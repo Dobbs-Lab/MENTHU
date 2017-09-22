@@ -1,6 +1,6 @@
 ####Required Function#######
 
-calculateMENTHU <- function(casList, geneSeq, threshold){
+calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons){
 	pamList <- casList
 	#pamList <- "NGG"
 	#print(pamList)
@@ -12,6 +12,10 @@ calculateMENTHU <- function(casList, geneSeq, threshold){
 	#	pamList <- list("NGG","NGCG", "NGAG", "NGAN", "NGNG", "NNGRRT", "NNGRRN", "NNNNGATT", "NNAGAAW", "NAAAAC")
 	
 	#pamSites <- pamScan(pamList,DNAStringSet(input$geneSeq),findCut = TRUE,type = "cas9")
+	
+	#Subset geneSeq input to only search exons for PAMs
+	#exonSeqs <- geneSeq
+	
 	pamSites <- pamScan(pamList,DNAStringSet(geneSeq),findCut = TRUE,type = "cas9")	
 	
 	#print(pamSites)
@@ -20,7 +24,7 @@ calculateMENTHU <- function(casList, geneSeq, threshold){
 	# print(test)
 	#print(window(genSeq,test,80))
 	
-	menthuFrame <- data.frame(targetSeq = as.character(), menthuScore = as.numeric(), toolType = as.character(), strand = as.character(), exon = as.character(), location = as.numeric())
+	menthuFrame <- data.frame(targetSequence = as.character(), menthuScore = as.numeric(), toolType = as.character(), strand = as.character(), exon = as.character(), location = as.integer())
 	#PAM LEVEL
 	for(i in 1:length(pamSites[])){
 		toolTypeI <- names(pamSites)[i]
@@ -46,7 +50,7 @@ calculateMENTHU <- function(casList, geneSeq, threshold){
 						if(abs(slopeFrame$slopeMH3Plus) >= threshold){
 							crispr <- substr(slopeFrame$seq, 24, (43 + nchar(toolTypeI)))
 							
-							formFrame  <- data.frame(targetSeq = crispr, menthuScore = abs(slopeFrame$slopeMH3Plus), toolType = toolTypeI, strand = "forward", exon = exonNum, location = pamSites[[i]][[1]][[k]][[l]])
+							formFrame  <- data.frame(targetSequence = crispr, menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), toolType = toolTypeI, strand = "forward", exon = exonNum, location = as.integer(pamSites[[i]][[1]][[k]][[l]], digits = 0))
 							menthuFrame <- rbind(menthuFrame, formFrame)
 						}
 					}
@@ -56,9 +60,18 @@ calculateMENTHU <- function(casList, geneSeq, threshold){
 		#}
 	}
 	print(menthuFrame)
+	#colnames(menthuFrame) <- c("Target Sequence", "Score", "Tool", "Strand", "Exon", "Location")
 	return(menthuFrame)
 }
 
+
+####Exon Handler for Custom Exon Input####
+exonHandler <- function(exonRHandsonTable){
+	exonTable <- hot_to_r(exonRHandsonTable)
+	exons <- exonTable[apply(exonTable, MARGIN = 1, function(x) any(x > 0)),]
+	
+	return(exons)
+}
 
 #' pamScan
 #' 

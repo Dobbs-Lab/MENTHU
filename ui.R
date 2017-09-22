@@ -9,13 +9,13 @@
 
 library(shiny)
 library(shinyjs)
-#library(rhandsontable)
-#library(shinyIncubator)
+library(rhandsontable)
+library(shinyIncubator)
 
 shinyUI(
 	
 	
-	#Creates the navbar set-up
+	####Creates the navbar set-up####
 	navbarPage(id = 'mainPage',
 						 windowTitle = "MENTHU",
 						 
@@ -39,6 +39,7 @@ shinyUI(
 						 				 
 						 				 #Text area in center of page
 						 				 column(9, wellPanel(
+						 				 	includeHTML("www/menthuAbout.html")
 						 				 ))
 						 				 
 						 ),
@@ -73,8 +74,8 @@ shinyUI(
 						 				 column(2, wellPanel(
 						 				 	
 						 				 	#Cut/Paste cDNA example; input$example
-						 				 	actionLink("example", 
-						 				 						 label = "Example"),
+						 				 	actionLink("exampleGeneSeq", 
+						 				 						 label = "Copy/paste Gene Sequence Example"),
 						 				 	
 						 				 	p(""),
 						 				 	
@@ -89,38 +90,34 @@ shinyUI(
 						 				 column(9, wellPanel(
 						 				 	
 						 				 	####Choose PAM sequence#############################################
-						 				 	p("1. Select the PAM sequence(s) you wish to target:"),
-						 				 	
-						 				 	actionLink("selectAll", "Select All"),
-						 				 	p(""),
-						 				 	actionLink("selectNone", "De-select All"),
 						 				 	checkboxGroupInput("casType",
-						 				 										 label = "",
-						 				 										 choices = list("S. pyogenes SpCas9: 5'-NGG-3'" = 1,
-						 				 										 							 "S. pyogenes SpCas9: 5'-NRG-3'" = 2,
-						 				 										 							 "S. aureus SaCas9: 5'-NNNRRT-3'" = 3,
-						 				 										 							 "S. aureus SaCas9: 5'-NNGRRT-3'" = 4,
-						 				 										 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'" = 5,
-						 				 										 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'" = 6,
-						 				 										 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = 7,
-						 				 										 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = 8,
-						 				 										 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'" = 9,
+						 				 										 label = "1. Select the PAM sequence(s) you wish to target:",
+						 				 										 choices = list("S. pyogenes SpCas9: 5'-NGG-3'" = "NGG",
+						 				 										 							 "S. pyogenes SpCas9: 5'-NRG-3'" = "NRG",
+						 				 										 							 "S. aureus SaCas9: 5'-NNNRRT-3'" = "NNNRRT",
+						 				 										 							 "S. aureus SaCas9: 5'-NNGRRT-3'" = "NNGRRT",
+						 				 										 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'" = "NNGTGA",
+						 				 										 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'" = "NNAGAAW",
+						 				 										 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTN",
+						 				 										 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
+						 				 										 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'" = "NNNVRYAC",
 						 				 										 							 #"Francisella FnCpf1: 5'-TTN-3'" = 10,
 						 				 										 							 #"Francisella FnCpf1: 5'-YTN-3'" = 11,
-						 				 										 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = 12),
-						 				 										 							 #"T. denticola: 5'-NAAAC-3'" = 13),
-						 				 										 selected = 1)
+						 				 										 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT"),
+						 				 										 selected = "NGG"),
+						 				 	actionLink("selectAll", "Select All"),
+						 				 	p(""),
+						 				 	actionLink("selectNone", "De-select All")
 						 				 ),
 						 				 wellPanel(
 						 				 	
 						 				 	
 						 				 	
 						 				 	####Choose Input Type###############################################
-						 				 	p("2. What type of sequence input do you want to use?"),
 						 				 	radioButtons("inputType",
-						 				 							 label = "",
-						 				 							 choices = list(#"GenBank Gene ID"  = 1,
-						 				 							 							 "Copy/paste sequence" = 2
+						 				 							 label = "2. What type of sequence input do you want to use?",
+						 				 							 choices = list("GenBank Gene ID"  = 1,
+						 				 							 	"Copy/paste gene sequence" = 2
 						 				 							 ),
 						 				 							 selected = 1),
 						 				 	####Input sequence#####################
@@ -130,8 +127,9 @@ shinyUI(
 						 				 		textAreaInput("genbankId",
 						 				 									label = "",
 						 				 									value = "",
-						 				 									placeholder = "Paste GenBank gene ID here...")
-						 				 		
+						 				 									placeholder = "Paste GenBank gene ID here..."),
+						 				 		textOutput("validgenbankid"),
+						 				 		textOutput("genbankidexists")
 						 				 		
 						 				 	),
 						 				 	
@@ -142,40 +140,46 @@ shinyUI(
 						 				 									label = "",
 						 				 									value = "",
 						 				 									placeholder = "Paste gene sequence here..."),
+						 				 		textOutput("validgeneseq"),
 						 				 		p(""),
-						 				 		p("Input exon location information here."),
-						 				 	  p("If you need to add more exons, right-click and select 'Insert Row'")#,
-						 				 		#rHandsontableOutput("exonInfo")
-						 				 		
+						 				 		radioButtons("pasteExonType", label = "Does your pasted sequence have multiple exons, and do you wish to find a target within those exons?", choices = list("No" = 0, "Yes" = 1), inline = TRUE),
+						 				 		conditionalPanel(
+						 				 			condition = "input.pasteExonType == 1",
+						 				 			p("Input exon location information here. If the first exon starts on nucleotide 63 and ends on nucleotide 145 of your sequence, type '63' into 'exonStart' and '145' into 'exonEnd'."),
+						 				 			p("If you need to add more exons, right-click or command-click and select 'Insert Row'. You do not need to remove extra rows."),
+						 				 			rHandsontableOutput("exonInfo"),
+						 				 			textOutput("validexoninfo")
+						 				 		)
 						 				 	)
-						 				 	
 						 				 ),
 						 				 
 						 				 
 						 				 ############Exon Options#########################
 						 				 
 						 				 wellPanel(
-						 				 	p("3. Do you want to use targets in the first exon? (Not recommended.)"),
 						 				 	radioButtons("firstExon",
-						 				 							 label = "",
+						 				 							 label = "3. Do you want to use targets in the first exon? (Not recommended.)",
 						 				 							 choices = list("No" = 0,
 						 				 							 							 "Yes" = 1),
-						 				 							 selected = 0)
-						 				 ),
-						 				 
-						 				 wellPanel(
-						 				 	p("4. What percentage of the first exons in the sequence do you want to consider?"),
-						 				 	p("For gene knockouts, it is recommended that you find a target within the first 30% of the exons in the sequence."),
+						 				 							 selected = 0),
+						 				 	p(tags$b("4. What percentage of the first exons in the sequence do you want to consider?")),
+						 				 	p("For gene knockouts, it is recommended that you find a target after the first exon, but within the next 30% of the exons in the sequence."),
 						 				 	p("However, you can look for targets in every exon (100%) by changing the value to '100'."),
 						 				 	
 						 				 	numericInput("exonPercentage",
 						 				 							 label = "",
-						 				 							 value = "30")
-						 				 	
-						 				 	
+						 				 							 value = 30)
+						 				 ),
+						 				 
+						 				 wellPanel(
+						 				 	numericInput("threshold",
+						 				 							 label = "5. Choose minimum score for reporting (>50 is a strong score, >40 is moderate; we do not recommend using sites <40): ",
+						 				 							 value = 40)
 						 				 ),
 						 				 
 						 				 wellPanel(	
+						 				 	
+						 				 	
 						 				 	conditionalPanel(
 						 				 		condition = "input.inputType == 1",
 						 				 		actionButton("genBankSubmit", "Submit")
@@ -183,7 +187,11 @@ shinyUI(
 						 				 	
 						 				 	conditionalPanel(
 						 				 		condition = "input.inputType == 2",
-						 				 		actionButton("geneSeqSubmit", "Submit")
+						 				 		actionButton("geneSeqSubmit", "Submit"),
+						 				 		p(""),
+						 				 		
+						 				 		DT::dataTableOutput('geneSeqResults')
+						 				 		#tags$head(tags$style("#geneSeqResults table {background-color: white; }", media = "screen", type = "text/css"))
 						 				 	)
 						 				 	
 						 				 	
@@ -218,15 +226,14 @@ shinyUI(
 						 	)),
 						 	
 						 	#Text area in center of page
-						 	column(9,
-						 				 
-						 				 wellPanel(
+						 	#Text area in center of page
+						 	column(9, wellPanel(
 						 		p("Please contact MENTHUHelp@gmail.com to report issues and request support."),
 						 		p("Before submitting a bug report, please read the instructions below on how to write a helpful bug report."),
-						 		p("By following these instructions, we will be able to solve your issue more quickly.")),
-						 		wellPanel(
-						 		includeHTML("www/20170921_A_Guide_to_Writing_Helpful_Bug_Reports.html"))
-						 		)
+						 		p("By following these instructions, we will be able to solve your issue more quickly."),
+						 		includeHTML("www/20170921_A_Guide_to_Writing_Helpful_Bug_Reports.html"),
+						 		p("A standalone version of this code may be downloaded from", tags$a(href = "https://github.com/Dobbs-Lab/GTagHD", target = "_blank", " GitHub."), " The R code is provided as-is, and may not be used in commercial applications. Please be aware that you modify the code at your own risk; we are unable to provide support for modified versions.")
+						 	))
 						 	
 						 ),
 						 ##########TOOLS AND DOWNLOADS TAB#################################
@@ -288,3 +295,7 @@ shinyUI(
 						 	))
 						 )
 	))
+#
+
+
+

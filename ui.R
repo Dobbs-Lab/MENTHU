@@ -231,8 +231,8 @@ shinyUI(
 						 		p("Please contact MENTHUHelp@gmail.com to report issues and request support."),
 						 		p("Before submitting a bug report, please read the instructions below on how to write a helpful bug report."),
 						 		p("By following these instructions, we will be able to solve your issue more quickly."),
-						 		includeHTML("www/20170921_A_Guide_to_Writing_Helpful_Bug_Reports.html"),
-						 		p("A standalone version of this code may be downloaded from", tags$a(href = "https://github.com/Dobbs-Lab/GTagHD", target = "_blank", " GitHub."), " The R code is provided as-is, and may not be used in commercial applications. Please be aware that you modify the code at your own risk; we are unable to provide support for modified versions.")
+						 		includeHTML("www/20170921_A_Guide_to_Writing_Helpful_Bug_Reports.html")
+						 		
 						 	))
 						 	
 						 ),
@@ -248,9 +248,7 @@ shinyUI(
 						 	
 						 	#Text area in center of page
 						 	column(9, wellPanel(
-						 			p("A standalone version of this code will be available shortly at GitHub.")
-						 			#p("A standalone version of this code may be downloaded from", tags$a(href = "https://github.com/Dobbs-Lab/GTagHD", target = "_blank", " GitHub."), " The R code is provided as-is, and may not be used in commercial applications. Please be aware that you modify the code at your own risk; we are unable to provide support for modified versions.")
-						 		
+						 		p("A standalone version of this code may be downloaded from", tags$a(href = "https://github.com/Dobbs-Lab/GTagHD", target = "_blank", " GitHub."), " The R code is provided as-is, and may not be used in commercial applications. Please be aware that you modify the code at your own risk; we are unable to provide support for modified versions.")
 						 	))
 						 	
 						 ),

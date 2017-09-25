@@ -200,6 +200,8 @@ shinyUI(
 						 				 		actionButton("geneSeqSubmit", "Submit"),
 						 				 		p(""),
 						 				 		
+						 				 		uiOutput("downOut"),
+						 				 		p(""),
 						 				 		DT::dataTableOutput('geneSeqResults')
 						 				 		#tags$head(tags$style("#geneSeqResults table {background-color: white; }", media = "screen", type = "text/css"))
 						 				 	)

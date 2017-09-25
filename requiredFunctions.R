@@ -36,7 +36,7 @@ calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons, percent, 
 	#Create data frame to hold results
 	menthuFrame <- data.frame(targetSequence = as.character(), 
 														menthuScore = as.numeric(), 
-														#frameShift = as.character(), 
+														frameShift = as.character(), 
 														toolType = as.character(), 
 														strand = as.character(), 
 														exon = as.character(), 
@@ -106,7 +106,7 @@ calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons, percent, 
 								
 								formFrame  <- data.frame(targetSequence = crispr, 
 																				 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
-																				 #frameShift = slopeFrame$frameShift,
+																				 frameShift = slopeFrame$frameShift,
 																				 toolType = toolTypeI, 
 																				 strand = strandId, 
 																				 exon = exonNum, 
@@ -324,7 +324,7 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 		patternScoreDF <- calculateBae(inData, cutSite, lengthWeight)
 		patternScoreDF <- patternScoreDF[order(-patternScoreDF$patternScore),]
 		
-		#fShift <- (if(patternScoreDF[1, 3] %% 3 == 0){"No"} else {"Yes"})
+		fShift <- (if(patternScoreDF[1, 3] %% 3 == 0){"No"} else {"Yes"})
 		#Subset the out of frame scores
 		outOfFrameInst <- patternScoreDF[which(patternScoreDF$delLength %% 3 != 0),]
 		
@@ -363,7 +363,7 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 														outOfFrameScore = outOfFrameScore,
 														#slopeMH2Plus = linModel2$coefficients[2],
 														slopeMH3Plus = linModel3$coefficients[2],
-														#frameShift = fShift,
+														frameShift = fShift,
 														stringsAsFactors = FALSE)
 		
 		#targetDF <- rbind(targetDF, tempFrame)

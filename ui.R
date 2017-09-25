@@ -73,6 +73,11 @@ shinyUI(
 						 				 #Adds a sidebar for users to pre-populate fields with an example, and reset the form
 						 				 column(2, wellPanel(
 						 				 	
+						 				 	#GenBank Example; input$exampleGenBank
+						 				 	#actionLink("exampleGenBank",
+						 				 	#label = "GenBank Accession Example),
+						 				 	#p(""),
+						 				 	
 						 				 	#Cut/Paste cDNA example; input$example
 						 				 	actionLink("exampleGeneSeq", 
 						 				 						 label = "Copy/paste Gene Sequence Example"),
@@ -98,16 +103,19 @@ shinyUI(
 						 				 										 							 "S. aureus SaCas9: 5'-NNGRRT-3'" = "NNGRRT",
 						 				 										 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'" = "NNGTGA",
 						 				 										 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'" = "NNAGAAW",
-						 				 										 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTN",
-						 				 										 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
 						 				 										 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'" = "NNNVRYAC",
-						 				 										 							 #"Francisella FnCpf1: 5'-TTN-3'" = 10,
-						 				 										 							 #"Francisella FnCpf1: 5'-YTN-3'" = 11,
 						 				 										 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT"),
+						 				 										 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTTN",
+						 				 										 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
+						 				 										 #"Francisella FnCpf1: 5'-TTN-3'" = "TTN",
+						 				 										 #"Francisella FnCpf1: 5'-YTN-3'" = "YTN"),
 						 				 										 selected = "NGG"),
+						 				 	p(""),
 						 				 	actionLink("selectAll", "Select All"),
 						 				 	p(""),
-						 				 	actionLink("selectNone", "De-select All")
+						 				 	actionLink("selectNone", "De-select All"),
+						 				 	p(""),
+						 				 	textOutput("validpam")
 						 				 ),
 						 				 wellPanel(
 						 				 	
@@ -171,10 +179,12 @@ shinyUI(
 						 				 							 value = 30)
 						 				 ),
 						 				 
+						 				 ###########THRESHOLD#############################
 						 				 wellPanel(
 						 				 	numericInput("threshold",
 						 				 							 label = "5. Choose minimum score for reporting (>50 is a strong score, >40 is moderate; we do not recommend using sites <40): ",
-						 				 							 value = 40)
+						 				 							 value = 40),
+						 				 	textOutput("validthreshold")
 						 				 ),
 						 				 
 						 				 wellPanel(	

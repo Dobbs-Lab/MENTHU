@@ -1,6 +1,6 @@
 ####Required Function#######
 
-calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons){
+calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons, progress){
 	pamList <- casList
 	#pamList <- "NGG"
 	#print(pamList)
@@ -15,7 +15,7 @@ calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons){
 	
 	#Subset geneSeq input to only search exons for PAMs
 	#exonSeqs <- geneSeq
-	
+	progress$inc(0.1, detail = "Scanning for target sites...")
 	pamSites <- pamScan(pamList,DNAStringSet(geneSeq),findCut = TRUE,type = "cas9")	
 	
 	#print(pamSites)
@@ -27,6 +27,7 @@ calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons){
 	menthuFrame <- data.frame(targetSequence = as.character(), menthuScore = as.numeric(), toolType = as.character(), strand = as.character(), exon = as.character(), location = as.integer())
 	#PAM LEVEL
 	for(i in 1:length(pamSites[])){
+		progress$inc(1/length(pamSites[]), detail = paste("Processing ", names(pamSites[i])))
 		toolTypeI <- names(pamSites)[i]
 		
 		#STRAND LEVEL

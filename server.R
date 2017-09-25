@@ -6,10 +6,15 @@ library(stringr)
 library(stringi)
 library(Biostrings)
 library(DT)
+library(xlsx)
 
 source("requiredFunctions.R")
 
 shinyServer(function(input, output, session){
+	####Declare empty results variable
+	results <<- 0
+	dF <- reactiveValues(downloadF = FALSE)
+	
 	####Validation Checks####
 	
 	####Make sure GenBank/RefSeq ID is properly formatted####
@@ -106,6 +111,25 @@ shinyServer(function(input, output, session){
 				hot_col("exonEnd", format = "0")
 		
 	})
+	
+	#Download button
+	output$downOut <- renderUI({
+		if(dF$downloadF){
+			downloadButton("downRes", "Download Results")
+		} else {
+			""
+		}
+	})
+	
+	#Download handler
+	output$downRes <- downloadHandler(
+		filename = function(){
+			paste(gsub("CDT", "", gsub(" ", "_", Sys.time())), "_targets.csv")},
+		content = function(file){
+			write.csv(results, file)
+		}
+		
+	)
 	
 	
 	########################################################
@@ -215,9 +239,10 @@ shinyServer(function(input, output, session){
 				progress$set(message = "Beginning calculation...", value = 0)
 				
 				#results <- calculateMENTHUGeneSeq(input$casType, input$geneSeq, input$threshold, exons)
-				results <- calculateMENTHUGeneSeq(input$casType, input$geneSeq, input$threshold, exons, progress)
-				results <- results[order(-results$menthuScore),]
+				results <<- calculateMENTHUGeneSeq(input$casType, input$geneSeq, input$threshold, exons, input$exonPercentage, progress)
+				results <<- results[order(-results$menthuScore),]
 				#print(results)
+				dF$downloadF <<- TRUE
 				output$geneSeqResults <- DT::renderDataTable(results, options = list(scrollX = TRUE))
 
 			
@@ -259,6 +284,8 @@ shinyServer(function(input, output, session){
 	})
 	
 	reset <- function(){
+		results <<- 0
+		dF$downloadF <<- FALSE
 		updateCheckboxGroupInput(session, 
 														 "casType", 
 														 label = "",

@@ -162,12 +162,12 @@ shinyServer(function(input, output, session){
 														 							 "S. aureus SaCas9: 5'-NNGRRT-3'" = "NNGRRT",
 														 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'" = "NNGTGA",
 														 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'" = "NNAGAAW",
-														 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTN",
-														 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
 														 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'" = "NNNVRYAC",
-														 							 #"Francisella FnCpf1: 5'-TTN-3'" = 10,
-														 							 #"Francisella FnCpf1: 5'-YTN-3'" = 11,
 														 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT"),
+														 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTTN",
+														 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
+														 #"Francisella FnCpf1: 5'-TTN-3'" = "TTN",
+														 #"Francisella FnCpf1: 5'-YTN-3'" = "YTN"),
 														 selected = c("NGG", "NRG", "NNNRRT", "NNGRRT", "NNGTGA", "NNAGAAW", "NNNVRYAC", "NNNNGMTT"))
 	})
 	
@@ -181,12 +181,12 @@ shinyServer(function(input, output, session){
 														 							 "S. aureus SaCas9: 5'-NNGRRT-3'" = "NNGRRT",
 														 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'" = "NNGTGA",
 														 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'" = "NNAGAAW",
-														 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTN",
-														 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
 														 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'" = "NNNVRYAC",
-														 							 #"Francisella FnCpf1: 5'-TTN-3'" = 10,
-														 							 #"Francisella FnCpf1: 5'-YTN-3'" = 11,
 														 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT"),
+														 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTTN",
+														 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
+														 #"Francisella FnCpf1: 5'-TTN-3'" = "TTN",
+														 #"Francisella FnCpf1: 5'-YTN-3'" = "YTN"),
 														 selected = "NGG"
 		)
 	})
@@ -243,12 +243,12 @@ shinyServer(function(input, output, session){
 														 							 "S. aureus SaCas9: 5'-NNGRRT-3'" = "NNGRRT",
 														 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'" = "NNGTGA",
 														 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'" = "NNAGAAW",
-														 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTN",
-														 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
 														 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'" = "NNNVRYAC",
-														 							 #"Francisella FnCpf1: 5'-TTN-3'" = 10,
-														 							 #"Francisella FnCpf1: 5'-YTN-3'" = 11,
 														 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT"),
+														 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTTN",
+														 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
+														 #"Francisella FnCpf1: 5'-TTN-3'" = "TTN",
+														 #"Francisella FnCpf1: 5'-YTN-3'" = "YTN"),
 														 selected = c("NGG", "NNGTGA", "NNAGAAW", "NNNVRYAC", "NNNNGMTT"))
 		updateNumericInput(session, "threshold", value = 30)
 		
@@ -268,12 +268,12 @@ shinyServer(function(input, output, session){
 														 							 "S. aureus SaCas9: 5'-NNGRRT-3'" = "NNGRRT",
 														 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'" = "NNGTGA",
 														 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'" = "NNAGAAW",
-														 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTN",
-														 							 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
 														 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'" = "NNNVRYAC",
-														 							 #"Francisella FnCpf1: 5'-TTN-3'" = 10,
-														 							 #"Francisella FnCpf1: 5'-YTN-3'" = 11,
 														 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT"),
+														 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTTN",
+														 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
+														 #"Francisella FnCpf1: 5'-TTN-3'" = "TTN",
+														 #"Francisella FnCpf1: 5'-YTN-3'" = "YTN"),
 														 selected = "NGG"
 		)
 		updateRadioButtons(session, "inputType", label = "", choices = list(#"GenBank Gene ID"  = 1,

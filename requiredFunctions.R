@@ -1,66 +1,125 @@
 ####Required Function#######
-
-calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons, progress){
+calculateMENTHUgenbank <- function(casList, genbankId, threshold, percent, progress){
+	#Get list of PAM targets
 	pamList <- casList
-	#pamList <- "NGG"
-	#print(pamList)
-	#exon <- getExon("GU179289.1", percent = 10)
-	#exonInfo <- exon[[1]]
-	#exonSeq <- exon[[2]]
-	#genSeq <- exon[[3]]
 	
-	#	pamList <- list("NGG","NGCG", "NGAG", "NGAN", "NGNG", "NNGRRT", "NNGRRN", "NNNNGATT", "NNAGAAW", "NAAAAC")
+	#Get exon information
+	exon <- getExon(genbankId, percent = 10)
+	#Get exon indices
+	exonInfo <- exon[[1]]
+	#Get the exon sequences
+	exonSeq <- exon[[2]]
+	#Get the gene sequence
+	genSeq <- exon[[3]]
 	
-	#pamSites <- pamScan(pamList,DNAStringSet(input$geneSeq),findCut = TRUE,type = "cas9")
+	#Update progress bar
+	progress$inc(0.1, detail = "Scanning for target sites...")
+	
+	#Scan for target sites
+	pamSites <- pamScan(pamList,DNAStringSet(input$geneSeq),findCut = TRUE,type = "cas9")
+	
+}
+
+calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exons, percent, progress){
+	#Rename the input casList to pamList
+	pamList <- casList
 	
 	#Subset geneSeq input to only search exons for PAMs
 	#exonSeqs <- geneSeq
+	
+	#Update progress bar
 	progress$inc(0.1, detail = "Scanning for target sites...")
-	pamSites <- pamScan(pamList,DNAStringSet(geneSeq),findCut = TRUE,type = "cas9")	
 	
-	#print(pamSites)
-	#test <- pamSites[[1]][[1]][[1]][[1]]
+	#Scan for target sites
+	pamSites <- pamScan(pamList,DNAStringSet(geneSeq), findCut = TRUE, type = "cas9")	
 	
-	# print(test)
-	#print(window(genSeq,test,80))
+	#Create data frame to hold results
+	menthuFrame <- data.frame(targetSequence = as.character(), 
+														menthuScore = as.numeric(), 
+														#frameShift = as.character(), 
+														toolType = as.character(), 
+														strand = as.character(), 
+														exon = as.character(), 
+														location = as.integer())
 	
-	menthuFrame <- data.frame(targetSequence = as.character(), menthuScore = as.numeric(), toolType = as.character(), strand = as.character(), exon = as.character(), location = as.integer())
 	#PAM LEVEL
 	for(i in 1:length(pamSites[])){
 		progress$inc(1/length(pamSites[]), detail = paste("Processing ", names(pamSites[i])))
 		toolTypeI <- names(pamSites)[i]
-		
+		#print(paste0("i = ", i)) #For testing purposes
+		#print(nchar(geneSeq))    #For testing purposes
 		#STRAND LEVEL
-		#for(j in 1:length(pamSites[[i]][])){
-		
-		#EXON LEVEL
-		for(k in 1:length(pamSites[[i]][[1]][])){
-			exonNum <- names(pamSites[[i]][[1]])[k]
-			#SITE LEVEL
-			for(l in 1:length(pamSites[[i]][[1]][[k]][])){
-				print(l)
-				#If there's enough context...
-				if(!is.na(pamSites[[i]][[1]][[k]][[l]]) && !is.null(pamSites[[i]][[1]][[k]][[l]])){
-					if((pamSites[[i]][[1]][[k]][[l]] > 43) && ((pamSites[[i]][[1]][[k]][[l]] + 40 + nchar(toolTypeI)) < nchar(geneSeq))){
-						#context <- window(DNAString(input$geneSeq), pamSites[[i]][[1]][[k]][[l]], 80)
-						context <- window(DNAString(geneSeq), pamSites[[i]][[1]][[k]][[l]], 80)
-						slopeFrame <- calculateSlopeCompetition(as.character(context), cutSite = 40, weight = 20, top = 10)
-						print(abs(slopeFrame$slopeMH3Plus))
+		for(j in 1:length(pamSites[[i]][])){
+			
+			#EXON LEVEL
+			for(k in 1:length(pamSites[[i]][[j]][])){
+				#Get the number of the exon
+				exonNum <- names(pamSites[[i]][[j]])[k]
+				
+				#SITE LEVEL
+				for(l in 1:length(pamSites[[i]][[j]][[k]][])){
+					#print(l) #For testing purposes
+					
+					#If on the positive strand...
+					if(j == 1){
+						strandId <- "forward"
+						#print(strandId) #For testing purposes
+						#print(pamSites[[i]][[j]][[k]][[l]]) #For testing purposes
+
+					} else if (j == 2){
+						#If on the negative strand...
+						strandId <- "complement" 
+						#print(strandId) #For testing purposes
+						#print(paste0(pamSites[[i]][[j]][[k]][[l]])) #For testing purposes
+					}
+					
+					#Boolean value determining if their is enough sequence context (40 bp upstream, 40 bp downstream) of the cut site
+					#in order to run deletion calculation
+					contextCondition <- ((pamSites[[i]][[j]][[k]][[l]] > 40) && 
+															 	(pamSites[[i]][[j]][[k]][[l]] + 40) <= nchar(geneSeq))
+					
+					#Check if there's enough context...
+					if(!is.na(pamSites[[i]][[j]][[k]][[l]]) && !is.null(pamSites[[i]][[j]][[k]][[l]])){
+						#print(contextCondition) #For testing purposes
 						
-						#if(abs(slopeFrame$slopeMH3Plus) > input$threshold){
-						if(abs(slopeFrame$slopeMH3Plus) >= threshold){
-							crispr <- substr(slopeFrame$seq, 24, (43 + nchar(toolTypeI)))
+						if(contextCondition){
+							#Get the sequence context surrounding the cut site
+							context <- window(DNAString(geneSeq), pamSites[[i]][[j]][[k]][[l]], 80)
+							#print(context) #For testing purposes
 							
-							formFrame  <- data.frame(targetSequence = crispr, menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), toolType = toolTypeI, strand = "forward", exon = exonNum, location = as.integer(pamSites[[i]][[1]][[k]][[l]], digits = 0))
-							menthuFrame <- rbind(menthuFrame, formFrame)
+							#Calculate competition for the sequence generated by window()
+							slopeFrame <- calculateSlopeCompetition(as.character(context), cutSite = 40, weight = 20, top = 10)
+							#print(abs(slopeFrame$slopeMH3Plus)) #For testing purposes
+							
+							#If the score is greater than the threshold, report it
+							if(abs(slopeFrame$slopeMH3Plus) >= threshold){
+								
+								#Get the CRISPR target sequence required to target this site
+								if(strandId == "forward"){
+									crispr <- substr(slopeFrame$seq, 24, (43 + nchar(toolTypeI)))
+								} else if(strandId == "complement"){
+									crispr <- as.character(substr(reverseComplement(DNAString(slopeFrame$seq)), 24, 43 + nchar(toolTypeI)))
+								}
+								
+								#print(crispr) #For testing purposes
+								#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
+								
+								formFrame  <- data.frame(targetSequence = crispr, 
+																				 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																				 #frameShift = slopeFrame$frameShift,
+																				 toolType = toolTypeI, 
+																				 strand = strandId, 
+																				 exon = exonNum, 
+																				 location = as.integer(pamSites[[i]][[j]][[k]][[l]], digits = 0))
+								menthuFrame <- rbind(menthuFrame, formFrame)
+							}
 						}
 					}
 				}
 			}
 		}
-		#}
 	}
-	print(menthuFrame)
+	#print(menthuFrame) #For testing purposes
 	#colnames(menthuFrame) <- c("Target Sequence", "Score", "Tool", "Strand", "Exon", "Location")
 	return(menthuFrame)
 }
@@ -127,17 +186,17 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 					npamSites[k] <- ndf$start[k]
 				}
 			} else {
-				switch(type,
-							 cas9 = {pShift = -4}
-				)
-				switch(type,
-							 cas9 <- {nShift = 5}
-				)
+				#switch(type,
+				#			 cas9 = {pShift = -4}
+				#)
+				#switch(type,
+				#			 cas9 <- {nShift = 5}
+				#)
 				for (k in 1:length(pdf$start)) {
-					ppamSites[k] <- pdf$start[k] + pShift
+					ppamSites[k] <- pdf$start[k] - 4
 				}
 				for (k in 1:length(ndf$start)) {
-					npamSites[k] <- ndf$start[k] + nShift
+					npamSites[k] <- ndf$start[k] + nchar(ppam) + 2 #Changed to be PAM agnostic
 				}
 			}
 			
@@ -191,6 +250,48 @@ window <- function(sequence, position, winSize = 80) {
 	}
 }
 
+#' getExon
+#' 
+#' Function that fetches exon data from a GenBank accesion ID
+#' 
+#' @param accession GenBank accession ID
+#' @param percent Percentage of exons from 5' to 3' to fetch
+#' 
+#' @result List of exon start and end site and DNA sequences
+#' 
+#' @examples 
+#' 
+#' @export 
+#' 
+getExon <- function(accession, percent = 100) {
+	
+	require(genbankr)
+	
+	# Transform accession string to readable format and parse GenBank data
+	gba <- GBAccession(accession) 
+	gb <- readGenBank(gba)
+	seq <- getSeq(gb)[[1]] # fetch gene sequence
+	exonInfo <- data.frame(slot(exons(gb),"ranges")) #fetch exon information
+	
+	# Variable initialization
+	set <- NULL
+	exonSeq <- NULL
+	
+	# Calculation of number of exons to extract from percent parameter
+	numExons <- floor(percent/100*length(exonInfo$start))
+	
+	# Generation of DNAStringSet of exon DNA sequences
+	for (i in 1:numExons) {
+		exStart <- exonInfo$start[i]
+		exEnd <- exonInfo$end[i]
+		set <- c(set, seq[exStart:exEnd])
+		exonSeq <- DNAStringSet(set)
+	}
+	
+	return(list(exonInfo[1:numExons,], exonSeq,seq))
+	
+}
+
 #' calculateSlopeCompetition
 #'
 #' @param inData A table of two columns - first is geneID, second is wildtype sequence
@@ -223,6 +324,7 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 		patternScoreDF <- calculateBae(inData, cutSite, lengthWeight)
 		patternScoreDF <- patternScoreDF[order(-patternScoreDF$patternScore),]
 		
+		#fShift <- (if(patternScoreDF[1, 3] %% 3 == 0){"No"} else {"Yes"})
 		#Subset the out of frame scores
 		outOfFrameInst <- patternScoreDF[which(patternScoreDF$delLength %% 3 != 0),]
 		
@@ -261,6 +363,7 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 														outOfFrameScore = outOfFrameScore,
 														#slopeMH2Plus = linModel2$coefficients[2],
 														slopeMH3Plus = linModel3$coefficients[2],
+														#frameShift = fShift,
 														stringsAsFactors = FALSE)
 		
 		#targetDF <- rbind(targetDF, tempFrame)

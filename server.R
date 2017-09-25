@@ -58,8 +58,8 @@ shinyServer(function(input, output, session){
 						 			 "Allowed nucleotides are A, C, G, and T.")),
 				need(nchar(input$geneSeq) < 5000, "The DNA sequence has >5000 nucleotides. For sequences of this size, please use the local version of MENTHU, which can be accessed via the 'Tools and Downloads' tab.")
 			)
-		} else if(input$inputType == 1) {
-			#prevent crash on empty submission
+		} else if(input$inputType == 2) {
+			#prevent running on empty submission
 			validate(
 				need(input$geneSeq != "", "")
 			)
@@ -71,6 +71,25 @@ shinyServer(function(input, output, session){
 		if(!is.null(input$exonInfo)){
 			values[["old"]] <- isolate(values[[""]])
 		}
+	})
+	
+	#Valid threshold
+	validThreshold <- reactive({
+	if(!is.null(input$threshold)){
+		validate(
+			need(input$threshold >= 0,
+					 "Error: Threshold value must be non-negative.")
+		)
+	}	
+	})
+	
+	#Valid PAM
+	validPAM <- reactive({
+		print(input$casType)
+		validate(
+			need(length(input$casType) > 0,
+					 "Error: No PAMs selected.")
+		)
 	})
 	
 	#Render exon table
@@ -102,6 +121,14 @@ shinyServer(function(input, output, session){
 	
 	output$validgeneseq <- renderText({
 		validGeneSeq()
+	})
+	
+	output$validthreshold <- renderText({
+		validThreshold()
+	})
+	
+	output$validpam <- renderText({
+		validPAM()
 	})
 	
 	#output$validexoninfo <- renderText({
@@ -166,6 +193,15 @@ shinyServer(function(input, output, session){
 
 	#Submit Handler
 	observeEvent(input$geneSeqSubmit, {
+		#Make a progress object
+		progress <- shiny::Progress$new()
+		#Make sure this closes
+		on.exit(progress$close())
+		
+		
+		#Prevent from running if missing inputs or have invalid inputs
+		if(is.null(validGeneSeq()) && (is.null(validThreshold())) && (is.null(validPAM()))){
+
 			if(input$pasteExonType == 0){
 				exons <- 0
 			} else {
@@ -174,13 +210,18 @@ shinyServer(function(input, output, session){
 					exons <- 0
 				}
 			}
-			print(exons)
 			
-			results <- calculateMENTHUGeneSeq(input$casType, input$geneSeq, input$threshold, exons)
-			results <- results[order(-results$menthuScore, results$toolType, results$location),]
-			#print(results)
-			output$geneSeqResults <- DT::renderDataTable(results, options = list(scrollX = TRUE))
-		
+				print(exons)
+				progress$set(message = "Beginning calculation...", value = 0)
+				
+				#results <- calculateMENTHUGeneSeq(input$casType, input$geneSeq, input$threshold, exons)
+				results <- calculateMENTHUGeneSeq(input$casType, input$geneSeq, input$threshold, exons, progress)
+				results <- results[order(-results$menthuScore),]
+				#print(results)
+				output$geneSeqResults <- DT::renderDataTable(results, options = list(scrollX = TRUE))
+
+			
+		}
 	})
 
 	
@@ -195,7 +236,7 @@ shinyServer(function(input, output, session){
 		updateTextAreaInput(session, "geneSeq", label = "", value = "CTTTCCTGCGTTATCCCCTGATTCTGTGGATAACCGTATTACCGCCTTTGAGTGAGCTGATACCGCTCGCCGCAGCCGAACGACCGAGCGCAGCGAGTCAGTGAGCGAGGAAGCGGAAGAGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATACGCGTACCGCTAGCCAGGAAGAGTTTGTAGAAACGCAAAAAGGCCATCCGTCAGGATGGCCTTCTGCTTAGTTTGATGCCTGGCAGTTTATGGCGGGCGTCCTGCCCGCCACCCTCCGGGCCGTTGCTTCACAACGTTCAAATCCGCTCCCGGCGGATTTGTCCTACTCAGGAGAGCGTTCACCGACAAACAACAGATAAAACGAAAGGCCCAGTCTTCCGACTGAGCCTTTCGTTTTATTTGATGCCTGGCAGTTCCCTACTCTCGCGTTAACGCTAGCATGGATGTTTTCCCAGTCACGACGT")
 		updateCheckboxGroupInput(session, 
 														 "casType", 
-														 label = "",
+														 label = "1. Select the PAM sequence(s) you wish to target:",
 														 choices = list("S. pyogenes SpCas9: 5'-NGG-3'" = "NGG",
 														 							 "S. pyogenes SpCas9: 5'-NRG-3'" = "NRG",
 														 							 "S. aureus SaCas9: 5'-NNNRRT-3'" = "NNNRRT",

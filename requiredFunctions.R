@@ -1,21 +1,68 @@
 ####Required Function#######
 
-calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exonDF, progress){
+calculateMENTHUGeneSeq <- function(casList, wiggle = TRUE, wigRoom = 39, geneSeq, threshold, exonDF, progress, armin, armax, spamin, spamax){
+	require(Biostrings)
 	#Rename the input casList to pamList
 	pamList <- casList
+	print("here1")
+	#Create an empty list to hold exon sequences
+	set <- NULL
+	exonSeqs <- NULL
 	
+	print(exonDF) #debugging
+	
+	print("here2") #debugging
 	#Subset geneSeq to exon sequences
-	#exonSeqs <- substring(rep(as.character(geneSeq), nrow(exonDF)), exonDF$exonStart, exonDF$exonEnd)
+	#Deal with the case in which exons are specified and extra context should be included to examine sites where the gRNA would run off the exon
+	if((wiggle == TRUE) && (class(exonDF) == "data.frame")){
+		for(i in 1:nrow(exonDF)){
+			#Ensure exon doesn't run off the end
+			if((exonDF$exonStart[i] - wigRoom) < 1){
+				exStart <- 1
+			} else {
+				exStart <- exonDF$exonStart[i] - wigRoom
+			}
+			
+			if(exonDF$exonEnd[i] + wigRoom > nchar(geneSeq)){
+				exEnd <- nchar(geneSeq)
+			} else {
+				exEnd <- exonDF$exonEnd[i] + wigRoom
+			}
+			set <- c(set, DNAString(geneSeq)[exStart:exEnd])
+			exonSeqs <- DNAStringSet(set)
+		}
+	} else if((!wiggle) && (class(exonDF) == "data.frame")){
+		exonSeqs <- DNAStringSet(substring(rep(as.character(geneSeq), nrow(exonDF)), exonDF$exonStart, exonDF$exonEnd))
+	} else {
+		exonSeqs <- DNAStringSet(geneSeq)
+	}
+	print(exonSeqs)
+	print(exonSeqs[1])
 	
 	#Update progress bar
 	progress$inc(0.1, detail = "Scanning for target sites...")
 	
-	#Scan for target sites
-	pamSites <- pamScan(pamList, DNAStringSet(geneSeq), findCut = TRUE, type = "cas9")	
-	#pamSites <- pamScan(pamList, DNAStringSet(exonSeqs), findCut = TRUE, type = "cas9")
-
+	#If the user is using Cas:
+	if(length(pamList) > 0){
+		#Scan for target sites
+		#pamSites <- pamScan(pamList, DNAStringSet(geneSeq), findCut = TRUE, type = "cas9")
+		if(class(exonDF) == "data.frame"){
+			pamSites <- pamScan(pamList, exonSeqs, exonStarts = exonDF$exonStart, findCut = TRUE, type = "cas9", wiggle = wiggle, wigRoom = wigRoom)
+		} else {
+			pamSites <- pamScan(pamList, exonSeqs, exonStarts = NULL, findCut = TRUE, type = "cas9", wiggle = wiggle, wigRoom = wigRoom)
+		}
+		
+		pamFlag <- TRUE
+		#pamSites <- pamScan(pamList, exonSeqs, exonStarts = NULL, findCut = TRUE, type = "cas9", wiggle = TRUE, wigRoom = 39)
+	} else {
+		pamSites <- 0
+		pamFlag <- FALSE
+	}
+	
+	print("got through PAM scan")
+	
 	#if(length(talenList > 0)){
-		#targetList, findcut = FALSE, range = FALSE, armin = 15, armax = 18, spamin = 14, spamax = 16, exonStarts = NULL
+	#targetList, findcut = FALSE, range = FALSE, armin = 15, armax = 18, spamin = 14, spamax = 16, exonStarts = NULL
 	#	talenSites <- talPal(targetList, 
 	#											 findcut = TRUE, 
 	#											 range   = TRUE, 
@@ -36,93 +83,144 @@ calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exonDF, progress
 														exonID = as.numeric(), 
 														location = as.integer())
 	
-	#PAM LEVEL
-	for(i in 1:length(pamSites[])){
-		progress$inc(1/length(pamSites[]), detail = paste("Processing ", names(pamSites[i])))
-		toolTypeI <- names(pamSites)[i]
-		#print(paste0("i = ", i)) #For testing purposes
-		#print(nchar(geneSeq))    #For testing purposes
-		#STRAND LEVEL
-		for(j in 1:length(pamSites[[i]][])){
+	#Set a flag to be true if there are TALEN inputs
+	talFlag <- armin != "" & armax != "" & spamin != "" & spamax != ""
+	
+	#If there are TALEN inputs
+	if(talFlag){
+		#Set the range flag to true
+		rFlag <- TRUE
+		
+		#If there are exon inputs...
+		if(nrow(exonDF) > 0){
+			#Set all exon starts to the exon starts in the input frame
+			exonStart <- exonDF$exonStart
+		} else {
+			#If there are no exon inputs, make exon start null
+			exonStart <- NULL
+		}
+		
+		#Submit talen info to talPal
+		#talSites <- talPal(DNAStringSet(geneSeq), 
+		talSites <- talPal(exonSeqs,
+											 findcut = TRUE, 
+											 range      = rFlag, 
+											 armin      = armin, 
+											 armax      = armax, 
+											 spamin     = spamin, 
+											 spamax     = spamax, 
+											 exonStarts = exonStart)
+		
+		
+	} else {
+		talSites <- ""
+	}
+	print(talSites)
+	if(class(exonDF) != "data.frame"){
+		exonDF <- data.frame(exonStart = 1, exonEnd = nchar(geneSeq), stringsAsFactors = FALSE)
+	}
+	print(nrow(exonDF))
+	print(exonDF)
+	
+	print("past the TALs")
+	#If the user is using PAMS:
+	if(pamFlag){
+		
+		#PAM LEVEL
+		for(i in 1:length(pamSites[])){
+			if(talFlag == FALSE){
+				progress$inc(1/(length(pamSites[])), detail = paste("Processing ", names(pamSites[i])))
+			} else {
+				progress$inc(1/(length(pamSites[]) + length(talSites[[1]][[1]])), detail = paste("Processing ", names(pamSites[i])))
+			}
 			
-			#EXON LEVEL
-			for(k in 1:length(pamSites[[i]][[j]][])){
-				#Get the number of the exon
-				exonNum <- names(pamSites[[i]][[j]])[k]
-				#ONLY DO THE NEXT STEPS IF THE EXON IS ON THE TARGET LIST
-				#SITE LEVEL
-				for(l in 1:length(pamSites[[i]][[j]][[k]][])){
-					#print(l) #For testing purposes
-					inExon <- FALSE
-					exonID <- 0
-					#Kick out target sites where the cut site is not within an exon
-					if(exonDF != 0){
-						for(m in 1:nrow(exonDF)){
-							if((pamSites[[i]][[j]][[k]][[l]] >= exonDF$exonStart[m]) && 
-								 (pamSites[[i]][[j]][[k]][[l]] <= exonDF$exonEnd[m])){
-								inExon <- TRUE
-								exonID <- m
-							}
-						}
-					} else {
-						inExon <- TRUE
-						exonID <- 1
-					}
-
+			print("past 1st prog bar")
+			toolTypeI <- names(pamSites)[i]
+			#print(paste0("i = ", i)) #For testing purposes
+			#print(nchar(geneSeq))    #For testing purposes
+			#STRAND LEVEL
+			for(j in 1:length(pamSites[[i]][])){
+				
+				#EXON LEVEL
+				for(k in 1:length(pamSites[[i]][[j]][])){
+					#Get the number of the exon
+					exonNum <- as.numeric(gsub("Exon ", "", names(pamSites[[i]][[j]])[k]))
+					print(exonNum)
 					
-					if(inExon){
-						#If on the positive strand...
-						if(j == 1){
-							strandId <- "forward"
-							#print(strandId) #For testing purposes
-							#print(pamSites[[i]][[j]][[k]][[l]]) #For testing purposes
-							
-						} else if (j == 2){
-							#If on the negative strand...
-							strandId <- "complement" 
-							#print(strandId) #For testing purposes
-							#print(paste0(pamSites[[i]][[j]][[k]][[l]])) #For testing purposes
-						}
-						
-						#Boolean value determining if there is enough sequence context (40 bp upstream, 40 bp downstream) of the cut site
-						#in order to run deletion calculation
-						contextCondition <- ((pamSites[[i]][[j]][[k]][[l]] > 40) && 
-																 	(pamSites[[i]][[j]][[k]][[l]] + 40) <= nchar(geneSeq))
-						
-						#Check if there's enough context...
-						if(!is.na(pamSites[[i]][[j]][[k]][[l]]) && !is.null(pamSites[[i]][[j]][[k]][[l]])){
-							#print(contextCondition) #For testing purposes
-							
-							if(contextCondition){
-								#Get the sequence context surrounding the cut site
-								context <- window(DNAString(geneSeq), pamSites[[i]][[j]][[k]][[l]], 80)
-								#print(context) #For testing purposes
-								
-								#Calculate competition for the sequence generated by window()
-								slopeFrame <- calculateSlopeCompetition(as.character(context), cutSite = 40, weight = 20, top = 10)
-								#print(abs(slopeFrame$slopeMH3Plus)) #For testing purposes
-								
-								#If the score is greater than the threshold, report it
-								if(abs(slopeFrame$slopeMH3Plus) >= threshold){
-									
-									#Get the CRISPR target sequence required to target this site
-									if(strandId == "forward"){
-										crispr <- substr(slopeFrame$seq, 24, (43 + nchar(toolTypeI)))
-									} else if(strandId == "complement"){
-										crispr <- as.character(substr(reverseComplement(DNAString(slopeFrame$seq)), 24, 43 + nchar(toolTypeI)))
+					#ONLY DO THE NEXT STEPS IF THE EXON IS ON THE TARGET LIST
+					#SITE LEVEL
+					for(l in 1:length(pamSites[[i]][[j]][[k]][])){
+						if(!is.na(pamSites[[i]][[j]][[k]][[l]])){
+							#print(l) #For testing purposes
+							inExon <- FALSE
+							exonId <- 0
+							#Kick out target sites where the cut site is not within the current exon
+							#if(exonDF != 0){
+								for(m in 1:nrow(exonDF)){
+									if((pamSites[[i]][[j]][[k]][[l]] >= exonDF$exonStart[m]) && 
+										 (pamSites[[i]][[j]][[k]][[l]] <= exonDF$exonEnd[m])){
+										inExon <- TRUE
+										exonId <- m
 									}
+								}
+							#}
+							
+							if(exonNum == exonId){
+								#If on the positive strand...
+								if(j == 1){
+									strandId <- "forward"
+									#print(strandId) #For testing purposes
+									#print(pamSites[[i]][[j]][[k]][[l]]) #For testing purposes
 									
-									#print(crispr) #For testing purposes
-									#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
+								} else if (j == 2){
+									#If on the negative strand...
+									strandId <- "complement" 
+									#print(strandId) #For testing purposes
+									#print(paste0(pamSites[[i]][[j]][[k]][[l]])) #For testing purposes
+								}
+								
+								#Boolean value determining if there is enough sequence context (40 bp upstream, 40 bp downstream) of the cut site
+								#in order to run deletion calculation
+								contextCondition <- ((pamSites[[i]][[j]][[k]][[l]] > 40) && 
+																		 	(pamSites[[i]][[j]][[k]][[l]] + 40) < nchar(geneSeq))
+								
+								#Check if there's enough context...
+								if(!is.na(pamSites[[i]][[j]][[k]][[l]]) && !is.null(pamSites[[i]][[j]][[k]][[l]])){
+									#print(contextCondition) #For testing purposes
 									
-									formFrame  <- data.frame(targetSequence = crispr, 
-																					 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
-																					 frameShift = slopeFrame$frameShift,
-																					 toolType = toolTypeI, 
-																					 strand = strandId, 
-																					 exonID = exonID, 
-																					 location = as.integer(pamSites[[i]][[j]][[k]][[l]], digits = 0))
-									menthuFrame <- rbind(menthuFrame, formFrame)
+									if(contextCondition){
+										#Get the sequence context surrounding the cut site
+										#context <- window(DNAString(geneSeq), pamSites[[i]][[j]][[k]][[l]] + exonDF$exonStart[exonNum], 80)
+										context <- window(DNAString(geneSeq), pamSites[[i]][[j]][[k]][[l]], 80)
+										#print(context) #For testing purposes
+										
+										#Calculate competition for the sequence generated by window()
+										slopeFrame <- calculateSlopeCompetition(as.character(context), cutSite = 40, weight = 20, top = 10)
+										#print(abs(slopeFrame$slopeMH3Plus)) #For testing purposes
+										
+										#If the score is greater than the threshold, report it
+										if(abs(slopeFrame$slopeMH3Plus) >= threshold){
+											
+											#Get the CRISPR target sequence required to target this site
+											if(strandId == "forward"){
+												crispr <- substr(slopeFrame$seq, 24, (43 + nchar(toolTypeI)))
+											} else if(strandId == "complement"){
+												crispr <- as.character(substr(reverseComplement(DNAString(slopeFrame$seq)), 24, 43 + nchar(toolTypeI)))
+											}
+											
+											#print(crispr) #For testing purposes
+											#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
+											
+											formFrame  <- data.frame(targetSequence = crispr, 
+																							 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																							 frameShift = slopeFrame$frameShift,
+																							 toolType = toolTypeI, 
+																							 strand = strandId, 
+																							 exonID = exonNum, 
+																							 location = as.integer(pamSites[[i]][[j]][[k]][[l]], digits = 0))
+											menthuFrame <- rbind(menthuFrame, formFrame)
+										}
+									}
 								}
 							}
 						}
@@ -131,6 +229,200 @@ calculateMENTHUGeneSeq <- function(casList, geneSeq, threshold, exonDF, progress
 			}
 		}
 	}
+	
+	print("we got to here")
+	
+	if(talFlag){
+		
+		#For TALENs
+		#for(n in 1:length(talSites[])){
+			toolTypeI <- "TALEN"
+			
+			
+			for(o in 1:length(talSites[[1]][])){
+				if(pamFlag == FALSE){
+					progress$inc(1/(length(talSites[[1]])), detail = paste("Processing TALENs"))
+				} else {
+					progress$inc(1/(length(pamSites[]) + length(talSites[[1]])), detail = paste("Processing TALENs"))
+				}
+				print(paste0("O = ", n))
+				
+				if(length(talSites[[1]][[o]] > 0)){
+					#Get the number of the exon
+					exonNum <- names(talSites[[2]][o])
+					exonNumAct <- as.numeric(gsub("Exon ", "", exonNum))
+					
+					for(p in 1:length(talSites[[1]][[o]])){
+						print(paste0("P = ", p))
+						print(paste0("talSites NOP = ", talSites[[1]][[o]][[p]]))
+						
+						#Only do the calculation of the TALEN cut site if it is in the current exon
+						if(length(talSites[[1]][[o]][[p]][]) > 0){
+								
+								if(!is.na(talSites[[1]][[o]][[p]])){
+									#print(l) #For testing purposes
+									inExon <- FALSE
+									exonID <- exonNumAct
+									#Kick out target sites where the cut site is not within an exon
+									for(r in 1:nrow(exonDF)){
+										print(exonDF$exonStart[r])
+										print(talSites[[1]][[o]][[p]])
+										if((talSites[[1]][[o]][[p]] >= exonDF$exonStart[r]) && (talSites[[1]][[o]][[p]] <= exonDF$exonEnd[r])){
+											inExon <- TRUE
+											exonID <- exonNumAct
+										}
+									}
+									
+									print(inExon)
+									if(inExon){
+										#If on the positive strand...
+										#if(n == 1){
+										strandId <- "forward"
+										#print(strandId) #For testing purposes
+										#print(talSites[[i]][[j]][[k]][[l]]) #For testing purposes
+										
+										#} else if (n == 2){
+										#If on the negative strand...
+										#strandId <- "complement" 
+										#print(strandId) #For testing purposes
+										#print(paste0(talSites[[i]][[j]][[k]][[l]])) #For testing purposes
+										#}
+										
+										#Boolean value determining if there is enough sequence context (40 bp upstream, 40 bp downstream) of the cut site
+										#in order to run deletion calculation
+										contextCondition <- ((talSites[[1]][[o]][[p]] > 40) && 
+																				 	(talSites[[1]][[o]][[p]] + 40) <= nchar(geneSeq))
+										print(contextCondition)
+										#Check if there's enough context...
+										if(!is.na(talSites[[1]][[o]][[p]]) && !is.null(talSites[[1]][[o]][[p]])){
+											#print(contextCondition) #For testing purposes
+											
+											if(contextCondition){
+												#Get the sequence context surrounding the cut site
+												context <- window(DNAString(geneSeq), talSites[[1]][[o]][[p]], 80)
+												#print(context) #For testing purposes
+												print(context)
+												#Calculate competition for the sequence generated by window()
+												slopeFrame <- calculateSlopeCompetition(as.character(context), cutSite = 40, weight = 20, top = 10)
+												#print(abs(slopeFrame$slopeMH3Plus)) #For testing purposes
+												print(slopeFrame)
+												#If the score is greater than the threshold, report it
+												if(abs(slopeFrame$slopeMH3Plus) >= threshold){
+													
+													#Get the CRISPR target sequence required to target this site
+													if(strandId == "forward"){
+														talen <- as.character(talSites[[2]][[o]][[1]][[p]])
+													} else if(strandId == "complement"){
+														talen <- as.character(reverseComplement(DNAString(talSites[[2]][[o]][[1]][[p]])))
+													}
+													
+													print(talen) #For testing purposes
+													#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
+													
+													formFrame  <- data.frame(targetSequence = talen, 
+																									 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																									 frameShift = slopeFrame$frameShift,
+																									 toolType = "TALEN", 
+																									 strand = strandId, 
+																									 exonID = exonID, 
+																									 location = as.integer(talSites[[1]][[o]][[p]], digits = 0))
+													
+													print(formFrame)
+													menthuFrame <- rbind(menthuFrame, formFrame)
+												}
+											}
+										}
+									}
+								}
+						}
+					}
+				}
+			}
+	}
+	#EXON LEVEL
+	#for(k in 1:length(talSites[[i]][[j]][])){
+	#Get the number of the exon
+	#exonNum <- names(talSites[[i]][[j]])[k]
+	#ONLY DO THE NEXT STEPS IF THE EXON IS ON THE TARGET LIST
+	#SITE LEVEL
+	#for(l in 1:length(talSites[[i]][[j]][[k]][])){
+	#print(l) #For testing purposes
+	#inExon <- FALSE
+	#exonID <- 0
+	#Kick out target sites where the cut site is not within an exon
+	#if(exonDF != 0){
+	#	for(m in 1:nrow(exonDF)){
+	#		if((talSites[[1]][[1]][n] >= exonDF$exonStart[m]) && 
+	#			 (talSites[[1]][[1]][n] <= exonDF$exonEnd[m])){
+	#			inExon <- TRUE
+	#			exonID <- m
+	#		}
+	#	}
+	#} else {
+	#	inExon <- FALSE
+	#}
+	
+	
+	#if(inExon){
+	#If on the positive strand...
+	#if(j == 1){
+	#		strandId <- "forward"
+	#print(strandId) #For testing purposes
+	#print(talSites[[i]][[j]][[k]][[l]]) #For testing purposes
+	
+	#} else if (j == 2){
+	#If on the negative strand...
+	#strandId <- "complement" 
+	#print(strandId) #For testing purposes
+	#print(paste0(talSites[[i]][[j]][[k]][[l]])) #For testing purposes
+	#}
+	
+	#Boolean value determining if there is enough sequence context (40 bp upstream, 40 bp downstream) of the cut site
+	#in order to run deletion calculation
+	#contextCondition <- ((talSites[[1]][[1]][n] > 40) && 
+	#										 	(talSites[[1]][[1]][n] + 40) <= nchar(geneSeq))
+	
+	#Check if there's enough context...
+	#if(!is.na(talSites[[1]][[1]][n]) && !is.null(talSites[[1]][[1]][n])){
+	#print(contextCondition) #For testing purposes
+	
+	#if(contextCondition){
+	#Get the sequence context surrounding the cut site
+	#context <- window(DNAString(geneSeq), talSites[[1]][[1]][n], 80)
+	#print(context) #For testing purposes
+	
+	#Calculate competition for the sequence generated by window()
+	#slopeFrame <- calculateSlopeCompetition(as.character(context), cutSite = 40, weight = 20, top = 10)
+	#print(abs(slopeFrame$slopeMH3Plus)) #For testing purposes
+	
+	#If the score is greater than the threshold, report it
+	#if(abs(slopeFrame$slopeMH3Plus) >= threshold){
+	
+	#Get the target sequence for this
+	#if(strandId == "forward"){
+	#		talen <- talSites[[2]][[1]][[1]][n]
+	#} else if(strandId == "complement"){
+	#		crispr <- as.character(substr(reverseComplement(DNAString(slopeFrame$seq)), 24, 43 + nchar(toolTypeI)))
+	#}
+	
+	#print(crispr) #For testing purposes
+	#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
+	
+	#	formFrame  <- data.frame(targetSequence = talen, 
+	#													 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+	#													 frameShift = slopeFrame$frameShift,
+	#													 toolType = toolTypeI, 
+	#													 strand = strandId, 
+	#													 exonID = exonID, 
+	#													 location = as.integer(talSites[[1]][[1]][n], digits = 0))
+	#	menthuFrame <- rbind(menthuFrame, formFrame)
+	#}
+	#}
+	#}
+	#}
+	#}
+	print(menthuFrame)
+	print(menthuFrame[!duplicated(menthuFrame),])
 	#print(menthuFrame) #For testing purposes
 	#colnames(menthuFrame) <- c("Target Sequence", "Score", "Tool", "Strand", "Exon", "Location")
 	return(menthuFrame)
@@ -175,13 +467,13 @@ calculateMENTHUGeneSeqGenBank <- function(casList, talenList, gbFlag, gbhFlag, g
 	#	geneSeq <- as.character(info$ORIGIN)
 	#}
 
-	exon <- getExon(genbankInfo, gbFlag, exonTargetType, firstExon, exonStuff)
+	exon     <- getExon(genbankInfo, gbFlag, exonTargetType, firstExon, exonStuff)
 	#Get exon indices
 	exonInfo <- exon[[1]]
 	#Get the exon sequences
-	exonSeq <- exon[[2]]
+	exonSeq  <- exon[[2]]
 	#Get the gene sequence
-	geneSeq <- exon[[3]]
+	geneSeq  <- exon[[3]]
 	
 	#Generate the list of exons that should be checked
 	
@@ -313,6 +605,110 @@ calculateMENTHUGeneSeqGenBank <- function(casList, talenList, gbFlag, gbhFlag, g
 			}
 		}
 	}
+	
+	
+	#For TALENs
+	for(i in 1:length(talSites[])){
+		print(i)
+		toolTypeI <- names(talSites)[i]
+		progress$inc(1/(length(talSites[])), detail = paste("Processing ", names(talSites[i])))
+		#print(paste0("i = ", i)) #For testing purposes
+		#print(nchar(geneSeq))    #For testing purposes
+		#STRAND LEVEL
+		for(j in 1:length(talSites[[i]][])){
+			print(j)
+			#EXON LEVEL
+			if(length(talSites[[i]][[j]][]) > 0){
+				
+				
+				for(k in 1:length(talSites[[i]][[j]][])){
+					print(k)
+					
+					#Get the number of the exon
+					exonNum <- names(talSites[[i]][[j]])[k]
+					exonNumAct <- as.numeric(gsub("Exon ", "", exonNum))
+					#Only do the calculation if the exon is in the interest list
+					#if(exonNumAct %in% exonList){
+					#SITE LEVEL
+					if(length(talSites[[i]][[j]][[k]][]) > 0){
+						
+						for(l in 1:length(talSites[[i]][[j]][[k]][])){
+							print(l)
+							if(!is.na(talSites[[i]][[j]][[k]][[l]])){
+								#print(l) #For testing purposes
+								#inExon <- TRUE
+								exonID <- exonNumAct
+								#Kick out target sites where the cut site is not within an exon
+								for(m in 1:nrow(exonInfo)){
+									if((talSites[[i]][[j]][[k]][[l]] >= exonInfo$start[m]) && (talSites[[i]][[j]][[k]][[l]] <= exonInfo$end[m])){
+										inExon <- TRUE
+										exonID <- exonNumAct
+									}
+								}
+								
+								#if(inExon){
+								#If on the positive strand...
+								if(j == 1){
+									strandId <- "forward"
+									#print(strandId) #For testing purposes
+									#print(talSites[[i]][[j]][[k]][[l]]) #For testing purposes
+									
+								} else if (j == 2){
+									#If on the negative strand...
+									strandId <- "complement" 
+									#print(strandId) #For testing purposes
+									#print(paste0(talSites[[i]][[j]][[k]][[l]])) #For testing purposes
+								}
+								
+								#Boolean value determining if there is enough sequence context (40 bp upstream, 40 bp downstream) of the cut site
+								#in order to run deletion calculation
+								contextCondition <- ((talSites[[i]][[j]][[k]][[l]] > 40) && 
+																		 	(talSites[[i]][[j]][[k]][[l]] + 40) <= nchar(geneSeq))
+								
+								#Check if there's enough context...
+								if(!is.na(talSites[[i]][[j]][[k]][[l]]) && !is.null(talSites[[i]][[j]][[k]][[l]])){
+									#print(contextCondition) #For testing purposes
+									
+									if(contextCondition){
+										#Get the sequence context surrounding the cut site
+										context <- window(DNAString(geneSeq), talSites[[i]][[j]][[k]][[l]], 80)
+										#print(context) #For testing purposes
+										
+										#Calculate competition for the sequence generated by window()
+										slopeFrame <- calculateSlopeCompetition(as.character(context), cutSite = 40, weight = 20, top = 10)
+										#print(abs(slopeFrame$slopeMH3Plus)) #For testing purposes
+										
+										#If the score is greater than the threshold, report it
+										if(abs(slopeFrame$slopeMH3Plus) >= threshold){
+											
+											#Get the CRISPR target sequence required to target this site
+											if(strandId == "forward"){
+												crispr <- substr(slopeFrame$seq, 24, (43 + nchar(toolTypeI)))
+											} else if(strandId == "complement"){
+												crispr <- as.character(substr(reverseComplement(DNAString(slopeFrame$seq)), 24, 43 + nchar(toolTypeI)))
+											}
+											
+											#print(crispr) #For testing purposes
+											#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
+											
+											formFrame  <- data.frame(targetSequence = crispr, 
+																							 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																							 frameShift = slopeFrame$frameShift,
+																							 toolType = toolTypeI, 
+																							 strand = strandId, 
+																							 exonID = exonID, 
+																							 location = as.integer(talSites[[i]][[j]][[k]][[l]], digits = 0))
+											menthuFrame <- rbind(menthuFrame, formFrame)
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	print(menthuFrame) #For testing purposes
 	#colnames(menthuFrame) <- c("Target Sequence", "Score", "Tool", "Strand", "Exon", "Location")
 	return(menthuFrame)
@@ -340,6 +736,7 @@ window <- function(sequence, position, winSize = 80) {
 	} else {
 		return(sequence[(position-((winSize + winSize%%2)/2 - 1)):(position+((winSize + winSize%%2)/2))])
 	}
+	
 }
 
 

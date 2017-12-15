@@ -64,13 +64,13 @@ calculateMENTHUGeneSeq <- function(casList, wiggle = TRUE, wigRoom = 39, geneSeq
 	}
 	
 	#Create data frame to hold results
-	menthuFrame <- data.frame(targetSequence = as.character(), 
-														menthuScore = as.numeric(), 
-														frameShift = as.character(), 
-														toolType = as.character(), 
-														strand = as.character(), 
-														exonID = as.numeric(), 
-														location = as.integer())
+	menthuFrame <- data.frame(Target_Sequence = as.character(), 
+														MENTHU_Score = as.numeric(), 
+														Frame_Shift = as.character(), 
+														Tool_Type = as.character(), 
+														Strand = as.character(), 
+														Exon_ID = as.numeric(), 
+														Cut_Location = as.integer())
 	
 	#Set a flag to be true if there are TALEN inputs
 	talFlag <- armin != "" & armax != "" & spamin != "" & spamax != ""
@@ -187,13 +187,13 @@ calculateMENTHUGeneSeq <- function(casList, wiggle = TRUE, wigRoom = 39, geneSeq
 											}
 											
 											#Create data frame of the current results
-											formFrame  <- data.frame(targetSequence = crispr, 
-																							 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
-																							 frameShift = slopeFrame$frameShift,
-																							 toolType = toolTypeI, 
-																							 strand = strandId, 
-																							 exonID = exonNum, 
-																							 location = as.integer(pamSites[[i]][[j]][[k]][[l]], digits = 0))
+											formFrame  <- data.frame(Target_Sequence = crispr, 
+																							 MENTHU_Score = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																							 Frame_Shift = slopeFrame$frameShift,
+																							 Tool_Type = toolTypeI, 
+																							 Strand = strandId, 
+																							 Exon_ID = exonNum, 
+																							 Cut_Location = as.integer(pamSites[[i]][[j]][[k]][[l]], digits = 0))
 											
 											#Bind the current results to the running list
 											menthuFrame <- rbind(menthuFrame, formFrame)
@@ -295,13 +295,13 @@ calculateMENTHUGeneSeq <- function(casList, wiggle = TRUE, wigRoom = 39, geneSeq
 													print(talen) #For testing purposes
 													#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
 													
-													formFrame  <- data.frame(targetSequence = talen, 
-																									 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
-																									 frameShift = slopeFrame$frameShift,
-																									 toolType = "TALEN", 
-																									 strand = strandId, 
-																									 exonID = exonID, 
-																									 location = as.integer(talSites[[1]][[o]][[p]], digits = 0))
+													formFrame  <- data.frame(Target_Sequence = talen, 
+																									 MENTHU_Score = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																									 Frame_Shift = slopeFrame$frameShift,
+																									 Tool_Type = "TALEN", 
+																									 Strand = strandId, 
+																									 Exon_ID = exonID, 
+																									 Cut_Location = as.integer(talSites[[1]][[o]][[p]], digits = 0))
 													
 													print(formFrame)
 													menthuFrame <- rbind(menthuFrame, formFrame)
@@ -471,13 +471,13 @@ calculateMENTHUGeneSeqGenBank <- function(casList, talenList, gbFlag, gbhFlag, g
 	#}
 	
 	#Create data frame to hold results
-	menthuFrame <- data.frame(targetSequence = as.character(), 
-														menthuScore = as.numeric(), 
-														frameShift = as.character(), 
-														toolType = as.character(), 
-														strand = as.character(), 
-														exonID = as.numeric(), 
-														location = as.integer())
+	menthuFrame <- data.frame(Target_Sequence = as.character(), 
+														MENTHU_Score = as.numeric(), 
+														Frame_Shift = as.character(), 
+														Tool_Type = as.character(), 
+														Strand = as.character(), 
+														Exon_ID = as.numeric(), 
+														Cut_Location = as.integer())
 	print(pamSites)
 	#PAM LEVEL
 	for(i in 1:length(pamSites[])){
@@ -563,13 +563,13 @@ calculateMENTHUGeneSeqGenBank <- function(casList, talenList, gbFlag, gbhFlag, g
 											#print(crispr) #For testing purposes
 											#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
 											
-											formFrame  <- data.frame(targetSequence = crispr, 
-																							 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
-																							 frameShift = slopeFrame$frameShift,
-																							 toolType = toolTypeI, 
-																							 strand = strandId, 
-																							 exonID = exonID, 
-																							 location = as.integer(pamSites[[i]][[j]][[k]][[l]], digits = 0))
+											formFrame  <- data.frame(Target_Sequence = crispr, 
+																							 MENTHU_Score = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																							 Frame_Shift = slopeFrame$frameShift,
+																							 Tool_Type = toolTypeI, 
+																							 Strand = strandId, 
+																							 Exon_ID = exonID, 
+																							 Cut_Location = as.integer(pamSites[[i]][[j]][[k]][[l]], digits = 0))
 											menthuFrame <- rbind(menthuFrame, formFrame)
 										}
 									}
@@ -667,13 +667,13 @@ calculateMENTHUGeneSeqGenBank <- function(casList, talenList, gbFlag, gbhFlag, g
 											#print(crispr) #For testing purposes
 											#print(round(abs(slopeFrame$slopeMH3Plus), digits = 2)) #For testing purposes
 											
-											formFrame  <- data.frame(targetSequence = crispr, 
-																							 menthuScore = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
-																							 frameShift = slopeFrame$frameShift,
-																							 toolType = toolTypeI, 
-																							 strand = strandId, 
-																							 exonID = exonID, 
-																							 location = as.integer(talSites[[i]][[j]][[k]][[l]], digits = 0))
+											formFrame  <- data.frame(Target_Sequence = crispr, 
+																							 MENTHU_Score = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																							 Frame_Shift = slopeFrame$frameShift,
+																							 Tool_Type = toolTypeI, 
+																							 Strand = strandId, 
+																							 Exon_ID = exonID, 
+																							 Cut_Location = as.integer(talSites[[i]][[j]][[k]][[l]], digits = 0))
 											menthuFrame <- rbind(menthuFrame, formFrame)
 										}
 									}

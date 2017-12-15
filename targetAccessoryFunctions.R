@@ -15,7 +15,7 @@
 #' 
 #' @export 
 #' 
-pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, type = NULL) {
+pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, type = NULL, wiggle = TRUE, wigRoom = 39) {
 	
 	require(Biostrings)
 	
@@ -37,6 +37,7 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 			
 			# Variable initialization
 			target <- targetList[[j]]
+			print(target)
 			ppamSites <- NULL
 			npamSites <- NULL
 			
@@ -68,14 +69,22 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 			}
 			
 			
-			# Add ppamStes and npamSites to memory
+			# Add ppamSites and npamSites to memory
 			pPAM[[j]] <- ppamSites
 			nPAM[[j]] <- npamSites
 			
 			# Correct positions by localization in gene and not exon
-			if (is.null(exonStarts) == FALSE) {
-				pPAM[[j]] <- pPAM[[j]] + exonStarts[j]
-				nPAM[[j]] <- nPAM[[j]] + exonStarts[j]
+			if(is.null(exonStarts) == FALSE) {
+				if(wiggle && (exonStarts[j] - wigRoom > 0)){
+					pPAM[[j]] <- pPAM[[j]] + exonStarts[j] - wigRoom - 1
+					nPAM[[j]] <- nPAM[[j]] + exonStarts[j] - wigRoom - 1
+				} else if (wiggle && (exonStarts[j] - wigRoom < 0)){
+					pPAM[[j]] <- pPAM[[j]] + exonStarts[j] - 1
+					nPAM[[j]] <- nPAM[[j]] + exonStarts[j] - 1
+				} else {
+					pPAM[[j]] <- pPAM[[j]] + exonStarts[j]
+					nPAM[[j]] <- nPAM[[j]] + exonStarts[j]
+				}
 			}
 		}
 		
@@ -152,9 +161,9 @@ talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax
 			
 			if (findcut == TRUE) {
 				# Estimates position of cut site
-				talSites[[i]] <- m[[1]][1:tempn] + ceiling(attributes(m[[1]])$capture.length/2) - 1 
+				talSites[[i]] <- unlist(as.list(m[[1]][1:tempn] + ceiling(attributes(m[[1]])$capture.length/2) - 1))
 			} else{
-				talSites[[i]] <- m[[1]][1:tempn]
+				talSites[[i]] <- unlist(as.list(unlist(m[[1]][1:tempn])))
 			}
 			
 			# Correct positions by localization in gene and not exon

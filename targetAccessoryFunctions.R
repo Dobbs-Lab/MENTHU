@@ -122,7 +122,7 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 #' 
 #' @export 
 #' 
-talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax = 18, spamin = 14, spamax = 16, exonStarts = NULL) {
+talPal <- function(targetList, findcut = FALSE, wiggle = TRUE, wigRoom = 39, range = FALSE, armin = 15, armax = 18, spamin = 14, spamax = 16, exonStarts = NULL) {
 	
 	require(stringr)
 	
@@ -166,11 +166,18 @@ talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax
 				talSites[[i]] <- unlist(as.list(unlist(m[[1]][1:tempn])))
 			}
 			
-			# Correct positions by localization in gene and not exon
+			# Correct positions by localization in gene and not exon, taking into account "wiggle room"
 			if (is.null(exonStarts) == FALSE) {
-				talSites[[i]] <- talSites[[i]] + exonStarts[i]
+				if(wiggle && (exonStarts[i] - wigRoom > 0)){
+					talSites[[i]] <- talSites[[i]] + exonStarts[i] - wigRoom - 1
+				} else if (wiggle && (exonStarts[i] - wigRoom <= 0)) {
+					talSites[[i]] <- talSites[[i]] + exonStarts[i] - 1
+				} else {
+					talSites[[i]] <- talSites[[i]] + exonStarts[i]
+				}
 			}
 		}
+		
 	} else {
 		# Default TALEN search, 15b arm lengths and 15b spacer
 		for (i in 1:numSites) {
@@ -195,7 +202,13 @@ talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax
 			
 			# Correct positions by localization in gene and not exon
 			if (is.null(exonStarts) == FALSE) {
-				talSites[[i]] <- talSites[[i]] + exonStarts[i]
+				if(wiggle && (exonStarts[i] - wigRoom > 0)){
+					talSites[[i]] <- talSites[[i]] + exonStarts[i] - wigRoom - 1
+				} else if (wiggle && (exonStarts[i] - wigRoom <= 0)) {
+					talSites[[i]] <- talSites[[i]] + exonStarts[i] - 1
+				} else {
+					talSites[[i]] <- talSites[[i]] + exonStarts[i]
+				}
 			}
 		}
 	}

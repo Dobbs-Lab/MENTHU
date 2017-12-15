@@ -307,7 +307,7 @@ shinyServer(function(input, output, session){
 				}
 				print(input$inputType)
 				#Calculate the MENTHU score
-				results <<- calculateMENTHUGeneSeqGenBank(input$casType, talenList, gbFlag, gbhFlag, info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, progress)
+				results <<- calculateMENTHUGeneSeqGenBank(input$casType, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, progress)
 				#Order the result table from largest menthuScore to smallest
 				results <<- results[order(-results$menthuScore),]
 				#print(results)
@@ -367,10 +367,21 @@ shinyServer(function(input, output, session){
 			#if(input$talenOp == 1){
 			#	talenList <- list(input$armin, input$armax, input$spamin, input$spamax)
 			#}
-
+			if(input$talenOp == 0){
+				talArmin <- ""
+				talArmax <- ""
+				talSpamin <- ""
+				talSpamax <- ""
+			} else {
+				talArmin <- input$armin
+				talArmax <- input$armax
+				talSpamin <- input$spamin
+				talSpamax <- input$spamax
+			}
+			
 
 			#Calculate the MENTHU score
-			results <<- calculateMENTHUGeneSeq(input$casType, input$geneSeq, input$threshold, exonIn, progress)
+			results <<- calculateMENTHUGeneSeq(input$casType, wiggle = TRUE, wigRoom = 39, input$geneSeq, input$threshold, exonIn, progress, talArmin, talArmax, talSpamin, talSpamax)
 			#Order the result table from largest menthuScore to smallest
 			results <<- results[order(-results$menthuScore),]
 			#print(results)

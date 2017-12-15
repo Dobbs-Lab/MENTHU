@@ -309,7 +309,7 @@ shinyServer(function(input, output, session){
 				#Calculate the MENTHU score
 				results <<- calculateMENTHUGeneSeqGenBank(input$casType, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, progress)
 				#Order the result table from largest menthuScore to smallest
-				results <<- results[order(-results$menthuScore),]
+				results <<- results[order(-results$MENTHU_Score),]
 				#print(results)
 				#Set the download button flag to true to render download button visible
 				dFGB$downloadFGB <<- TRUE
@@ -383,7 +383,7 @@ shinyServer(function(input, output, session){
 			#Calculate the MENTHU score
 			results <<- calculateMENTHUGeneSeq(input$casType, wiggle = TRUE, wigRoom = 39, input$geneSeq, input$threshold, exonIn, progress, talArmin, talArmax, talSpamin, talSpamax)
 			#Order the result table from largest menthuScore to smallest
-			results <<- results[order(-results$menthuScore),]
+			results <<- results[order(-results$MENTHU_Score),]
 			#print(results)
 			#Set the download button flag to true to render download button visible
 			dF$downloadF <<- TRUE

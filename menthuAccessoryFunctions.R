@@ -97,8 +97,6 @@ calculateBae <- function(seq, cutPosition, weight = 20.0){
 	lengthWeight <- weight
 	right        <- nchar(seq) - left + 1
 	
-	#print(paste0('length of seq = ', nchar(seq)))
-	
 	mhDF         <- data.frame(seq     = as.character(),
 														 iC      = as.numeric(),
 														 ipluskC = as.numeric(),
@@ -191,10 +189,6 @@ calculateBae <- function(seq, cutPosition, weight = 20.0){
 		sumScore3 <- sumScore3 + score3
 		sumScoreNot3 <- sumScoreNot3 + scoreNot3
 	}
-	
-	#print(paste0("MH Score: ", sumScore3 + sumScoreNot3))
-	#print(paste0("Out-of-frame score: ", (sumScoreNot3*100/(sumScore3 + sumScoreNot3))))
-	
 	
 	return(psDF)
 }

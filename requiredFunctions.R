@@ -76,7 +76,8 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom)
+													wigRoom    = wigRoom,
+													exonList   = row.names(exonDF))
 		} else {
 			pamSites <- pamScan(pamList, 
 													cutDistList, 
@@ -85,7 +86,8 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom)
+													wigRoom    = wigRoom,
+													exonList   = "1")
 		}
 		
 		#Set pamFlag TRUE - PAMs are used
@@ -128,7 +130,8 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 												 armax      = armax, 
 												 spamin     = spamin, 
 												 spamax     = spamax, 
-												 exonStarts = exonDF$exonStart)
+												 exonStarts = exonDF$exonStart,
+												 exonList   = row.names(exonDF))
 		} else {
 			#If there are no exon inputs, make exon start null
 			#Submit talen info to talPal
@@ -141,7 +144,8 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 												 armax      = armax, 
 												 spamin     = spamin, 
 												 spamax     = spamax, 
-												 exonStarts = NULL)
+												 exonStarts = NULL,
+												 exonList   = "1")
 		}
 		
 	} else {
@@ -482,9 +486,11 @@ calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, w
 		pamFlag <- FALSE
 	}
 	
+	print(talenList)
 	#Set a flag to be true if there are TALEN inputs
-	talFlag <- (talenList[1] != "") && (talenList[2] != "") && (talenList[3] != "") && (talenList[4] != "")
+	talFlag <- unique(talenList != "")
 	
+	print(talFlag)
 	#If there are TALEN inputs
 	if(talFlag){
 		#Set the range flag to true
@@ -498,10 +504,10 @@ calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, w
 											 wiggle = TRUE,
 											 wigRoom = 39,
 											 range      = rFlag, 
-											 armin      = armin, 
-											 armax      = armax, 
-											 spamin     = spamin, 
-											 spamax     = spamax, 
+											 armin      = talenList[[1]], 
+											 armax      = talenList[[2]], 
+											 spamin     = talenList[[3]], 
+											 spamax     = talenList[[4]], 
 											 exonList   = exonInfo$exonNum,
 											 exonStarts = exonInfo$start)
 		
@@ -686,7 +692,7 @@ calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, w
 												formFrame  <- data.frame(Target_Sequence = talen, 
 																								 MENTHU_Score = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
 																								 Frame_Shift = slopeFrame$frameShift,
-																								 Tool_Type = toolTypeI, 
+																								 Tool_Type = "TALEN", 
 																								 Strand = strandId, 
 																								 Exon_ID = exonID, 
 																								 Cut_Location = as.integer(talSites[[1]][[o]][[p]], digits = 0))

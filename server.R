@@ -293,7 +293,7 @@ shinyServer(function(input, output, session){
 			paste(gsub("CDT", "", gsub(" ", "_", Sys.time())), "_targets.csv")},
 		
 		content = function(file){
-			write.csv(results, file)
+			write.csv(results, file, row.names = FALSE)
 		}
 		
 	)

@@ -99,29 +99,10 @@ formatApe <- function(apeContents){
 			#If on the complement strand
 			if(grepl("complement\\(", curFeat, ignore.case = TRUE)){
 				orientation <- "complement"
-				#Get the string containing the join info
-				#joinString <- grep("complement\\([a-zA-Z0-9\\,\\.\\s\\>\\<]+\\)", perl = TRUE, ignore.case = TRUE, value = TRUE)
 			} else {
 				#String is in default orientation
 				orientation <- "default"
-				#Get the string containing the join info
-				#joinString <- grep("join\\([0-9\\,\\.\\s\\>\\<]+\\)", joinS, perl = TRUE, ignore.case = TRUE, value = TRUE)
 			}
-			#Do a bunch of cleaning steps to get the start and end joining indices into a list
-			#Remove "complement("
-			#jS <- gsub("complement\\(", "", joinString)
-			#Remove "join("
-			#jS <- gsub("join", "", jS)
-			#Remove any lone "("
-			#jS <- gsub("\\(", "", jS)
-			#Remove ending ")"
-			#jS <- gsub("\\)", "", jS)
-			#Get rid of newline characters
-			#jS <- gsub("\\\n", "", jS)
-			#Remove any ">" or "<" characters
-			#jS <- gsub("\\>", "", jS, perl = TRUE)
-			#jS <- gsub("\\<", "", jS, perl = TRUE)
-			#Split into start and stop indices
 			jS <- strsplit(indexString, split = ",", fixed = TRUE)
 			jSStart <-  as.numeric(sapply(strsplit(unlist(jS), split = "\\.\\.", fixed = FALSE), "[", 1))
 			jSEnd   <-  as.numeric(sapply(strsplit(unlist(jS), split = "\\.\\.", fixed = FALSE), "[", 2))
@@ -262,32 +243,61 @@ getFeatureValues <- function(featureLines){
 	return(df)
 }
 
-
-
 getExonLocus <- function(gene){
 	geneF <- getFeatures(gene)
-	exonListI <- which(sapply(sapply(geneF, "[", 2), "[", 1) == "exon")
-	geneExons <- geneF[exonListI]
-	exonTable <- data.frame(start = numeric(length(exonListI)), 
-													end   = numeric(length(exonListI)),
-													width = numeric(length(exonListI)),
-													type  = character(length(exonListI)),
-													orientation = character(length(exonListI)),
-													number = character(length(exonListI)),
-													stringsAsFactors = FALSE)
+	cdsFlag <- FALSE
+	exonList <- which(sapply(sapply(geneF, "[", 2), "[", 1) == "exon")
 	
-	for(i in 1:length(exonListI)){
-		exonTable[i, 1] <- geneExons[[i]][2, 2]
-		exonTable[i, 2] <- geneExons[[i]][3, 2]
-		exonTable[i, 3] <- as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2])
-		exonTable[i, 4] <- geneExons[[i]][1, 2]
-		exonTable[i, 5] <- geneExons[[i]][4, 2]
-		exonTable[i, 6] <- geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2]
+	if(length(exonList) < 1){
+		exonList <- which(sapply(sapply(geneF, "[", 2), "[", 1) == "CDS")
+		cdsFlag <- TRUE
 	}
-	
-	return(exonTable)
+
+	if(length(exonList) < 1){
+		return("Error: No exons or CDS")
+		
+	} else {
+		geneExons <- list()
+		
+		#Treat CDS as exons
+		if(cdsFlag){
+			for(p in 1:length(exonList)){
+				curBit <- geneF[exonList[p]][[1]]
+				joinS  <- curBit[5, 2]
+				joinE  <- curBit[6, 2]
+				for(q in 1:length(joinS[[1]])){
+					subGene <- curBit
+					subGene[2, 2] <- joinS[[1]][q]
+					subGene[3, 2] <- joinE[[1]][q]
+					tFrame <- data.frame(qualifier = "number", value = q)
+					subGene <- rbind(subGene, tFrame)
+					geneExons <- rlist:::list.append(geneExons, subGene)
+				}
+			}
+		} else {
+			geneExons <- geneF[exonList]
+		}
+		
+		exonTable <- data.frame(start       = numeric(length(exonList)), 
+														end         = numeric(length(exonList)),
+														width       = numeric(length(exonList)),
+														type        = character(length(exonList)),
+														orientation = character(length(exonList)),
+														number      = character(length(exonList)),
+														stringsAsFactors = FALSE)
+		
+		for(i in 1:length(geneExons)){
+			exonTable[i, 1] <- geneExons[[i]][2, 2]
+			exonTable[i, 2] <- geneExons[[i]][3, 2]
+			exonTable[i, 3] <- as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2])
+			exonTable[i, 4] <- geneExons[[i]][1, 2]
+			exonTable[i, 5] <- geneExons[[i]][4, 2]
+			exonTable[i, 6] <- geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2]
+			
+		}
+		
+		return(exonTable)
+	}
 }
-
-
 
 

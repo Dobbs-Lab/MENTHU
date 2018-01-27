@@ -178,7 +178,7 @@ shinyUI(
 						 				 	conditionalPanel(
 						 				 		condition = "input.talenOp == 1",
 						 				 		p(paste0("Specify TALEN design parameters. For an exact length, make \"Min\" and \"Max\" values identical.", 
-						 				 						 "The \"Min\" value must be less than or equal to the \"Max\" value.")),
+						 				 						 "The \"Min\" value must be less than or equal to the \"Max\" value. Please note that to shorten computation time, we currently only search for TALENs in the forward/sense orientation.")),
 						 				 		textOutput("validtalen"),
 						 				 		
 						 				 		#Choose TALEN arm length by specifying min and max values

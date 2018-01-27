@@ -485,11 +485,9 @@ calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, w
 		pamFlag <- FALSE
 	}
 	
-	print(talenList)
 	#Set a flag to be true if there are TALEN inputs
 	talFlag <- unique(talenList != "")
 	
-	print(talFlag)
 	#If there are TALEN inputs
 	if(talFlag){
 		#Set the range flag to true

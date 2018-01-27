@@ -22,7 +22,7 @@ shinyUI(
 						 theme = "ogtheme.css", 
 						 
 						 #Page title box
-						 tags$div("MENTHU v1.0.1", 
+						 tags$div("MENTHU v1.1.0", 
 						 				 style = "color:white"),
 						 
 						 ########ABOUT TAB#################################################
@@ -31,15 +31,15 @@ shinyUI(
 						 				 
 						 				 #Sidebar panel with links
 						 				 column(2, wellPanel(
-						 				 	tags$div(tags$span(a(href = "https://www.iastate.edu/",   
+						 				 	tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
 						 				 											 target = "_blank", 
-						 				 											 tags$img(src = "isulogo.jpg",     
-						 				 											 				 width = "90%")))),
-						 				 	p(""),
-						 				 	tags$div(tags$span(a(href = "https://www.mayoclinic.org", 
-						 				 											 target = "_blank", 
-						 				 											 tags$img(src = "mayoclinic.jpeg", 
-						 				 											 				 width = "50%"))))
+						 				 											 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
 						 				 )),
 						 				 
 						 				 #Text area in center of page
@@ -55,15 +55,15 @@ shinyUI(
 						 				 
 						 				 #Sidebar panel with links
 						 				 column(2, wellPanel(
-						 				 	tags$div(tags$span(a(href = "https://www.iastate.edu/",   
+						 				 	tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
 						 				 											 target = "_blank", 
-						 				 											 tags$img(src = "isulogo.jpg",    
-						 				 											 				 width = "90%")))),
-						 				 	p(""),
-						 				 	tags$div(tags$span(a(href = "https://www.mayoclinic.org", 
-						 				 											 target = "_blank", 
-						 				 											 tags$img(src = "mayoclinic.jpeg", 
-						 				 											 				 width = "50%"))))
+						 				 											 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
 						 				 )),
 						 				 
 						 				 #Text area in center of page
@@ -91,7 +91,7 @@ shinyUI(
 						 				 	
 						 				 	#Cut/Paste cDNA example; input$example
 						 				 	actionLink("exampleGeneSeq", 
-						 				 						 label = "Copy/paste Gene Sequence Example"),
+						 				 						 label = "Pasted Sequence Example"),
 						 				 	
 						 				 	p(""),
 						 				 	
@@ -123,17 +123,43 @@ shinyUI(
 						 				 										 #"Francisella FnCpf1: 5'-YTN-3'" = "YTN"),
 						 				 										 selected = "NGG"
 						 				 	),
+
 						 				 	
-						 				 	p(""),
+						 				 	tags$br(),
 						 				 	actionLink("selectAll", "Select All PAMs"),
-						 				 	p(""),
+						 				 	tags$br(),
 						 				 	actionLink("selectNone", "De-select All PAMs"),
-						 				 	p(""),
+						 				 	tags$br(),
 						 				 	textOutput("validpam"),
+						 				 	
+						 				 	
+						 				 	radioButtons("customCutOpt",
+						 				 							 label    = "1a. Do you want to create a 'custom' PAM sequence?",
+						 				 							 choices  = list("No" = 0,
+						 				 							 								"Yes" = 1),
+						 				 							 selected = 0, 
+						 				 							 inline = TRUE),
+						 				 	
+						 				 	conditionalPanel(
+						 				 		condition = "input.customCutOpt == 1",
+												textOutput("validmatchcustominputlength"),
+												textOutput("validcustompam"),
+						 				 		textAreaInput("customPamSeq",
+						 				 									label = "Input your nucleotide PAM sequence in the 5'-3' direction (e.g., 'NGG' for SpCas9). You can enter multiple sequences by separating the PAMs with a comma or a space, e.g. 'NGG NRG NNVRYAC', etc.:", 
+						 				 									#\nIf your sequence allows for ambiguity, please use the IUPAC one-letter codes: R = A or G; Y = C or T; S = G or C; W = A or T; K = G or T; M = A or C; B = not A; D = not C; H = not G; V = not T; N = any base.",
+						 				 									value = "",
+						 				 									placeholder = "Please input PAM sequence(s) in 5'-3' direction..."),
+												textOutput("validcustomcutsites"),
+						 				 		textAreaInput("cutSite",
+						 				 									label = "Please specify where your nuclease cuts in relation to your PAM (negative values for upstream). If you entered multiple PAM sequences, please list the DSB locations in the ORDER YOU INPUT THE PAM SEQUENCES, e.g. '-3 -3 3', etc.:",
+#If the double-strand break site (DSB) is 5' to the PAM, count the number of bases between the DSB site and the FIRST base of your PAM. For example, SpCas9 generally induces a DSB three bases upstream of 'NGG', so the input value would be -3. If the cut is 3' to the PAM, count the number of bases between the LAST base of your PAM and the DSB site.",
+						 				 									value = "",
+						 				 									placeholder = "Input the DSB site(s) in relation to your PAM(s)...")
+						 				 	),
 						 				 	
 						 				 	#Decide whether to include TALEN targets
 						 				 	radioButtons("talenOp",
-						 				 							 label = "1a. Do you want to use TALEN targets?",
+						 				 							 label = "1b. Do you want to use TALEN targets?",
 						 				 							 choices = list(
 						 				 							 	"No" = 0,
 						 				 							 	"Yes" = 1
@@ -142,16 +168,21 @@ shinyUI(
 						 				 							 inline = TRUE
 						 				 	),
 						 				 	
+						 				 	#For not using TALEN targets
 						 				 	conditionalPanel(
 						 				 		condition = "input.talenOp == 0",
 						 				 		p("You can use TALEN targets in addition to, or instead of, PAM targets.")
 						 				 	),
 						 				 	
+						 				 	#Using TALEN targets
 						 				 	conditionalPanel(
 						 				 		condition = "input.talenOp == 1",
-						 				 		p("Specify TALEN design parameters. For an exact length, make \"Min\" and \"Max\" values identical. The \"Min\" value must be less than or equal to the \"Max\" value."),
+						 				 		p(paste0("Specify TALEN design parameters. For an exact length, make \"Min\" and \"Max\" values identical.", 
+						 				 						 "The \"Min\" value must be less than or equal to the \"Max\" value.")),
+						 				 		textOutput("validtalen"),
+						 				 		
 						 				 		#Choose TALEN arm length by specifying min and max values
-						 				 		tags$b("Choose the minimum and maximum TALEN arm length: "),
+						 				 		tags$b("Choose the minimum and maximum TALEN arm length (arm length may range from 15-18 nucleotides): "),
 						 				 		tags$br(),
 						 				 		div(style="display:inline-block",
 						 				 				numericInput("armin",
@@ -162,6 +193,7 @@ shinyUI(
 						 				 										 step = 1,
 						 				 										 width = "80px"
 						 				 				)),
+						 				 		
 						 				 		div(style="display:inline-block",
 						 				 				numericInput("armax",
 						 				 										 label = "Max: ",
@@ -174,21 +206,22 @@ shinyUI(
 						 				 		tags$br(),
 						 				 		
 						 				 		#Choose spacer length by specifying min and max values
-						 				 		tags$b("Choose the minimum and maximum spacer length: "),
+						 				 		tags$b("Choose the minimum and maximum spacer length (spacer length may range from 14-16 nucleotides): "),
 						 				 		tags$br(),
 						 				 		div(style="display:inline-block",
 						 				 				numericInput("spamin",
 						 				 										 label = "Min: ",
-						 				 										 value = 14,
+						 				 										 value = 15,
 						 				 										 min = 14,
 						 				 										 max = 16,
 						 				 										 step = 1,
 						 				 										 width = "80px"
 						 				 				)),
+						 				 		
 						 				 		div(style="display:inline-block",
 						 				 				numericInput("spamax",
 						 				 										 label = "Max: ",
-						 				 										 value = 16,
+						 				 										 value = 15,
 						 				 										 min = 14,
 						 				 										 max = 16,
 						 				 										 step = 1,
@@ -224,14 +257,17 @@ shinyUI(
 						 				 	conditionalPanel(
 						 				 		condition = "input.inputType == 2",
 						 				 		
+						 				 		#Text area to copy/paste gene sequence
 						 				 		textAreaInput("geneSeq",
 						 				 									label = "",
 						 				 									value = "",
 						 				 									placeholder = "Paste gene sequence here..."),
 						 				 		
-						 				 		textOutput("validgeneseq"),
-						 				 		p(""),
+						 				 		#Check to make sure gene sequence is valid
+						 				 		textOutput("validgeneseq"), 
+						 				 		tags$br(),
 						 				 		
+						 				 		#Choose to specify exon inputs by hand
 						 				 		radioButtons("pasteExonType", 
 						 				 								 label = "Does your pasted sequence have multiple exons, and do you wish to find a target within those exons?",
 						 				 								 choices = list("No" = 0, "Yes" = 1),
@@ -246,6 +282,7 @@ shinyUI(
 						 				 							 " type '63' into 'exonStart' and '145' into 'exonEnd'.")),
 						 				 			p(paste0("If you need to add more exons, right-click or command-click and select 'Insert Row'.", 
 						 				 							 " You do not need to remove extra rows.")),
+						 				 			#uiOutput("inputTable"),
 						 				 			rHandsontableOutput("exonInfo"),
 						 				 			textOutput("validexoninfo")
 						 				 		)
@@ -256,7 +293,9 @@ shinyUI(
 						 				 ############Exon Options#########################
 						 				 conditionalPanel(
 						 				 	condition = "input.inputType == 1",
+						 				 	
 						 				 	wellPanel(
+						 				 		#Choose whether to include first exon in future determinations
 						 				 		radioButtons("firstExon",
 						 				 								 label = "2a. Do you want to find targets in the first exon? (Not recommended for gene knockouts.)",
 						 				 								 choices = list("No" = 0,
@@ -264,6 +303,7 @@ shinyUI(
 						 				 								 selected = 0,
 						 				 								 inline = TRUE),
 						 				 		
+						 				 		#Choose option for specifying exon input
 						 				 		p(tags$b("Which exon(s) do you want to target?")),
 						 				 		radioButtons("exonTargetType",
 						 				 								 label = "Do you want to: ",
@@ -273,6 +313,7 @@ shinyUI(
 						 				 								 							 "Provide a list of exons to target" = 3),
 						 				 								 selected = 0),
 						 				 		
+						 				 		#When working from the beginning of the sequence
 						 				 		conditionalPanel(
 						 				 			condition = "input.exonTargetType == 1",
 						 				 			p(paste0("Specify a percentage of exons, starting from the beginning of the sequence,", 
@@ -290,6 +331,7 @@ shinyUI(
 						 				 									 value = 30)
 						 				 		),
 						 				 		
+						 				 		#When working from the end of the sequence
 						 				 		conditionalPanel(
 						 				 			condition = "input.exonTargetType == 2",
 						 				 			p("Specify a percentage of exons, starting from the end of the sequence, to search. "),
@@ -301,6 +343,7 @@ shinyUI(
 						 				 									 max = 100)
 						 				 		),
 						 				 		
+						 				 		#When listing exons to target
 						 				 		conditionalPanel(
 						 				 			condition = "input.exonTargetType == 3",
 						 				 			textAreaInput("exonTargetList",
@@ -319,6 +362,7 @@ shinyUI(
 						 				 
 						 				 ###########THRESHOLD#############################
 						 				 wellPanel(
+						 				 	#Choose value for MENTHU display threshold
 						 				 	numericInput("threshold",
 						 				 							 label = paste0("3. Choose minimum score for reporting (>50 is a strong score, ",
 						 				 							 							 ">40 is moderate; we do not recommend using sites <40.): "),
@@ -326,35 +370,41 @@ shinyUI(
 						 				 							 min = 0,
 						 				 							 max = 100
 						 				 	),
+						 				 	
+						 				 	#Validate threshold
 						 				 	textOutput("validthreshold")
 						 				 ),
 						 				 
 						 				 wellPanel(	
 						 				 	
-						 				 	
+						 				 	#Submit panel for GenBank subissions
 						 				 	conditionalPanel(
 						 				 		condition = "input.inputType == 1",
-						 				 		actionButton("genbankSubmit", "Submit"),
-						 				 		p(""),
+						 				 		actionButton("genbankSubmit", "Submit"), #Submit button
+						 				 		tags$br(),
 						 				 		
-						 				 		uiOutput("downOutGenbank"),
-						 				 		p(""),
+						 				 		uiOutput("downOutGenbank"), #Download button; should only display when there are results to download
+						 				 		tags$br(),
 						 				 		
+						 				 		textOutput('genbankIdOutcome'), #Indicates if there is a problem with the supplied s
+						 				 		tags$style("#genbankIdOutcome{color: red;}"),
 						 				 		DT::dataTableOutput('genbankResults')
-						 				 		#tags$head(tags$style("#geneSeqResults table {background-color: white; }", media = "screen", type = "text/css"))
+						 				 		
 						 				 	),
 						 				 	
 						 				 	conditionalPanel(
 						 				 		condition = "input.inputType == 2",
 						 				 		actionButton("geneSeqSubmit", "Submit"),
-						 				 		p(""),
+						 				 		tags$br(),
 						 				 		
 						 				 		uiOutput("downOut"),
-						 				 		p(""),
+						 				 		tags$br(),
 						 				 		
 						 				 		DT::dataTableOutput('geneSeqResults')
 						 				 		#tags$head(tags$style("#geneSeqResults table {background-color: white; }", media = "screen", type = "text/css"))
-						 				 	)
+						 				 	),
+						 				 	p("Your results may take a few minutes to appear. Please do not close this web page until your calculation is finished.")
+						 				 	
 						 				 )
 						 				 )
 						 ),
@@ -366,7 +416,15 @@ shinyUI(
 						 	titlePanel(""),
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		p("Paper link will be here when it's published.")
+						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", 
+						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
 						 	)),
 						 	
 						 	#Text area in center of page
@@ -378,21 +436,33 @@ shinyUI(
 						 
 						 ##########CONTACT US Tab##########################################
 						 tabPanel(
-						 	tags$div("Contact", style = "color:white"),
+						 	tags$div("Report Bugs or Request Help", style = "color:white"),
 						 	titlePanel(""),
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		#p("Lab website links here.")
+						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", 
+						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
 						 	)),
 						 	
 						 	#Text area in center of page
 						 	column(9, wellPanel(
-						 		p("Please contact MENTHUHelp@gmail.com to report issues and request support."),
-						 		p("Before submitting a bug report, please read the instructions below on how to write a helpful bug report."),
-						 		p("By following these instructions, we will be able to solve your issue more quickly."),
-						 		includeHTML("www/20170921_A_Guide_to_Writing_Helpful_Bug_Reports.html")
-						 		
-						 	))
+						 		p("Please use the form below, or email us directly at GeneSculptSuite@gmail.com, to report issues and request support.")
+						 	),
+						 	
+						 	tags$iframe(id = "googleform", 
+						 							src = "https://docs.google.com/forms/d/e/1FAIpQLSeq9aDRj6EOCskBwPsA2PFQ2LsKxT4v85-rGTlYQOk0n8X2Gw/viewform?usp=pp_url&entry.358268393&entry.1646278736=MENTHU&entry.1934309806&entry.565411344&entry.754537383&entry.826100992",
+						 							width = 760,
+						 							height = 2000,
+						 							frameborder = 0,
+						 							marginheight = 0)
+						 	)
 						 	
 						 ),
 						 ##########TOOLS AND DOWNLOADS TAB#################################
@@ -400,9 +470,18 @@ shinyUI(
 						 tabPanel(
 						 	tags$div("Tools and Downloads", style = "color:white"),
 						 	titlePanel(""),
+						 	
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		p(tags$a(href = "https://github.com/Dobbs-Lab/MENTHU", target = "_blank", "Download MENTHU at GitHub"))
+						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", 
+						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
 						 	)),
 						 	
 						 	#Text area in center of page
@@ -418,17 +497,26 @@ shinyUI(
 						 	titlePanel(""),
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		tags$html(tags$div(tags$span(a(href = "https://www.iastate.edu/", target = "_blank", "Iowa State University"))),
-						 							tags$div(tags$span(a(href = "https://www.mayoclinic.org/", target = "_blank", "The Mayo Clinic"))),
-						 							tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", target = "_blank", "Genome Writers Guild"))),
-						 							tags$div(tags$span(a(href = "https://dill-picl.org", target = "_blank", "Dill-PICL Lab"))),
-						 							tags$div(tags$span(a(href = "https://www.nih.gov/", target = "_blank", "National Institutes of Health (NIH)")))
-						 		))),
+						 		#Sidebar panel with links
+						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", 
+						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.nih.gov/", target = "_blank", tags$img(src = "nihlogo.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://dill-picl.org", target = "_blank", tags$img(src = "lawlab_web_wiki_header.png", width = "100%"))))
+						 	)),
 						 	
 						 	#Text area in center of page
 						 	column(9, wellPanel(
-						 		tags$p("This project was funded through NIH R24 OD020166 and is a joint effort by Iowa State University and The Mayo Clinic."),
-						 		tags$p("This server is generously hosted by the", a(href = "https://dill-picl.org/", target = "_blank", 'Dill-PICL Lab'), "at Iowa State University.")
+						 		tags$p("This webtool was created and is maintained by funding through NIH R24 OD020166 and is a joint effort by Iowa State University and The Mayo Clinic."),
+						 		tags$p("This server is generously hosted by the", a(href = "https://dill-picl.org/", target = "_blank", 'Lawrence-Dill Plant Informatics and Computation (Dill-PICL) Lab'), "at Iowa State University.")
 						 	))
 						 ),
 						 
@@ -438,13 +526,18 @@ shinyUI(
 						 	tags$div("Change Log", style = "color:white"),
 						 	titlePanel(""),
 						 	
+						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		tags$html(tags$div(tags$span(a(href = "https://www.iastate.edu/", target = "_blank", "Iowa State University"))),
-						 							tags$div(tags$span(a(href = "https://www.mayoclinic.org/", target = "_blank", "The Mayo Clinic"))),
-						 							tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", target = "_blank", "Genome Writers Guild"))),
-						 							tags$div(tags$span(a(href = "https://dill-picl.org", target = "_blank", "Dill-PICL Lab"))),
-						 							tags$div(tags$span(a(href = "https://www.nih.gov/", target = "_blank", "National Institutes of Health (NIH)")))
-						 		))),
+						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", 
+						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 	)),
 						 	
 						 	#Text area in center of page
 						 	column(9, wellPanel(

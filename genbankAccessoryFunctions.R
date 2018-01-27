@@ -13,9 +13,9 @@
 #'  
 getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTargetType, firstExon, exonStuff) {
 	
-	require(genbankr)
+	#require(genbankr)
 	require(Biostrings)
-	
+	gbFlag <- FALSE
 	#If the genbank file read properly all the way through...
 	if(gbFlag){
 		# Transform accession string to readable format and parse GenBank data
@@ -23,13 +23,14 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 		#gb <- readGenBank(gba)
 		genSeq <- Biostrings:::getSeq(genbankInfo)[[1]] # fetch gene sequence
 		exonInfo <- data.frame(slot(exons(genbankInfo),"ranges")) #fetch exon information
+		exonInfo$exonNum <- seq(from = 1, to = nrow(exonInfo))
 	} else {
 		#If the genbank file was wonky....
 		genSeq <- Biostrings:::DNAString(genbankInfo$ORIGIN) #Get the gene sequence
-		exonInfo <- getExonLocus(genbankInfo)[, 1:3] #Get the exon locations
+		#exonInfo <- getExonLocus(genbankInfo)[, 1:3] #Get the exon locations
+		exonInfo <- getExonLocus(genbankInfo)
+		exonInfo$exonNum <- seq(from = 1, to = nrow(exonInfo))
 	}
-	
-	print(head(exonInfo)) #For debugging purposes
 	
 	#If the user wants to target within a certain percentage of the beginning of the sequence
 	if(exonTargetType == 1){
@@ -61,7 +62,6 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 		}
 	}
 	
-	#print(head(exonList))
 		# Variable initialization
 		set <- NULL
 		exonSeq <- NULL
@@ -70,10 +70,9 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 		#numExons <- floor(percent/100*length(exonInfo$start))
 		numExons <- exonList
 		# Generation of DNAStringSet of exon DNA sequences
-		print(length(numExons))
 		
 		for (i in 1:length(numExons)) {
-			print(i)
+			
 			#If wiggle = true, include sequence context upstream and downstream of exon so that cut sites whose context runs out of the exon can still be considered
 			if(wiggle){
 				#Ensure that there is enough wiggle room to add sequence context at beginning of exon (e.g., if exon 1 starts at base 23, there is not 39 bases of wiggle room to add)
@@ -84,11 +83,12 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 				}
 				
 				#Ensure there is enough wiggle room to add sequence context at end of exon (e.g., if exon 10 ends at base 455, and the sequence ends at base 450, there is not 39 bases of wiggle room)
-				if(exonInfor$end[numExons[i]] + wigRoom > nchar(seq)){
-					exEnd <- nchar(genSeq)
+				if(exonInfo$end[numExons[i]] + wigRoom > nchar(genSeq)){
+					exEnd <- nchar(as.character(genSeq))
 				} else {
 					exEnd <- exonInfo$end[numExons[i]] + wigRoom
 				}
+				
 				set <- c(set, genSeq[exStart:exEnd])
 				exonSeq <- DNAStringSet(set)
 				
@@ -102,16 +102,14 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 			
 		}
 		
-		print("here")
 	return(list(exonInfo[numExons,], exonSeq, genSeq))
 }
 
 #For handling GenBank files that throw errors
 wonkyGenBankHandler <- function(gba){
-	gbFile <- rentrez:::entrez_fetch(db = "nucleotide", gba, rettype = "gb") 
-	geneIn <- unlist(strsplit(gbFile, "\\\n", perl = TRUE))
-	
-	geneInfo <- formatApe(geneIn)
+	gbFile <- rentrez:::entrez_fetch(db = "nucleotide", gba, rettype = "gb") #Fetch the flat file
+	geneIn <- unlist(strsplit(gbFile, "\\\n", perl = TRUE)) #Read the flat file line by line
+	geneInfo <- formatApe(geneIn) #Pass the readLInes from the flat file to formatApe to create a plasmid object
 	return(geneInfo)
 }
 

@@ -76,8 +76,7 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom,
-													exonList   = row.names(exonDF))
+													wigRoom    = wigRoom)
 		} else {
 			pamSites <- pamScan(pamList, 
 													cutDistList, 

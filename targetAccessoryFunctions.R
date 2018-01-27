@@ -15,7 +15,7 @@
 #' 
 #' @export 
 #' 
-pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, type = NULL, wiggle = TRUE, wigRoom = 39) {
+pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NULL, findCut = FALSE, type = NULL, wiggle = TRUE, wigRoom = 39) {
 	
 	require(Biostrings)
 	
@@ -28,7 +28,7 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 		
 		# Variable initialization
 		ppam <- DNAString(pamList[[i]]) # Transform char to DNAString
-		npam <- reverseComplement(ppam) # Find PAM sequence in - DNA strand
+		npam <- Biostrings::reverseComplement(ppam) # Find PAM sequence in - DNA strand
 		pPAM <- vector("list", numTarget)
 		nPAM <- vector("list", numTarget)
 		PAMs <- vector("list", 2)
@@ -37,7 +37,6 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 			
 			# Variable initialization
 			target <- targetList[[j]]
-			print(target)
 			ppamSites <- NULL
 			npamSites <- NULL
 			
@@ -50,21 +49,27 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 				for (k in 1:length(pdf$start)) {
 					ppamSites[k] <- pdf$start[k]
 				}
+				
 				for (k in 1:length(ndf$start)) {
 					npamSites[k] <- ndf$start[k]
 				}
+				
 			} else {
-				#switch(type,
-				#			 cas9 = {pShift = -4}
-				#)
-				#switch(type,
-				#			 cas9 <- {nShift = 5}
-				#)
 				for (k in 1:length(pdf$start)) {
-					ppamSites[k] <- pdf$start[k] - 4
+					if(cutDistList[i] < 0){
+						ppamSites[k] <- pdf$start[k] + cutDistList[i] - 1
+						
+					} else {
+						ppamSites[k] <- pdf$start[k] + nchar(ppam) + cutDistList[i] - 1
+					}
+					
 				}
 				for (k in 1:length(ndf$start)) {
-					npamSites[k] <- ndf$start[k] + nchar(ppam) + 2 #Changed to be PAM agnostic
+					if (cutDistList[i] < 0) {
+						npamSites[k] <- ndf$start[k] + nchar(ppam) - cutDistList[i] - 1
+					} else {
+						npamSites[k] <- ndf$start[k] - cutDistList[i] - 1
+					}
 				}
 			}
 			
@@ -74,7 +79,7 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 			nPAM[[j]] <- npamSites
 			
 			# Correct positions by localization in gene and not exon
-			if(is.null(exonStarts) == FALSE) {
+			if(!is.null(exonStarts)) {
 				if(wiggle && (exonStarts[j] - wigRoom > 0)){
 					pPAM[[j]] <- pPAM[[j]] + exonStarts[j] - wigRoom - 1
 					nPAM[[j]] <- nPAM[[j]] + exonStarts[j] - wigRoom - 1
@@ -88,9 +93,10 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 			}
 		}
 		
-		# Name exons
-		names(pPAM)[1:numTarget] <- paste0("Exon ", 1:(numTarget))
-		names(nPAM)[1:numTarget] <- paste0("Exon ", 1:(numTarget))
+		# Name exons if there is a list...
+		#if()
+		names(pPAM)[1:numTarget] <- paste0("Exon ", exonList)
+		names(nPAM)[1:numTarget] <- paste0("Exon ", exonList)
 		
 		# Name PAMs by strand
 		PAMs <-list(pPAM, nPAM)
@@ -100,6 +106,7 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 		pamSites[[i]] <- PAMs
 		names(pamSites)[i] <- pamList[[i]]
 	}
+
 	return(pamSites)
 }
 
@@ -122,7 +129,8 @@ pamScan <- function(pamList, targetList, exonStarts = NULL, findCut = FALSE, typ
 #' 
 #' @export 
 #' 
-talPal <- function(targetList, findcut = FALSE, wiggle = TRUE, wigRoom = 39, range = FALSE, armin = 15, armax = 18, spamin = 14, spamax = 16, exonStarts = NULL) {
+talPal <- function(targetList, findcut = FALSE, wiggle = TRUE, wigRoom = 39, range = FALSE, 
+									 armin = 15, armax = 18, spamin = 14, spamax = 16, exonList, exonStarts = NULL) {
 	
 	require(stringr)
 	
@@ -131,7 +139,7 @@ talPal <- function(targetList, findcut = FALSE, wiggle = TRUE, wigRoom = 39, ran
 	# Variable definition and initialization
 	numSites <- length(targetList) # Number of sites to target
 	talSites <- vector("list", numSites)
-	talSeqs <- vector("list", numSites)
+	talSeqs  <- vector("list", numSites)
 	tempL <- NULL
 	tempR <- NULL
 	spacer <- NULL
@@ -141,8 +149,8 @@ talPal <- function(targetList, findcut = FALSE, wiggle = TRUE, wigRoom = 39, ran
 	
 	# Calculates range of allowable spacer and arm lengths
 	if (range == TRUE) {
-		low <- 2*armin + spamin # Lower bound of distance between 5'Ts
-		high <- 2*armax + spamax # Upper bound of distance between 5'Ts
+		low     <- 2 * armin + spamin # Lower bound of distance between 5'Ts
+		high    <- 2 * armax + spamax # Upper bound of distance between 5'Ts
 		pattern <- paste0("(?=(T[ACGT]{",low,",",high,"}A))") # Search regex
 		
 		# Find and extract left 5'T index and sequence from targetList
@@ -170,8 +178,10 @@ talPal <- function(targetList, findcut = FALSE, wiggle = TRUE, wigRoom = 39, ran
 			if (is.null(exonStarts) == FALSE) {
 				if(wiggle && (exonStarts[i] - wigRoom > 0)){
 					talSites[[i]] <- talSites[[i]] + exonStarts[i] - wigRoom - 1
+					
 				} else if (wiggle && (exonStarts[i] - wigRoom <= 0)) {
 					talSites[[i]] <- talSites[[i]] + exonStarts[i] - 1
+					
 				} else {
 					talSites[[i]] <- talSites[[i]] + exonStarts[i]
 				}
@@ -214,8 +224,8 @@ talPal <- function(targetList, findcut = FALSE, wiggle = TRUE, wigRoom = 39, ran
 	}
 	
 	# Name exons
-	names(talSites)[1:numSites] <- paste0("Exon ", 1:(numSites))
-	names(talSeqs)[1:numSites] <- paste0("Exon ", 1:(numSites))
+	names(talSites)[1:numSites] <- paste0("Exon ", exonList)
+	names(talSeqs)[1:numSites] <- paste0("Exon ", exonList)
 	
 	return(list(talSites,talSeqs))
 }
@@ -269,8 +279,8 @@ talCorral <- function(talSeq, armin = 15, armax = 18, spamin = 14, spamax = 16) 
 				spa <- substr(talSeq[[k]],(nchar(tempL[i]) + 1),(nchar(talSeq[[k]]) - nchar(tempR[j])))
 				if (nchar(spa) >= spamin && nchar(spa) <= spamax) {
 					spacer <- c(spacer,spa)
-					talL <- c(talL,tempL[i])
-					talR <- c(talR,tempR[j])
+					talL   <- c(talL,tempL[i])
+					talR   <- c(talR,tempR[j])
 				}
 			}
 		}

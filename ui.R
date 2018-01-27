@@ -123,7 +123,7 @@ shinyUI(
 						 				 										 #"Francisella FnCpf1: 5'-YTN-3'" = "YTN"),
 						 				 										 selected = "NGG"
 						 				 	),
-
+						 				 	
 						 				 	
 						 				 	tags$br(),
 						 				 	actionLink("selectAll", "Select All PAMs"),
@@ -142,17 +142,17 @@ shinyUI(
 						 				 	
 						 				 	conditionalPanel(
 						 				 		condition = "input.customCutOpt == 1",
-												textOutput("validmatchcustominputlength"),
-												textOutput("validcustompam"),
+						 				 		textOutput("validmatchcustominputlength"),
+						 				 		textOutput("validcustompam"),
 						 				 		textAreaInput("customPamSeq",
 						 				 									label = "Input your nucleotide PAM sequence in the 5'-3' direction (e.g., 'NGG' for SpCas9). You can enter multiple sequences by separating the PAMs with a comma or a space, e.g. 'NGG NRG NNVRYAC', etc.:", 
 						 				 									#\nIf your sequence allows for ambiguity, please use the IUPAC one-letter codes: R = A or G; Y = C or T; S = G or C; W = A or T; K = G or T; M = A or C; B = not A; D = not C; H = not G; V = not T; N = any base.",
 						 				 									value = "",
 						 				 									placeholder = "Please input PAM sequence(s) in 5'-3' direction..."),
-												textOutput("validcustomcutsites"),
+						 				 		textOutput("validcustomcutsites"),
 						 				 		textAreaInput("cutSite",
 						 				 									label = "Please specify where your nuclease cuts in relation to your PAM (negative values for upstream). If you entered multiple PAM sequences, please list the DSB locations in the ORDER YOU INPUT THE PAM SEQUENCES, e.g. '-3 -3 3', etc.:",
-#If the double-strand break site (DSB) is 5' to the PAM, count the number of bases between the DSB site and the FIRST base of your PAM. For example, SpCas9 generally induces a DSB three bases upstream of 'NGG', so the input value would be -3. If the cut is 3' to the PAM, count the number of bases between the LAST base of your PAM and the DSB site.",
+						 				 									#If the double-strand break site (DSB) is 5' to the PAM, count the number of bases between the DSB site and the FIRST base of your PAM. For example, SpCas9 generally induces a DSB three bases upstream of 'NGG', so the input value would be -3. If the cut is 3' to the PAM, count the number of bases between the LAST base of your PAM and the DSB site.",
 						 				 									value = "",
 						 				 									placeholder = "Input the DSB site(s) in relation to your PAM(s)...")
 						 				 	),
@@ -409,62 +409,6 @@ shinyUI(
 						 				 )
 						 ),
 						 
-						 
-						 ##########HOW TO CITE Tab#########################################
-						 tabPanel(
-						 	tags$div("How to Cite", style = "color:white"),
-						 	titlePanel(""),
-						 	#Sidebar panel with links
-						 	column(2, wellPanel(
-						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
-						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
-						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
-						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 												 target = "_blank", 
-						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
-						 	)),
-						 	
-						 	#Text area in center of page
-						 	column(9, wellPanel(
-						 		p("Manuscript is in prep; citation will be available shortly.")
-						 	))
-						 	
-						 ),
-						 
-						 ##########CONTACT US Tab##########################################
-						 tabPanel(
-						 	tags$div("Report Bugs or Request Help", style = "color:white"),
-						 	titlePanel(""),
-						 	#Sidebar panel with links
-						 	column(2, wellPanel(
-						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
-						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
-						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
-						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 												 target = "_blank", 
-						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
-						 	)),
-						 	
-						 	#Text area in center of page
-						 	column(9, wellPanel(
-						 		p("Please use the form below, or email us directly at GeneSculptSuite@gmail.com, to report issues and request support.")
-						 	),
-						 	
-						 	tags$iframe(id = "googleform", 
-						 							src = "https://docs.google.com/forms/d/e/1FAIpQLSeq9aDRj6EOCskBwPsA2PFQ2LsKxT4v85-rGTlYQOk0n8X2Gw/viewform?usp=pp_url&entry.358268393&entry.1646278736=MENTHU&entry.1934309806&entry.565411344&entry.754537383&entry.826100992",
-						 							width = 760,
-						 							height = 2000,
-						 							frameborder = 0,
-						 							marginheight = 0)
-						 	)
-						 	
-						 ),
 						 ##########TOOLS AND DOWNLOADS TAB#################################
 						 
 						 tabPanel(
@@ -481,7 +425,9 @@ shinyUI(
 						 		tags$br(),
 						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
 						 												 target = "_blank", 
-						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		p(tags$a(href = "https://github.com/Dobbs-Lab/MENTHU", target = "_blank", "Download MENTHU at GitHub"))
 						 	)),
 						 	
 						 	#Text area in center of page
@@ -490,7 +436,6 @@ shinyUI(
 						 	))
 						 	
 						 ),
-						 
 						 ##########FUNDING Tab#############################################
 						 tabPanel(
 						 	tags$div("Funding", style = "color:white"),
@@ -523,6 +468,64 @@ shinyUI(
 						 		p("The overarching goal of this application is to create tools and efficient methods to define genes that can promote human health. While a tremendous amount of data has been cataloged on gene mutation and changes in gene expression associated with complex human disease, our understanding of those genes that could be co-opted to restore patient health is lacking. To address this need and test for genes that when restored to wild type function promote health, we propose develop mutagenic, revertible and conditional alleles that provide spatial and temporal control of gene expression. The ability to make site-specific, untagged mutant alleles in zebrafish and other models has been greatly advanced by custom nucleases that include TALENs and CRISPR/Cas9 systems. These systems operate on the same principle: they are designed to bind to specific sequences in the genome and create a double strand break. The goals of this proposal leverage the activities of TALEN and CRISPR/Cas9 technologies to make site-specific double strand breaks. First, we propose to develop a suite of vectors to make integration alleles that are highly mutagenic and allow production of conditional and revertible alleles. Second, we propose to develop methods to generate predictable alleles in zebrafish at TALEN- and CRISPR/Cas9-induced double strand break sites by invoking the microhomology mediated end-joining pathway. Third, leveraging our preliminary data, we propose to improve methods for homology directed repair with oligonucleotides to create disease associated alleles in zebrafish and for site-specific integration using homologous recombination at TALENs and CRISPR/Cas9 cut sites. Fourth, we propose use single-strand annealing at TALENs and CRISPR/Cas9 cut sites to promote precise transgene integration to make tagged and highly mutagenic allele. These tools and techniques will have direct implications for providing precise gene editing techniques to assess the roles of genes in disease and their ability to promote health following disease progression. While we will develop these methodologies in zebrafish due to their ease of gene delivery, we anticipate these methodologies will not only enhance the efficiency of gene editing but will be readily adaptable for use in other model organisms and large animals. In our opinion, this will have important implications for modeling human disease and health in animal systems by greatly enhancing the ability to make predictible alleles, small nucleotide polymorphisms similar to those associated with human disease, and conditional alleles to test for the ability of a gene to restore health.")
 						 	))
 						 ),
+						 
+						 
+						 ##########HOW TO CITE Tab#########################################
+						 tabPanel(
+						 	tags$div("How to Cite", style = "color:white"),
+						 	titlePanel(""),
+						 	#Sidebar panel with links
+						 	column(2, wellPanel(
+						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", 
+						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 	)),
+						 	
+						 	#Text area in center of page
+						 	column(9, wellPanel(
+						 		p("Manuscript is in prep; citation will be available shortly.")
+						 	))
+						 	
+						 ),
+						 
+						 ##########CONTACT US Tab##########################################
+						 tabPanel(
+						 	tags$div("Report Bugs or Contact Us", style = "color:white"),
+						 	titlePanel(""),
+						 	#Sidebar panel with links
+						 	column(2, wellPanel(
+						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", 
+						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 	)),
+						 	
+						 	#Text area in center of page
+						 	column(9, wellPanel(
+						 		p("Please use the form below, or email us directly at GeneSculptSuite@gmail.com, to report issues and request support.")
+						 	),
+						 	
+						 	tags$iframe(id = "googleform", 
+						 							src = "https://docs.google.com/forms/d/e/1FAIpQLSeq9aDRj6EOCskBwPsA2PFQ2LsKxT4v85-rGTlYQOk0n8X2Gw/viewform?usp=pp_url&entry.358268393&entry.1646278736=MENTHU&entry.1934309806&entry.565411344&entry.754537383&entry.826100992",
+						 							width = 760,
+						 							height = 2000,
+						 							frameborder = 0,
+						 							marginheight = 0)
+						 	)
+						 	
+						 ),
+						 
 						 
 						 
 						 ######STATUS and CHANGELOG Tab####################################

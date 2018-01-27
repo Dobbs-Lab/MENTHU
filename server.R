@@ -758,6 +758,4 @@ shinyServer(function(input, output, session){
 		updateSliderInput(session = session, inputId = "spamin", max = input$spamax)
 	})
 	
-	#Stop session after browser tab is closed
-	session$onSessionEnded(stopApp)
 })

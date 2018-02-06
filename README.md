@@ -5,12 +5,13 @@
 
 #Run first time you run this tool on a computer:
 
-install.packages(c("shiny", "shinyjs", "Rcpp", "plyr", "stringr", "shinyIncubator", "stringi", "shinyTable", "rentrez", "rlist", "DT", "xlsx"))
+install.packages(c("shiny", "shinyjs", "Rcpp", "plyr", "stringr", "stringi", "shinyTable", "rentrez", "rlist", "DT", "xlsx", "devtools", "rhandsontable"))
 
 source("https://bioconductor.org/biocLite.R")
 
 biocLite("Biostrings")
 
+devtools::install_github("rstudio/shiny-incubator")
 
 
 #Run this code whenever you want to use the tool, including the first time:

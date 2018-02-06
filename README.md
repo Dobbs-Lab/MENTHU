@@ -3,7 +3,7 @@ This is a repository for the MENTHU knockout site recommender.
 
 You can run MENTHU online through a point-and-click website here: http://ll-g2f.gdcb.iastate.edu/menthu/
 
-If you already have R/RStudio installed, you can jump to here to start running MENTHU locally.
+If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU/README.md#running-menthu-locally) to immmediately start running MENTHU locally.
 
 # How to Run MENTHU Locally
 You will need to have the ability to install software on the computer you are using to run MENTHU locally; this may require administrator privileges. 

@@ -12,6 +12,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("Biostrings")
 
 devtools::install_github("rstudio/shiny-incubator")
+devtools::install_github("trestletech/shinyTable")
 
 
 #Run this code whenever you want to use the tool, including the first time:

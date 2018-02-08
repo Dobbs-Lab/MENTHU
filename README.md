@@ -104,7 +104,9 @@ You're all set!
 
 
 # Troubleshooting
-Please check the list of issues below to see if your issue is solved; if you can't find your issue or the fixes below don't work, please contact us at GeneSculptSuiteHelp@gmail.com for aid in troubleshooting. **Please be aware that we can only support up-to-date and unmodified versions of MENTHU's code.**
+Please check the list of issues below to see if your issue is solved; if you can't find your issue or the fixes below don't work, please contact us at GeneSculptSuiteHelp@gmail.com for aid in troubleshooting. 
+
+**Please be aware that we can only support up-to-date and unmodified versions of MENTHU's code.**
 
 ## Solutions:
 [Simple Fixes That Resolve Most Problems](https://github.com/Dobbs-Lab/MENTHU/README.md#before-troubleshooting-or-asking-for-help-please-follow-these-simple-steps-that-will-resolve-many-if-not-most-problems)

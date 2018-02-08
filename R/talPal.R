@@ -16,6 +16,7 @@
 #' 
 #' @export 
 #' 
+
 talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax = 18, spamin = 14, spamax = 16, exonStarts = NULL) {
   
   require(stringr)
@@ -25,6 +26,7 @@ talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax
   # Variable definition and initialization
   numSites <- length(targetList) # Number of sites to target
   talSites <- vector("list", numSites)
+
   talSeqs <- vector("list", numSites)
   tempL <- NULL
   tempR <- NULL
@@ -32,6 +34,7 @@ talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax
   left <- NULL
   right <- NULL
   specs <- NULL
+
   
   # Calculates range of allowable spacer and arm lengths
   if (range == TRUE) {
@@ -63,12 +66,14 @@ talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax
       # Correct positions by localization in gene and not exon
       if (is.null(exonStarts) == FALSE) {
         talSites[[i]] <- talSites[[i]] + exonStarts[i] - 1
+
       }
     }
   } else {
     # Default TALEN search, 15b arm lengths and 15b spacer
     for (i in 1:numSites) {
       target <- targetList[[i]]
+
       m <- gregexpr("(?=(T[ACGT]{45}A))",target, perl = TRUE)
       tempn <- length(m[[1]])
       
@@ -96,6 +101,7 @@ talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax
   
   # Name exons
   names(talSites)[1:numSites] <- paste0("Exon ", 1:(numSites))
+
   names(talSeqs)[1:numSites] <- paste0("Exon ", 1:(numSites))
   
   return(list(talSites,talSeqs))

@@ -111,7 +111,7 @@ Please check the list of issues below to see if your issue is solved; if you can
 ## Solutions:
 [Simple Fixes That Resolve Most Problems](https://github.com/Dobbs-Lab/MENTHU/README.md#before-troubleshooting-or-asking-for-help-please-follow-these-simple-steps-that-will-resolve-many-if-not-most-problems)
 
-[Known Issues and Their Solutions](https://github.com/Dobbs-Lab/MENTHU/README.md#1-failure-to-load-rjava)
+[Known (And Solved) Issues](https://github.com/Dobbs-Lab/MENTHU/README.md#known-and-solved-issues)
 
 ## Before troubleshooting or asking for help, please follow these simple steps that will resolve many (if not most) problems:
 [1. Check that you're running up-to-date MENTHU](https://github.com/Dobbs-Lab/MENTHU/README.md#1-check-that-youre-running-the-most-up-to-date-version-of-menthus-code)

@@ -20,7 +20,7 @@ You will need to have the ability to install software on the computer you are us
 
 [Troubleshooting](https://github.com/Dobbs-Lab/MENTHU/README.md#troubleshooting)
 
-## 1. Download and Install R
+## [1. Download and Install R](#1-download-and-install-r)
 MENTHU requires the latest version of R in order to run offline. 
 
 Download R for your appropriate operating system:
@@ -53,7 +53,7 @@ Linux/Unix: https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Instal
 
 
 
-## 2. Download and Install RStudio (optional)
+## [2. Download and Install RStudio](#2-download-and-install-rstudio-optional) (optional)
 MENTHU does not require the use of the RStudio development environment, but if you are interested in examining or modifying the MENTHU code, we recommend you do so in RStudio. 
 
 You can download RStudio for free here: https://www.rstudio.com/products/rstudio/download/#download
@@ -62,7 +62,7 @@ After downloading the RStudio installer, follow the installation instructions. I
 
 
 
-## 3. Run MENTHU locally
+## [3. Run MENTHU locally](#run-menthu-locally)
 You can run this RShiny web app in R (or RStudio) by opening up an R or RStudio session.
 
 You can copy and paste the code blocks below into your R/RStudio console to run them.
@@ -71,7 +71,7 @@ You can copy and paste the code blocks below into your R/RStudio console to run 
 
 
 
-### Run this code ONLY THE FIRST TIME you run this tool on a computer, or when you need to update these packages:**
+### [Run this code ONLY THE FIRST TIME you run this tool on a computer, or when you need to update these packages:](#install-code)
 
 ```
 #Install packages required to run MENTHU; you can also run this code to update these packages
@@ -103,40 +103,36 @@ You're all set!
 
 
 
-# Troubleshooting
+# [Troubleshooting](#troubleshooting)
 Please check the list of issues below to see if your issue is solved; if you can't find your issue or the fixes below don't work, please contact us at GeneSculptSuiteHelp@gmail.com for aid in troubleshooting. 
 
 **Please be aware that we can only support up-to-date and unmodified versions of MENTHU's code.**
 
 ## Solutions:
-[Simple Fixes That Resolve Most Problems](https://github.com/Dobbs-Lab/MENTHU/README.md#before-troubleshooting-or-asking-for-help-please-follow-these-simple-steps-that-will-resolve-many-if-not-most-problems)
+[Simple Fixes That Resolve Most Problems](https://github.com/Dobbs-Lab/MENTHU/README.md#simple-fix)
 
 [Known (And Solved) Issues](https://github.com/Dobbs-Lab/MENTHU/README.md#known-and-solved-issues)
 
-## Before troubleshooting or asking for help, please follow these simple steps that will resolve many (if not most) problems:
-[1. Check that you're running up-to-date MENTHU](https://github.com/Dobbs-Lab/MENTHU/README.md#1-check-that-youre-running-the-most-up-to-date-version-of-menthus-code)
+## [Before troubleshooting or asking for help, please follow these simple steps that will resolve many (if not most) problems:](#simple-fix)
+[1. Check that you're running up-to-date MENTHU](https://github.com/Dobbs-Lab/MENTHU/README.md#1-up-to-date)
 
 [2. Update Required MENTHU packages](https://github.com/Dobbs-Lab/MENTHU/README.md#2-update-the-required-menthu-packages)
 
 [3. Update R and/or RStudio installations](https://github.com/Dobbs-Lab/MENTHU/README.md#3-update-your-r-or-rstudio-installation)
 
 
-### 1. Check that you're running the most up-to-date version of MENTHU's code
+### [1. Check that you're running the most up-to-date version of MENTHU's code](#1-up-to-date)
 The most current MENTHU version is v1.1.0.
 
 You can check which version you are using by looking at the upper right hand corner of the MENTHU user interface. This will generally only be an issue if you have downloaded the MENTHU code from GitHub and are using ```runApp()``` to run locally; if that is the case, download the updated code and see if your problem persists.
 
 
-### 2. Update the required MENTHU packages 
-You can update all required packages by re-running the code [here]().
+### [2. Update the required MENTHU packages](#2-update-the-required-menthu-packages)
+You can update all required packages by re-running the code [here](https://github.com/Dobbs-Lab/MENTHU/README.md#install-code).
 
 
-### 3. Update your R or RStudio installation 
-You can check if you have the latest version of R by running the following code in R or RStudio:
-
-```
-R.Version()
-```
+### [3. Update your R or RStudio installation](#3-update-your-r-or-rstudio-installation)
+You can check if you have the latest version of R by running the command ```R.Version()``` in R or RStudio.
 
 Find the ```$version.string``` output, which will say "R version x.x.x (20yy-mm-dd)". The numbers replacing "x.x.x" are your R version; you should be running R 3.4.3 if you are on Windows or Linux/Unix, and either R 3.4.3 or R 3.3.3 for Mac OS X 10.9 (Mavericks) and above.
 
@@ -157,11 +153,11 @@ library(installr)
 updateR()
 ```
 
-You can also follow the instructions under [1. Download and Install R](), but the ```installr``` package is probably quicker and easier.
+You can also follow the instructions under [1. Download and Install R](https://github.com/Dobbs-Lab/MENTHU/README.md#1-download-and-install-r), but the ```installr``` package is probably quicker and easier.
 
 
 On Mac, Linux, or Unix:
-Follow the instructions under [1. Download and Install R]() for your operating system.
+Follow the instructions under [1. Download and Install R](https://github.com/Dobbs-Lab/MENTHU/README.md#1-download-and-install-r) for your operating system.
 
 
 
@@ -187,7 +183,7 @@ Solutions:
 
 [D1. Possible Cause: There is a mismatch in your Java bit-version and R/RStudio bit-version](https://github.com/Dobbs-Lab/MENTHU/README.md#d1-possible-cause-there-is-a-mismatch-in-your-java-bit-version-and-rrstudio-bit-version)
 
-#### A1. Possible Cause: Java is not installed
+#### [A1. Possible Cause: Java is not installed](#a1-possible-cause-java-is-not-installed)
 You can check if Java is correctly installed on your system by running ```java -version``` in a terminal window (this works on Windows, Mac OS, and Linux/Unix systems.) If you get an output, you have Java correctly installed. If you get an error such as "java: Command not found", you either do not have Java installed or the terminal can't find your Java installation.
 
 Solution: Download and install Java.
@@ -202,13 +198,13 @@ Linux/Unix:
 Visit https://www.java.com/en/download/help/linux_install.xml and follow the Java installation instructions.
 
 
-#### B1. Possible Cause: Java is out of date
+#### [B1. Possible Cause: Java is out of date](#b1-possible-cause-java-is-out-of-date)
 Explanation: If you know you have Java installed on your system but are still getting the ```loadNamespace() for 'rJava'``` error, it is possible that an update to MENTHU and/or the packages it depends on requires an updated version of Java; also, Java installations can sometimes get corrupted or otherwise messed up, and this can cause R to not recognize Java on your system.
 
-Solution: Download and install the latest version of Java for your operating system. Follow the directions in the links in [A1. Possible Cause: Java is not installed]() to install updated Java.
+Solution: Download and install the latest version of Java for your operating system. Follow the directions in the links in [A1. Possible Cause: Java is not installed](https://github.com/Dobbs-Lab/MENTHU/README.md#a1-possible-cause-java-is-not-installed) to install updated Java.
 
 
-#### C1. Possible Cause: R/RStudio can't find your Java installation
+#### [C1. Possible Cause: R/RStudio can't find your Java installation](#c1-possible-cause-rrstudio-cant-find-your-java-installation)
 Explanation: If you know you have the latest version of Java installed on your system but you're still getting this error, it is possible that R/RStudio doesn't know where Java is located on your system. 
 
 
@@ -219,7 +215,7 @@ Explanation: The $PATH variable is a collection of directions to locations on yo
 Follow the instructions here https://www.java.com/en/download/help/path.xml to add Java to your system $PATH.
 
 
-#### D1. Possible Cause: There is a mismatch in your Java bit-version and R/RStudio bit-version
+#### [D1. Possible Cause: There is a mismatch in your Java bit-version and R/RStudio bit-version](#d1-possible-cause-there-is-a-mismatch-in-your-java-bit-version-and-rrstudio-bit-version)
 Explanation: R and RStudio can be downloaded in 32- and 64-bit versions. The differences between the 32- and 64-bit versions are not important to troubleshooting; what *is* important is that on some systems, Java will not communicate with R (and thus, 'rJava' will not load) if you have the 64-bit version of R and the 32-bit version of Java, or vice-versa. 
 
 Solution: Download the bit-version of Java that matches your R/RStudio installation.
@@ -257,5 +253,6 @@ Solution: Download the bit-version of Java that matches your R/RStudio installat
       then you have 64-bit Java installed.
 
 
-3. If there is a mismatch, download the Java bit-version that matches your R bit-version by following the directions under [A1. Possible Cause: Java is not installed]().
+3. If there is a mismatch, download the Java bit-version that matches your R bit-version by following the directions under [A1. Possible Cause: Java is not installed](https://github.com/Dobbs-Lab/MENTHU/README.md#a1-possible-cause-java-is-not-installed)
+.
 

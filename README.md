@@ -238,21 +238,18 @@ Solution: Download the bit-version of Java that matches your R/RStudio installat
 
       If you see something like
 
-       ```
        java version "1.x.x_xxx"
        Java(TM) SE Runtime Environment <build 1.x.x_xxx-xxx>
        Java Hostpot(TM) Client VM (build xx.xxx-xxxx, mixed mode)
-       ```
+       
       you have 32-bit Java installed.
 
 
       If you see something like
 
-       ```
        java version "1.x.x_xxx"
        Java(TM) SE Runtime Environment <build 1.x.x_xxx-xxx>
        Java HotSpot<TM> 64-Bit Server VM <build xx.xxx-xxx, mixed mode>
-       ```
 
       then you have 64-bit Java installed.
 

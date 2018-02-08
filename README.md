@@ -77,7 +77,8 @@ You can copy and paste the code blocks below into your R/RStudio console to run 
 #Install packages required to run MENTHU; you can also run this code to update these packages
 
 #Install CRAN packages
-install.packages(c("shiny", "shinyjs", "Rcpp", "plyr", "stringr", "stringi", "shinyTable", "rentrez", "rlist", "DT", "xlsx", "devtools", "rhandsontable"))
+install.packages(c("shiny", "shinyjs", "Rcpp", "plyr", "stringr", "stringi", "shinyTable", 
+                   "rentrez", "rlist", "DT", "xlsx", "devtools", "rhandsontable"))
 
 #Install 'Biostrings' package from Bioconductor
 source("https://bioconductor.org/biocLite.R")

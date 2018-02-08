@@ -27,17 +27,17 @@ Download R for your appropriate operating system:
 
 Windows: https://mirror.las.iastate.edu/CRAN/bin/windows/
 
-   You should select the "base" option, or click "install R for the first time".
+ You should select the "base" option, or click "install R for the first time".
  
 
 Mac OS: https://mirror.las.iastate.edu/CRAN/bin/macosx/
 
-   Scroll down to the "Files" section, and find the R pkg file that lists your operating system (El Capitan, Mavericks, Snow Leopard, etc). Select the R-3.x.x.pkg file corresponding to your system - pay special attention to the "Important" section under R-3.4.3.pkg if you have "El Capitan"; you may want to consider using R-3.3.3.pkg if you don't want to install additional tools to support running R 3.4.3 on "El Capitan".
+ Scroll down to the "Files" section, and find the R pkg file that lists your operating system (El Capitan, Mavericks, Snow Leopard, etc). Select the R-3.x.x.pkg file corresponding to your system - pay special attention to the "Important" section under R-3.4.3.pkg if you have "El Capitan"; you may want to consider using R-3.3.3.pkg if you don't want to install additional tools to support running R 3.4.3 on "El Capitan".
 
 
 Linux/Unix: https://mirror.las.iastate.edu/CRAN/bin/linux/
 
-   Find your Unix distro, and folow the instructions in the directory.
+ Find your Unix distro, and folow the instructions in the directory.
  
 
 Once you have downloaded the R installer, run it to install R. You may be required to enter administrator credentials; if you do not have these credentials, talk to your institution's IT department to have them install the software.

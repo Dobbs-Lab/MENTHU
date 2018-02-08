@@ -2,19 +2,19 @@
 This is a repository for the MENTHU knockout site recommender.
 
 You can run MENTHU online through a web interface here: http://ll-g2f.gdcb.iastate.edu/menthu/
-
+ 
 
 ### If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU/README.md#run-menthu-locally) to immmediately start running MENTHU locally.
 
 ### If you are having issues running MENTHU locally, please check the [Troubleshooting](https://github.com/Dobbs-Lab/MENTHU/README.md#troubleshooting) section before requesting help.
-
+ 
 
 # How to Run MENTHU Locally
 You will need to have the ability to install software on the computer you are using to run MENTHU locally; this may require administrator privileges. 
 
-[1. Download and Install R]
-[2. Download and Install RStudio] (optional)
-[3. Run MENTHU locally](https://github.com/Dobbs-Lab/MENTHU/blob/dev/README.md#run-menthu-locally)
+[1. Download and Install R](https://github.com/Dobbs-Lab/MENTHU/README.md#1-download-and-install-r)
+[2. Download and Install RStudio](https://github.com/Dobbs-Lab/MENTHU/README.md#2-download-and-install-rstudio-optional) (optional)
+[3. Run MENTHU locally](https://github.com/Dobbs-Lab/MENTHU/blob/dev/README.md#3-run-menthu-locally)
 [Troubleshooting](https://github.com/Dobbs-Lab/MENTHU/README.md#troubleshooting)
 
 ## 1. Download and Install R
@@ -25,7 +25,7 @@ Download R for your appropriate operating system:
 Windows: https://mirror.las.iastate.edu/CRAN/bin/windows/
 
 You should select the "base" option, or click "install R for the first time".
-
+ 
 
 Mac OS: https://mirror.las.iastate.edu/CRAN/bin/macosx/
 
@@ -34,8 +34,8 @@ Scroll down to the "Files" section, and find the R pkg file that lists your oper
 
 Linux/Unix: https://mirror.las.iastate.edu/CRAN/bin/linux/
 
-Find you Unix distro, and folow the instructions in the directory.
-
+Find your Unix distro, and folow the instructions in the directory.
+ 
 
 Once you have downloaded the R installer, run it to install R. You may be required to enter administrator credentials; if you do not have these credentials, talk to your institution's IT department to have them install the software.
 

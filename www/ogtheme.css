@@ -21,3 +21,18 @@ body,
 .shiny-output-error-validation {
   color: red;
 }
+
+.checkcol {
+	height: 150px;
+	-webkit-column-count: 2;
+	-moz-column-count: 2;
+	-ms-column-count: 2;
+	column-count: 2;
+	-moz-column-fill: auto;
+	-column-fill: auto;
+					}
+					
+.progress-bar{
+	\\color: #08E00c !important;
+	background-color: #08E00C;
+}

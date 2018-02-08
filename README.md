@@ -259,4 +259,3 @@ Solution: Download the bit-version of Java that matches your R/RStudio installat
 
 3. If there is a mismatch, download the Java bit-version that matches your R bit-version by following the directions under [A1. Possible Cause: Java is not installed]().
 
-

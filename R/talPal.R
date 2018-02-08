@@ -16,7 +16,8 @@
 #' 
 #' @export 
 #' 
-talPal <- function(targetList, range = FALSE, armin = 14, armax = 18, spamin = 14, spamax = 16, exonStarts = NULL) {
+
+talPal <- function(targetList, findcut = FALSE, range = FALSE, armin = 15, armax = 18, spamin = 14, spamax = 16, exonStarts = NULL) {
   
   require(stringr)
   
@@ -25,32 +26,71 @@ talPal <- function(targetList, range = FALSE, armin = 14, armax = 18, spamin = 1
   # Variable definition and initialization
   numSites <- length(targetList) # Number of sites to target
   talSites <- vector("list", numSites)
+
+  talSeqs <- vector("list", numSites)
+  tempL <- NULL
+  tempR <- NULL
+  spacer <- NULL
+  left <- NULL
+  right <- NULL
+  specs <- NULL
+
   
   # Calculates range of allowable spacer and arm lengths
   if (range == TRUE) {
     low <- 2*armin + spamin # Lower bound of distance between 5'Ts
     high <- 2*armax + spamax # Upper bound of distance between 5'Ts
-    pattern <- paste0("(?=T[ACGT]{",low,",",high,"}A)") # Search regex
+    pattern <- paste0("(?=(T[ACGT]{",low,",",high,"}A))") # Search regex
     
-    # Find pattern in targetList and extract left 5'T positions
+    # Find and extract left 5'T index and sequence from targetList
     for (i in 1:numSites) {
       target <- targetList[[i]]
-      templ <- gregexpr(pattern, target, perl = TRUE)
-      tempn <- length(templ[[1]])
-      talSites[[i]] <- templ[[1]][1:tempn]
+      m <- gregexpr(pattern, target, perl = TRUE)
+      tempn <- length(m[[1]])
+      
+      # Captures non-capturing look ahead assertion
+      m <- lapply(m, function(i) {
+        attr(i,"match.length") <- attr(i,"capture.length")
+        i
+      })
+      
+      talSeqs[[i]] <- regmatches(target,m) 
+      
+      if (findcut == TRUE) {
+        # Estimates position of cut site
+        talSites[[i]] <- unlist(as.list(m[[1]][1:tempn] + ceiling(attributes(m[[1]])$capture.length/2) - 1))
+      } else{
+        talSites[[i]] <- unlist(as.list(unlist(m[[1]][1:tempn])))
+      }
       
       # Correct positions by localization in gene and not exon
       if (is.null(exonStarts) == FALSE) {
-        talSites[[i]] <- talSites[[i]] + exonStarts[i]
+        talSites[[i]] <- talSites[[i]] + exonStarts[i] - 1
+
       }
     }
   } else {
     # Default TALEN search, 15b arm lengths and 15b spacer
     for (i in 1:numSites) {
       target <- targetList[[i]]
-      templ <- gregexpr("(?=T[ACGT]{45}A)",target, perl = TRUE)
-      tempn <- length(templ[[1]])
-      talSites[[i]] <- templ[[1]][1:tempn]
+
+      m <- gregexpr("(?=(T[ACGT]{45}A))",target, perl = TRUE)
+      tempn <- length(m[[1]])
+      
+      # Captures non-capturing look ahead assertion
+      m <- lapply(m, function(i) {
+        attr(i,"match.length") <- attr(i,"capture.length")
+        i
+      })
+      
+      talSeqs[[i]] <- regmatches(target,m)
+      
+      if (findcut == TRUE) {
+        # Estimates position of cut site
+        talSites[[i]] <- m[[1]][1:tempn] + ceiling(attributes(m[[1]])$capture.length/2) - 1 
+      } else{
+        talSites[[i]] <- m[[1]][1:tempn]
+      }
       
       # Correct positions by localization in gene and not exon
       if (is.null(exonStarts) == FALSE) {
@@ -61,6 +101,8 @@ talPal <- function(targetList, range = FALSE, armin = 14, armax = 18, spamin = 1
   
   # Name exons
   names(talSites)[1:numSites] <- paste0("Exon ", 1:(numSites))
+
+  names(talSeqs)[1:numSites] <- paste0("Exon ", 1:(numSites))
   
-  return(talSites)
+  return(list(talSites,talSeqs))
 }

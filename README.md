@@ -13,8 +13,11 @@ You can run MENTHU online through a web interface here: http://ll-g2f.gdcb.iasta
 You will need to have the ability to install software on the computer you are using to run MENTHU locally; this may require administrator privileges. 
 
 [1. Download and Install R](https://github.com/Dobbs-Lab/MENTHU/README.md#1-download-and-install-r)
+
 [2. Download and Install RStudio](https://github.com/Dobbs-Lab/MENTHU/README.md#2-download-and-install-rstudio-optional) (optional)
+
 [3. Run MENTHU locally](https://github.com/Dobbs-Lab/MENTHU/blob/dev/README.md#3-run-menthu-locally)
+
 [Troubleshooting](https://github.com/Dobbs-Lab/MENTHU/README.md#troubleshooting)
 
 ## 1. Download and Install R
@@ -103,13 +106,22 @@ You're all set!
 Please check the list of issues below to see if your issue is solved; if you can't find your issue or the fixes below don't work, please contact us at GeneSculptSuiteHelp@gmail.com for aid in troubleshooting. **Please be aware that we can only support up-to-date and unmodified versions of MENTHU's code.**
 
 ## Solutions:
-[Simple Fixes That Resolve Most Problems]()
-[Error : .onLoad failed in loadNamespace() for 'rJava'](https://github.com/Dobbs-Lab/MENTHU/blob/dev/README.md#1-failure-to-load-rjava)
+[Simple Fixes That Resolve Most Problems](https://github.com/Dobbs-Lab/MENTHU/README.md#before-troubleshooting-or-asking-for-help-please-follow-these-simple-steps-that-will-resolve-many-if-not-most-problems)
+
+[Error : .onLoad failed in loadNamespace() for 'rJava'](https://github.com/Dobbs-Lab/MENTHU/README.md#1-failure-to-load-rjava)
 
 ## Before troubleshooting or asking for help, please follow these simple steps that will resolve many (if not most) problems:
+[1. Check that you're running up-to-date MENTHU](https://github.com/Dobbs-Lab/MENTHU/README.md#1-check-that-youre-running-the-most-up-to-date-version-of-menthus-code)
 
-### 1. Check that you're running the most up-to-date version of MENTHU's code (currently v1.1.0) 
-You can check this by looking at the upper right hand corner of the MENTHU user interface. This will generally only be an issue if you have downloaded the MENTHU code from GitHub and are using ```runApp()``` to run locally; if that is the case, download the updated code and see if your problem persists.
+[2. Update Required MENTHU packages](https://github.com/Dobbs-Lab/MENTHU/README.md#2-update-the-required-menthu-packages)
+
+[3. Update R and/or RStudio installations](https://github.com/Dobbs-Lab/MENTHU/README.md#3-update-your-r-or-rstudio-installation)
+
+
+### 1. Check that you're running the most up-to-date version of MENTHU's code
+The most current MENTHU version is v1.1.0.
+
+You can check which version you are using by looking at the upper right hand corner of the MENTHU user interface. This will generally only be an issue if you have downloaded the MENTHU code from GitHub and are using ```runApp()``` to run locally; if that is the case, download the updated code and see if your problem persists.
 
 
 ### 2. Update the required MENTHU packages 
@@ -151,6 +163,7 @@ Follow the instructions under [1. Download and Install R]() for your operating s
 
 
 ## Known (and Solved) Issues:
+[1. Failure to load 'rJava'](https://github.com/Dobbs-Lab/MENTHU/README.md#1-failure-to-load-rjava)
 
 ### 1. Failure to load 'rJava'
 Symptom: When trying to run the code, you get an error that contains:
@@ -161,6 +174,15 @@ Error : .onLoad failed in loadNamespace() for 'rJava'
 
 Explanation: 'rJava' is a package that is required for downloading your results file.  'rJava' allows R/RStudio to communicate with Java on your computer to open a window to download and save your results file. When you get the ```loadNamespace() for 'rJava'``` error, this means that R/RStudio can't communicate with the Java on your system.
 
+Solutions:
+
+[A1. Possible Cause: Java is not installed](https://github.com/Dobbs-Lab/MENTHU/README.md#a1-possible-cause-java-is-not-installed)
+
+[B1. Possible Cause: Java is out of date](https://github.com/Dobbs-Lab/MENTHU/README.md#b1-possible-cause-java-is-out-of-date)
+
+[C1. Possible Cause: R/RStudio can't find your Java installation](https://github.com/Dobbs-Lab/MENTHU/README.md#c1-possible-cause-rrstudio-cant-find-your-java-installation)
+
+[D1. Possible Cause: There is a mismatch in your Java bit-version and R/RStudio bit-version](https://github.com/Dobbs-Lab/MENTHU/README.md#d1-possible-cause-there-is-a-mismatch-in-your-java-bit-version-and-rrstudio-bit-version)
 
 #### A1. Possible Cause: Java is not installed
 You can check if Java is correctly installed on your system by running ```java -version``` in a terminal window (this works on Windows, Mac OS, and Linux/Unix systems.) If you get an output, you have Java correctly installed. If you get an error such as "java: Command not found", you either do not have Java installed or the terminal can't find your Java installation.
@@ -201,38 +223,38 @@ Solution: Download the bit-version of Java that matches your R/RStudio installat
 
 1. Identify your R bit-version:
 
-In R or RStudio, type ```R.Version()``` in the console.
+      In R or RStudio, type ```R.Version()``` in the console.
 
-There will be several lines of output; look for the one starting ```$arch```.
+      There will be several lines of output; look for the one starting ```$arch```.
 
-For 32-bit versions, this value will be "i386" or "x86".
+      For 32-bit versions, this value will be "i386" or "x86".
 
-For 64-bit versions, this value will be "x86_64" or "x64"
+      For 64-bit versions, this value will be "x86_64" or "x64"
 
 
 2. Identify your Java bit-version:
 
-Open a terminal window, and type ```java -version```.
+      Open a terminal window, and type ```java -version```.
 
-If you see something like
+      If you see something like
 
-```
-java version "1.x.x_xxx"
-Java(TM) SE Runtime Environment <build 1.x.x_xxx-xxx>
-Java Hostpot(TM) Client VM (build xx.xxx-xxxx, mixed mode)
-```
-you have 32-bit Java installed.
+       ```
+       java version "1.x.x_xxx"
+       Java(TM) SE Runtime Environment <build 1.x.x_xxx-xxx>
+       Java Hostpot(TM) Client VM (build xx.xxx-xxxx, mixed mode)
+       ```
+      you have 32-bit Java installed.
 
 
-If you see something like
+      If you see something like
 
-```
-java version "1.x.x_xxx"
-Java(TM) SE Runtime Environment <build 1.x.x_xxx-xxx>
-Java HotSpot<TM> 64-Bit Server VM <build xx.xxx-xxx, mixed mode>
-```
+       ```
+       java version "1.x.x_xxx"
+       Java(TM) SE Runtime Environment <build 1.x.x_xxx-xxx>
+       Java HotSpot<TM> 64-Bit Server VM <build xx.xxx-xxx, mixed mode>
+       ```
 
-then you have 64-bit Java installed.
+      then you have 64-bit Java installed.
 
 
 3. If there is a mismatch, download the Java bit-version that matches your R bit-version by following the directions under [A1. Possible Cause: Java is not installed]().

@@ -1,22 +1,44 @@
 # MENTHU
 This is a repository for the MENTHU knockout site recommender.
 
-You can run MENTHU online through a point-and-click website here: http://ll-g2f.gdcb.iastate.edu/menthu/
+You can run MENTHU online through a web interface here: http://ll-g2f.gdcb.iastate.edu/menthu/
 
-**If you already have R and/or RStudio installed, you can click [here](https://github.com/Dobbs-Lab/MENTHU/README.md#running-menthu-locally) to immmediately start running MENTHU locally.**
+
+### If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU/README.md#run-menthu-locally) to immmediately start running MENTHU locally.
+
+### If you are having issues running MENTHU locally, please check the [Troubleshooting]() section before requesting help.
+
 
 # How to Run MENTHU Locally
 You will need to have the ability to install software on the computer you are using to run MENTHU locally; this may require administrator privileges. 
 
-**If you are having issues running MENTHU locally, please check the 'Troubleshooting' section before requesting help.**
+1. Download and Install R
+2. Download and Install RStudio (optional)
+3. Run MENTHU locally
+Troubleshooting
 
-
-## Download and Install R
+## 1. Download and Install R
 MENTHU requires the latest version of R in order to run offline. 
 
-You can download R here: https://mirror.las.iastate.edu/CRAN/
+Download R for your appropriate operating system:
+
+Windows: https://mirror.las.iastate.edu/CRAN/bin/windows/
+
+You should select the "base" option, or click "install R for the first time".
+
+
+Mac OS: https://mirror.las.iastate.edu/CRAN/bin/macosx/
+
+Scroll down to the "Files" section, and find the R pkg file that lists your operating system (El Capitan, Mavericks, Snow Leopard, etc). Select the R-3.x.x.pkg file corresponding to your system - pay special attention to the "Important" section under R-3.4.3.pkg if you have "El Capitan"; you may want to consider using R-3.3.3.pkg if you don't want to install additional tools to support running R 3.4.3 on "El Capitan".
+
+
+Linux/Unix: https://mirror.las.iastate.edu/CRAN/bin/linux/
+
+Find you Unix distro, and folow the instructions in the directory.
+
 
 Once you have downloaded the R installer, run it to install R. You may be required to enter administrator credentials; if you do not have these credentials, talk to your institution's IT department to have them install the software.
+
 
 If you need additional help installing R, please check the installation instructions for your operating system:
 
@@ -27,7 +49,8 @@ Mac OS:     https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Instal
 Linux/Unix: https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-R-under-Unix_002dalikes
 
 
-## Download and Install RStudio (optional)
+
+## 2. Download and Install RStudio (optional)
 MENTHU does not require the use of the RStudio development environment, but if you are interested in examining or modifying the MENTHU code, we recommend you do so in RStudio. 
 
 You can download RStudio for free here: https://www.rstudio.com/products/rstudio/download/#download
@@ -35,7 +58,8 @@ You can download RStudio for free here: https://www.rstudio.com/products/rstudio
 After downloading the RStudio installer, follow the installation instructions. If you have both R and RStudio installed, you should only do the following steps in RStudio.
 
 
-## Running MENTHU locally
+
+## 3. Run MENTHU locally
 You can run this RShiny web app in R (or RStudio) by opening up an R or RStudio session.
 
 You can copy and paste the code blocks below into your R/RStudio console to run them.
@@ -43,10 +67,12 @@ You can copy and paste the code blocks below into your R/RStudio console to run 
 (Please read [this discussion](https://www.lifehacker.com.au/2016/05/be-careful-when-you-copy-and-paste-code-from-the-internet/) on why you should not generally copy/paste/run code directly from internet pages to your console; you're probably safe on GitHub, but you should not get in the habit of copying and pasting code directly into your console or terminal windows. Paste what you've copied into NotePad or a similar program, and then copy/paste from there to your console once you know the code is safe.)
 
 
+
 ### Run this code ONLY THE FIRST TIME you run this tool on a computer, or when you need to update these packages:**
 
 ```
 #Install packages required to run MENTHU; you can also run this code to update these packages
+
 #Install CRAN packages
 install.packages(c("shiny", "shinyjs", "Rcpp", "plyr", "stringr", "stringi", "shinyTable", "rentrez", "rlist", "DT", "xlsx", "devtools", "rhandsontable"))
 
@@ -59,7 +85,7 @@ devtools::install_github("rstudio/shiny-incubator", force = TRUE)
 devtools::install_github("trestletech/shinyTable",  force = TRUE)
 ```
 
-### Run this code every time you want to use the tool, including the first time:**
+### Run this code every time you want to use the tool, including the first time:
 
 ```
 #Load Shiny in the R/RStudio Environment
@@ -68,13 +94,20 @@ library(shiny)
 #Retrieve, load, and run MENTHU from GitHub
 runGitHub("MENTHU", "Dobbs-Lab")
 ```
+
 You're all set!
 
 
+
 # Troubleshooting
-Please check the list of issues below to see if your issue is solved; if you can't find your issue or the fixes below don't work, please contact us at GeneSculptSuiteHelp@gmail.com for aid in troubleshooting. **Please be aware that we can only support the most up-to-date, unmodified versions of MENTHU's code.**
+Please check the list of issues below to see if your issue is solved; if you can't find your issue or the fixes below don't work, please contact us at GeneSculptSuiteHelp@gmail.com for aid in troubleshooting. **Please be aware that we can only support up-to-date and unmodified versions of MENTHU's code.**
+
+## Solutions:
+[Simple Fixes That Resolve Most Problems]()
+[Error : .onLoad failed in loadNamespace() for 'rJava'](https://github.com/Dobbs-Lab/MENTHU/blob/dev/README.md#1-failure-to-load-rjava)
 
 ## Before troubleshooting or asking for help, please follow these simple steps that will resolve many (if not most) problems:
+
 ### 1. Check that you're running the most up-to-date version of MENTHU's code (currently v1.1.0) 
 You can check this by looking at the upper right hand corner of the MENTHU user interface. This will generally only be an issue if you have downloaded the MENTHU code from GitHub and are using ```runApp()``` to run locally; if that is the case, download the updated code and see if your problem persists.
 
@@ -84,7 +117,17 @@ You can update all required packages by re-running the code [here]().
 
 
 ### 3. Update your R or RStudio installation 
-You can update R by following these directions:
+You can check if you have the latest version of R by running the following code in R or RStudio:
+
+```
+R.Version()
+```
+
+Find the ```$version.string``` output, which will say "R version x.x.x (20yy-mm-dd)". The numbers replacing "x.x.x" are your R version; you should be running R 3.4.3 if you are on Windows or Linux/Unix, and either R 3.4.3 or R 3.3.3 for Mac OS X 10.9 (Mavericks) and above.
+
+
+If your R is out of date, you can update your installation by following these directions:
+
 
 On Windows:
 
@@ -99,11 +142,15 @@ library(installr)
 updateR()
 ```
 
+You can also follow the instructions under [1. Download and Install R](), but the ```installr``` package is probably quicker and easier.
+
+
 On Mac, Linux, or Unix:
+Follow the instructions under [1. Download and Install R]() for your operating system.
 
 
 
-## Potential issues:
+## Known (and Solved) Issues:
 
 ### 1. Failure to load 'rJava'
 Symptom: When trying to run the code, you get an error that contains:
@@ -114,7 +161,10 @@ Error : .onLoad failed in loadNamespace() for 'rJava'
 
 Explanation: 'rJava' is a package that is required for downloading your results file.  'rJava' allows R/RStudio to communicate with Java on your computer to open a window to download and save your results file. When you get the ```loadNamespace() for 'rJava'``` error, this means that R/RStudio can't communicate with the Java on your system.
 
+
 #### A1. Possible Cause: Java is not installed
+You can check if Java is correctly installed on your system by running ```java -version``` in a terminal window (this works on Windows, Mac OS, and Linux/Unix systems.) If you get an output, you have Java correctly installed. If you get an error such as "java: Command not found", you either do not have Java installed or the terminal can't find your Java installation.
+
 Solution: Download and install Java.
 
 Windows:
@@ -130,34 +180,18 @@ Visit https://www.java.com/en/download/help/linux_install.xml and follow the Jav
 #### B1. Possible Cause: Java is out of date
 Explanation: If you know you have Java installed on your system but are still getting the ```loadNamespace() for 'rJava'``` error, it is possible that an update to MENTHU and/or the packages it depends on requires an updated version of Java; also, Java installations can sometimes get corrupted or otherwise messed up, and this can cause R to not recognize Java on your system.
 
-Solution: Download and install the latest version of Java for your operating system. Follow the directions in the links in **'B1. Possible Cause: Java is not installed'** to install updated Java.
+Solution: Download and install the latest version of Java for your operating system. Follow the directions in the links in [A1. Possible Cause: Java is not installed]() to install updated Java.
 
 
 #### C1. Possible Cause: R/RStudio can't find your Java installation
 Explanation: If you know you have the latest version of Java installed on your system but you're still getting this error, it is possible that R/RStudio doesn't know where Java is located on your system. 
 
 
-Solution 1: Add your Java installation location to your environment $PATH
+Solution: Add your Java installation location to your $PATH variable
 
-Explanation
+Explanation: The $PATH variable is a collection of directions to locations on your computer where executable programs are stored. When a program that requires Java to run goes to use Java, it looks in the $PATH variable to find where Java is on your computer. If Java's location is not in the $PATH variable, then the program can't find it, and so thinks you don't have Java installed.
 
-Solution 2:
-
-Windows:
-
-Mac OS:
-
-1. Open a terminal window.
-
-2. Run this code in the terminal:
-
-```
-sudo ln -f -s $(/usr/libexec/java_home)/jre/lib/server/libjvm.dylib /usr/local/lib
-```
-
-Linux/Unix:
-
-Try running this code so that R can find your Java installation
+Follow the instructions here https://www.java.com/en/download/help/path.xml to add Java to your system $PATH.
 
 
 #### D1. Possible Cause: There is a mismatch in your Java bit-version and R/RStudio bit-version
@@ -167,11 +201,40 @@ Solution: Download the bit-version of Java that matches your R/RStudio installat
 
 1. Identify your R bit-version:
 
+In R or RStudio, type ```R.Version()``` in the console.
+
+There will be several lines of output; look for the one starting ```$arch```.
+
+For 32-bit versions, this value will be "i386" or "x86".
+
+For 64-bit versions, this value will be "x86_64" or "x64"
+
 
 2. Identify your Java bit-version:
 
+Open a terminal window, and type ```java -version```.
 
-3. If there is a mismatch, download the Java bit-version that matches your R bit-version:
+If you see something like
 
+```
+java version "1.x.x_xxx"
+Java(TM) SE Runtime Environment <build 1.x.x_xxx-xxx>
+Java Hostpot(TM) Client VM (build xx.xxx-xxxx, mixed mode)
+```
+you have 32-bit Java installed.
+
+
+If you see something like
+
+```
+java version "1.x.x_xxx"
+Java(TM) SE Runtime Environment <build 1.x.x_xxx-xxx>
+Java HotSpot<TM> 64-Bit Server VM <build xx.xxx-xxx, mixed mode>
+```
+
+then you have 64-bit Java installed.
+
+
+3. If there is a mismatch, download the Java bit-version that matches your R bit-version by following the directions under [A1. Possible Cause: Java is not installed]().
 
 

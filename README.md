@@ -62,7 +62,7 @@ After downloading the RStudio installer, follow the installation instructions. I
 
 
 
-## 3. Run MENTHU locally
+## [3. Run MENTHU locally](#run-menthu-locally)
 You can run this RShiny web app in R (or RStudio) by opening up an R or RStudio session.
 
 You can copy and paste the code blocks below into your R/RStudio console to run them.

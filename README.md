@@ -6,16 +6,16 @@ You can run MENTHU online through a web interface here: http://ll-g2f.gdcb.iasta
 
 ### If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU/README.md#run-menthu-locally) to immmediately start running MENTHU locally.
 
-### If you are having issues running MENTHU locally, please check the [Troubleshooting]() section before requesting help.
+### If you are having issues running MENTHU locally, please check the [Troubleshooting](https://github.com/Dobbs-Lab/MENTHU/README.md#troubleshooting) section before requesting help.
 
 
 # How to Run MENTHU Locally
 You will need to have the ability to install software on the computer you are using to run MENTHU locally; this may require administrator privileges. 
 
-1. Download and Install R
-2. Download and Install RStudio (optional)
-3. Run MENTHU locally
-Troubleshooting
+[1. Download and Install R]
+[2. Download and Install RStudio] (optional)
+[3. Run MENTHU locally](https://github.com/Dobbs-Lab/MENTHU/blob/dev/README.md#run-menthu-locally)
+[Troubleshooting](https://github.com/Dobbs-Lab/MENTHU/README.md#troubleshooting)
 
 ## 1. Download and Install R
 MENTHU requires the latest version of R in order to run offline. 

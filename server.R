@@ -11,11 +11,13 @@ library(rlist)
 library(DT)
 library(xlsx)
 
-source("requiredFunctions.R")
 source("apeShiftFunctions.R")
-source("targetAccessoryFunctions.R")
-source("menthuAccessoryFunctions.R")
 source("genbankAccessoryFunctions.R")
+source("menthu2.0AccessoryFunctions.R")
+source("required2.0Functions.R")
+source("targetAccessoryFunctions.R")
+
+
 
 shinyServer(function(input, output, session){
 	########################################################
@@ -43,9 +45,9 @@ shinyServer(function(input, output, session){
 	validRefSeqGBGenbankId <- reactive({
 		if(input$genbankId != ""){
 			if(stringr::str_detect(input$genbankId, regex("^(NM|NR|XM|XR)_[0-9]{6}", ignore_case = TRUE))){
-				validate(
-					need(1 == 2,
-							 "Error: This ID matches RefSeq RNA accession format. Please submit an accession corresponding to a DNA sequence."))
+				#validate(
+				#	need(1 == 2,
+				#			 "Error: This ID matches RefSeq RNA accession format. Please submit an accession corresponding to a DNA sequence."))
 				
 			} else if(stringr::str_detect(input$genbankId, regex("^(AP|NP|YP|XP|WP)_[0-9]{6}", ignore_case = TRUE))){
 				validate(
@@ -410,7 +412,7 @@ shinyServer(function(input, output, session){
 				
 				#Calculate the MENTHU score
 				results <<- calculateMENTHUGeneSeqGenBank(pams, cutDistances, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, 
-																									info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, progress)
+																									info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, progress, input$scoreScheme)
 				#Order the result table from largest menthuScore to smallest
 				results <<- results[order(-results$MENTHU_Score),]
 
@@ -519,12 +521,12 @@ shinyServer(function(input, output, session){
 				}
 			} else { #If no custom pams
 				pams <- input$casType
-				cutDistances <- rep(3, length(input$casType))
+				cutDistances <- rep(-3, length(input$casType))
 			}
 			
 			#Calculate the MENTHU score
 			results <<- calculateMENTHUGeneSeq(pams, cutDistances, wiggle = TRUE, wigRoom = 39, input$geneSeq, input$threshold, 
-																				 exonIn, progress, talArmin, talArmax, talSpamin, talSpamax)
+																				 exonIn, progress, talArmin, talArmax, talSpamin, talSpamax, input$scoreScheme)
 			#Order the result table from largest menthuScore to smallest
 			results <<- results[order(-results$MENTHU_Score),]
 
@@ -574,9 +576,16 @@ shinyServer(function(input, output, session){
 		updateRadioButtons(session,
 											 "exonTargetType",
 											 selected = 0)
-		updateNumericInput(session,
-											 "threshold",
-											 value = 40)
+		if(input$scoreScheme == 1){
+			updateNumericInput(session,
+												 "threshold",
+												 value = 40)
+		} else {
+			updateNumericInput(session,
+												 "threshold",
+												 value = 1.5)
+		}
+		
 		#Use custom PAM input
 		updateRadioButtons(session,
 											 "customCutOpt",

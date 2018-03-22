@@ -13,7 +13,6 @@ library(rhandsontable)
 library(shinyIncubator)
 
 shinyUI(
-	
 	####Creates the navbar set-up####
 	navbarPage(id = 'mainPage',
 						 windowTitle = "MENTHU",

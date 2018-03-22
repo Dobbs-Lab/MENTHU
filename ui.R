@@ -21,7 +21,7 @@ shinyUI(
 						 theme = "ogtheme.css", 
 						 
 						 #Page title box
-						 tags$div("MENTHU v1.1.0", 
+						 tags$div("MENTHU v2.0.0", 
 						 				 style = "color:white"),
 						 
 						 ########ABOUT TAB#################################################
@@ -104,7 +104,20 @@ shinyUI(
 						 				 #Main panel for entering information and submitting job
 						 				 column(9, wellPanel(
 						 				 	
+						 				 	
+						 				 		
+						 				 		####Choose PAM sequence#############################################
+						 				 		radioButtons("scoreScheme",
+						 				 								 label = "0. Select the scoring scheme you wish to use:",
+						 				 								 choices = list("Version 1.0 (Slope competition)" = 1,
+						 				 								 							 "Version 2.0 (Ratio competition)" = 2),
+						 				 								 selected = 2,
+						 				 								 inline = TRUE
+						 				 								 
+						 				 		)),
+						 				 	
 						 				 	####Choose PAM sequence#############################################
+						 				 	wellPanel(
 						 				 	checkboxGroupInput("casType",
 						 				 										 label = "1. Select the PAM sequence(s) you wish to target:",
 						 				 										 choices = list("S. pyogenes SpCas9: 5'-NGG-3'" = "NGG",

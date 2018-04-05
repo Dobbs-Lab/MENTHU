@@ -32,6 +32,10 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 		exonInfo$exonNum <- seq(from = 1, to = nrow(exonInfo))
 	}
 	
+	exonInfo$start <- as.numeric(exonInfo$start)
+	exonInfo$end   <- as.numeric(exonInfo$end)
+	exonInfo$number <- as.numeric(exonInfo$number)
+	
 	#If the user wants to target within a certain percentage of the beginning of the sequence
 	if(exonTargetType == 1){
 		exonCutoff <- ceiling(nrow(exonInfo) * exonStuff)
@@ -76,6 +80,7 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 			#If wiggle = true, include sequence context upstream and downstream of exon so that cut sites whose context runs out of the exon can still be considered
 			if(wiggle){
 				#Ensure that there is enough wiggle room to add sequence context at beginning of exon (e.g., if exon 1 starts at base 23, there is not 39 bases of wiggle room to add)
+				
 				if(exonInfo$start[numExons[i]] - wigRoom < 1){
 					exStart <- 1
 				} else {
@@ -90,6 +95,7 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 				}
 				
 				set <- c(set, genSeq[exStart:exEnd])
+				
 				exonSeq <- DNAStringSet(set)
 				
 			} else {
@@ -101,7 +107,7 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 			}
 			
 		}
-		
+
 	return(list(exonInfo[numExons,], exonSeq, genSeq))
 }
 

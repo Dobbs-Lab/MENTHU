@@ -286,14 +286,29 @@ getExonLocus <- function(gene){
 														number      = character(length(exonList)),
 														stringsAsFactors = FALSE)
 		
-		for(i in 1:length(geneExons)){
-			exonTable[i, 1] <- geneExons[[i]][2, 2]
-			exonTable[i, 2] <- geneExons[[i]][3, 2]
-			exonTable[i, 3] <- as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2])
-			exonTable[i, 4] <- geneExons[[i]][1, 2]
-			exonTable[i, 5] <- geneExons[[i]][4, 2]
-			exonTable[i, 6] <- geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2]
-			
+		#Determine if exons are numbered
+		numberedLength <- "number" %in% sapply(geneExons, "[[", 1)
+		
+		if(numberedLength){
+			for(i in 1:length(geneExons)){
+				exonTable[i, 1] <- geneExons[[i]][2, 2]
+				exonTable[i, 2] <- geneExons[[i]][3, 2]
+				exonTable[i, 3] <- as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2])
+				exonTable[i, 4] <- geneExons[[i]][1, 2]
+				exonTable[i, 5] <- geneExons[[i]][4, 2]
+				exonTable[i, 6] <- geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2]
+				
+			}
+		} else {
+			for(i in 1:length(geneExons)){
+				exonTable[i, 1] <- geneExons[[i]][2, 2]
+				exonTable[i, 2] <- geneExons[[i]][3, 2]
+				exonTable[i, 3] <- as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2])
+				exonTable[i, 4] <- geneExons[[i]][1, 2]
+				exonTable[i, 5] <- geneExons[[i]][4, 2]
+				exonTable[i, 6] <- i
+				
+			}
 		}
 		
 		return(exonTable)

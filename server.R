@@ -91,12 +91,12 @@ shinyServer(function(input, output, session){
 				#Check for not DNA input
 				need(!stringr::str_detect(input$geneSeq, "[^ACGTacgt0-9\\s\\n]"), 
 						 paste0("Error: Input DNA sequence contains non-standard nucleotides. ", 
-						 			 "Allowed nucleotides are A, C, G, and T.")),
+						 			 "Allowed nucleotides are A, C, G, and T."))#,
 				
 				#Prevent users from blowing up the server
-				need(nchar(input$geneSeq) < 5000, 
-						 paste0("The DNA sequence has >5000 nucleotides. For sequences of this size,",
-						 			 " please use the local version of MENTHU, which can be accessed via the 'Tools and Downloads' tab."))
+				#need(nchar(input$geneSeq) < 5000, 
+				#		 paste0("The DNA sequence has >5000 nucleotides. For sequences of this size,",
+				#		 			 " please use the local version of MENTHU, which can be accessed via the 'Tools and Downloads' tab."))
 			)
 			
 		} else if(input$inputType == 2) {

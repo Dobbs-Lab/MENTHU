@@ -1,3 +1,4 @@
+# Required packages
 library(shiny)
 library(shinyjs)
 library(shinyTable)
@@ -11,6 +12,7 @@ library(rlist)
 library(DT)
 library(plyr)
 
+# Required supporting files
 source("apeShiftFunctions.R")
 source("genbankAccessoryFunctions.R")
 source("menthu2.0AccessoryFunctions.R")
@@ -22,44 +24,35 @@ shinyServer(function(input, output, session){
 	###################Global Variables#####################
 	########################################################
 	
-	#Initialize with hidden results tables
-	#shinyjs::hidden(
-	#	div(id = "genbankResults"),
-	#	div(id = "geneSeqResults")
-	#)
-	
-	#Storage for final results so that it is accessible to download handler and submit buttons
+	# Storage for final results so that it is accessible to download handler and submit buttons
 	results   <<- 0
 	
-	#Empty data frame for displaying when users are inputting exon information
+	# Empty data frame for displaying when users are inputting exon information
 	dfEmpty   <<- data.frame(Exon_Num         = rep(0, 5),
 												   exonStart        = rep(0, 5), 
 												   exonEnd          = rep(0, 5), 
 												   stringsAsFactors = FALSE)
 	
-	#Example data frame for when the paste gene seq example is selected
+	# Example data frame for when the paste gene seq example is selected
 	dfExample <<- data.frame(Exon_Num         = c(1,     2,   3,   4,   5),
 													 exonStart        = c(1,   101, 201, 301, 401),
 													 exonEnd          = c(100, 200, 300, 400, 500),
 													 stringsAsFactors = FALSE)
 	
-	#Reactive values
-	rValues <- reactiveValues(downloadF   = FALSE,   #Flag for displaying download button (for copy/paste gene seq)
-														downloadFGB = FALSE,   #Flag for displaying download button (for genbank)
-														geneSeqResultsFlag = FALSE, #Flag for displaying gene seq results table
-														genbankResultsFlag = FALSE, #Flag for displaying genbank results table
-														rhFrame     = dfEmpty, #Slot to hold exon information data frame
-														resetVal    = FALSE, #Flag for if the reset button has been clicked
-														geneSeqError = 0)   #Error messages for geneSeq submission
+	# Reactive values
+	rValues <- reactiveValues(downloadF          = FALSE,   # Flag for displaying download button (for copy/paste gene seq)
+														downloadFGB        = FALSE,   # Flag for displaying download button (for genbank)
+														geneSeqResultsFlag = FALSE,   # Flag for displaying gene seq results table
+														genbankResultsFlag = FALSE,   # Flag for displaying genbank results table
+														rhFrame            = dfEmpty, # Slot to hold exon information data frame
+														resetVal           = FALSE,   #  for if the reset button has been clicked
+														geneSeqError       = 0)       # Error messages for geneSeq submission
 	
-	#dF      <<- reactiveValues(downloadF   = FALSE)
-	#dFGB    <<- reactiveValues(downloadFGB = FALSE)
-	
-	#Flag for displaying example table when clicking example geneSeq link
+	# Flag for displaying example table when clicking example geneSeq link
 	geneSeqExampleFlag <<- FALSE
 	
+	# Data file containing gene database; for use with pre-computed genes tab
 	#geneDF  <<-  readRDS(file = "testGeneDB.rds")
-	
 	
 	########################################################
 	##################Validation Checks#####################
@@ -77,7 +70,7 @@ shinyServer(function(input, output, session){
 					need(1 == 2,
 							 "Error: This ID matches the RefSeq protein accession format. Please submit an accession corresponding to a DNA sequence."))
 				
-				#Catch ginormous genomic region files
+				# Catch ginormous genomic region files; disabled for running locally
 			} else if(stringr::str_detect(input$genbankId, regex("^(AC|NC|NG|NT|NW|NZ)_[0-9]{6}", ignore_case = TRUE))){
 				#validate(
 				#	need(1 == 2,
@@ -87,13 +80,13 @@ shinyServer(function(input, output, session){
 				#			 			 "corresponding to your gene of interest."))
 				#)
 			
-				#Catch GenBank protein accessions
+				# Catch GenBank protein accessions
 			} else if(stringr::str_detect(input$genbankId, regex("^[A-Z]{3}[0-9]{5}", ignore_case = TRUE))){
 				validate(
 					need(1 == 2,
 							 "Error: This ID matches GenBank protein accession format. Please submit an accession corresponding to a DNA sequence."))
 				
-				#Catch anything else not conforming to input types
+				# Catch anything else not conforming to input types
 			} else {
 				validate(
 					need((((stringr::str_detect(input$genbankId, regex("^[a-zA-Z]{2}[0-9]{6}",                  ignore_case = TRUE)))  | 
@@ -121,12 +114,12 @@ shinyServer(function(input, output, session){
 						 paste0("Error: Input DNA sequence contains non-standard nucleotides. ", 
 						 			 "Allowed nucleotides are A, C, G, and T.")),
 				
-				#Prevent users from blowing up the server
+				# Prevent users from blowing up the server; disabled  for running locally
 				#need(nchar(input$geneSeq) < 5000, 
 				#		 paste0("The DNA sequence has >5000 nucleotides. For sequences of this size,",
 				#		 			 " please use the local version of MENTHU, which can be accessed via the 'Tools and Downloads' tab.")),
 				
-				#Prevent users from submitting too short sequences
+				# Prevent users from submitting too short sequences
 				need(nchar(input$geneSeq) > 80,
 						 paste0("The DNA sequence has <80 nucleotides. MENTHU requires at least 40 nucleotides upstream", 
 						 			 "and 40 nucleotides downstream of the DSB site in order to properly calculate the MENTHU score."))
@@ -141,7 +134,7 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-	#Valid threshold - make sure it's not negative
+	# Valid threshold - make sure the threshold is not negative
 	#validThreshold <- reactive({
 	#	if(!is.null(input$threshold)){
 	#		validate(
@@ -151,13 +144,13 @@ shinyServer(function(input, output, session){
 	#	}	
 	#})
 	
-	#Valid PAM - make sure user selects at least one target type
+	# Valid PAM - make sure user selects at least one target type
 	validPAM <- reactive({
 		validate(
 			#need((length(input$casType) > 0) | (input$talenOp == 1) | input$customCutOpt == 1,
 			need((length(input$casType) > 0) | input$customCutOpt == 1,
-					 "Error: No nuclease selected. Please select a Cas type, choose to use a custom PAM scheme, and/or the TALEN input option.")
-					 #"Error: No nuclease selected. Please select a Cas type or choose to use a custom PAM scheme.")
+					 #"Error: No nuclease selected. Please select a Cas type, choose to use a custom PAM scheme, and/or the TALEN input option.")
+					 "Error: No nuclease selected. Please select a Cas type or choose to use a custom PAM scheme.")
 		)
 	})
 	
@@ -186,18 +179,18 @@ shinyServer(function(input, output, session){
 	#	)
 	#})
 	
-	#Valid custom PAM inputs
+	# Valid custom PAM inputs
 	validCustomPam <- reactive({
-		#If the custom PAM is selected, make sure it only has IUPAC nucleotides or separating characters
+		# If the custom PAM is selected, make sure it only has IUPAC nucleotides or separating characters
 		if(input$customPamSeq != ""){
 			if(stringr::str_detect(input$customPamSeq, "[^ACGTRYSWKMBDHVNacgtryswkmbdhvn\\s,]")){
 				validate(
 					need(1 == 2,
-							 paste0("Error: Non-allowed characters detected. Only standard nucleotide (A, C, G, T), IUPAC extended", 
+							 paste0("Error: Non-allowed characters detected. Only standard nucleotide (A, C, G, T), IUPAC extended ", 
 							 			 "nucleotide symbols (R, Y, S, W, K, M, B, D, H, V, N), and separating characters (spaces and commas) allowed."))
 				)
 			} else {
-				#Check for all 'N' PAMs, single nucleotide PAMs, or PAMs consisting solely of Ns and a single nucleotide
+				# Check for all 'N' PAMs, single nucleotide PAMs, or PAMs consisting solely of Ns and a single nucleotide; disabled for running locally
 				#disallowed      <- "^[N]+[ACGTRYSWKMBDHV]{1}$|^[N]+[ACGTRYSWKMBDHV]{1}[N]+$|^[ACGTRYSWKMBDHVN]{1}$|^[N]+$"
 				#disallowedCheck <- grepl(disallowed, pamStitch("", input$customPamSeq), ignore.case = TRUE, perl = TRUE)
 				#disallowedExist <- is.element(TRUE, unlist(disallowedCheck))
@@ -214,7 +207,7 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-	#Valid custom cut sites
+	# Valid custom cut sites
 	validCustomCutSites <- reactive({
 		if(input$cutSite != ""){
 			validate(
@@ -224,13 +217,13 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-	#Check that the number of custom PAMs matches the number of custom cutSites
+	# Check that the number of custom PAMs matches the number of custom cutSites
 	validMatchCustomInputLength <- reactive({
 		if((input$customPamSeq != "") && 
 			 (input$customCutOpt != "")){
 			validate(
 				need(length(as.character(distStitch("", input$cutSite))) == length(pamStitch("", input$customPamSeq)),
-				paste0("Error: The number of custom PAM sequences does not match the number of custom DSB sites.", 
+				paste0("Error: The number of custom PAM sequences does not match the number of custom DSB sites. ", 
 							 "Please make sure that each PAM has one distance to its cut site specified."))
 			)
 		}
@@ -297,9 +290,7 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-	#Render function for RHandsonTable
-	#reactive(input$reset, input$exampleGeneSeq)
-	
+	# Render function for input table; DO NOT TOUCH ANY OF THIS - it breaks when you look at it sideways
 	renderTable <- reactive({
 		exonOutDF <- NULL
 		
@@ -318,9 +309,9 @@ shinyServer(function(input, output, session){
 		return(exonOutDF)
 	}) %>% debounce(1000)
 	
-	#Render exon table
+	# Render exon input table; DO NOT TOUCH ANY OF THIS - it took literal months to get this working properly
 	output$exonInfo <- renderRHandsontable({
-		#Action buttons that this function is dependent on
+		# Action buttons that this function is dependent on
 		input$reset
 		input$exampleGeneSeq
 		
@@ -342,7 +333,7 @@ shinyServer(function(input, output, session){
 	
 
 	
-	#Download button for copy/paste results
+	# Download button for copy/paste results
 	output$downOutGS <- renderUI({
 		if(rValues$downloadF){
 			downloadButton("downRes", "Download Results")
@@ -351,7 +342,7 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-	#Download button for genbank results
+	# Download button for genbank results
 	output$downOutGB <- renderUI({
 		if(rValues$downloadFGB){
 			downloadButton("downRes", "Download Results")
@@ -360,7 +351,7 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-	#Output function for copy/paste results
+	# Output function for copy/paste results
 	output$geneSeqResults <- renderUI({
 		if(rValues$geneSeqResultsFlag){
 			output$placeholder <- DT::renderDataTable(results, 
@@ -374,7 +365,7 @@ shinyServer(function(input, output, session){
 		
 	})
 	
-	#Output function for genbank results
+	# Output function for genbank results
 	output$genbankResults <- renderUI({
 		if(rValues$genbankResultsFlag){
 			output$placeholder <- DT::renderDataTable(results, 
@@ -387,7 +378,7 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-	#Download handler
+	# Download handler
 	output$downRes <- downloadHandler(
 		filename = function(){
 			#Name file in the form "YYYY-MM-DD_HH-MM-SS_targets.csv
@@ -402,22 +393,23 @@ shinyServer(function(input, output, session){
 		}
 	)
 	
+	# Pre-computed genes functions
 	
-	#Gene Selection UI Output
-	output$pcGeneSelect <- renderUI({
-		if(!is.null(input$pcSpeciesSelect)){
-			if(input$pcSpeciesSelect == "human"){
-				selectInput("pcGene", 
-										label = "Please select your gene of interest: ",
-										choices = c("Not yet supported" = 0))
-			} else if(input$pcSpeciesSelect == "drerio"){
-				selectInput("pcGene", 
-										label = "Please select your gene of interest: ",
-										choices = c("gene1",
-																"gene2"))
-			}
-		}
-	})
+	# Gene Selection UI Output
+	#output$pcGeneSelect <- renderUI({
+	#	if(!is.null(input$pcSpeciesSelect)){
+	#		if(input$pcSpeciesSelect == "human"){
+	#			selectInput("pcGene", 
+	#									label = "Please select your gene of interest: ",
+	#									choices = c("Not yet supported" = 0))
+	#		} else if(input$pcSpeciesSelect == "drerio"){
+	#			selectInput("pcGene", 
+	#									label = "Please select your gene of interest: ",
+	#									choices = c("gene1",
+	#															"gene2"))
+	#		}
+	#	}
+	#})
 	
 	#Clickable Plot Output
 	#output$genePlot <- renderPlot({
@@ -447,10 +439,11 @@ shinyServer(function(input, output, session){
 		#		talFlag <- 2 #Problems with input TALEN
 		#	}
 		#} else {
-			talFlag <- 0 #TALENs not selected
+			talFlag <- 0 # TALENs not selected
 		#}
 		
 		cusPamFlag <- 2
+		
 		if(input$customCutOpt == 1){
 			if(is.null(validCustomPam()) && is.null(validCustomCutSites())){
 				cusPamFlag <- 1
@@ -462,6 +455,7 @@ shinyServer(function(input, output, session){
 		}
 		
 		lenMatch <- 2
+		
 		if(input$customCutOpt == 1){
 			if(is.null(validMatchCustomInputLength())){
 				lenMatch <- 1
@@ -472,20 +466,21 @@ shinyServer(function(input, output, session){
 			lenMatch <- 0
 		}
 		
-		#Prevent from running without okay inputs
-		if(is.null(validRefSeqGBGenbankId()) && #Check Genbank ID is okay
-			 #is.null(validThreshold()) &&         #Check threshold is okay
-			 is.null(validPAM()) &&               #Check that one of the input options is selected
-			 (cusPamFlag != 2) &&                 #Check if custom PAMs are used, and if they are okay
-			 (talFlag != 2) &&                    #Check if TALENs are used, and if they are okay
+		# Prevent the whole shebang from running without okay inputs
+		if(is.null(validRefSeqGBGenbankId()) && # Check Genbank ID is okay
+			 #is.null(validThreshold()) &&         # Check threshold is okay
+			 is.null(validPAM()) &&               # Check that one of the input options is selected
+			 (cusPamFlag != 2) &&                 # Check if custom PAMs are used, and if they are okay
+			 (talFlag != 2) &&                    # Check if TALENs are used, and if they are okay
 			 (lenMatch != 2)){                    
 			
+			# Create a new progress object
 			progress <- shiny::Progress$new()
 			
-			#Make sure the progress option closes regardless of calculation outcome
+			# Make sure the progress option closes regardless of calculation outcome
 			on.exit(progress$close())
 			
-			#Set the progress message to display at beginning of calculations
+			# Set the progress message to display at beginning of calculations
 			progress$set(message = "Progress:", value = 0)
 			
 			talenList <- ""
@@ -506,8 +501,8 @@ shinyServer(function(input, output, session){
 			
 			progress$set(detail = "Retrieving GenBank entry...", value = 0.1)
 			
-			#Try to pull genbank entry associated with accession
-			#Get the GenBank sequence with exon/intron information
+			# Try to pull genbank entry associated with accession
+			# Get the GenBank sequence with exon/intron information
 			gba <- input$genbankId
 			
 			endOfTry <<- FALSE
@@ -519,14 +514,14 @@ shinyServer(function(input, output, session){
 				tryCatch({
 					info <- suppressWarnings(wonkyGenBankHandler(gba))
 					endOfTry <<- TRUE
-					gbhFlag  <<- TRUE  #Flag to indicate wonkyGenBankHandler was required 
-					gbFlag   <<- FALSE #Flag to indicate readGenBank failed #deprecated; to remove
+					gbhFlag  <<- TRUE  # Flag to indicate wonkyGenBankHandler was required 
+					gbFlag   <<- FALSE # Flag to indicate readGenBank failed #deprecated; to remove
 				}, error = function(err){
 				}
 				)
 			}
 			
-			#Figure out which exons to target
+			# Figure out which exons to target
 			if(endOfTry){
 				if(input$exonTargetType == 0){
 					exonStuff <- 1
@@ -541,19 +536,19 @@ shinyServer(function(input, output, session){
 					exonStuff <- input$exonTargetList	
 				}
 				
-				#Handle cut distances and PAMs for input to calculateMENTHUGeneSeqGenBank
-				if(input$customCutOpt == 1){ #If customs pams in use
-					suppressWarnings(if(!is.null(input$casType)){ #If pre-made PAMs in use
+				# Handle cut distances and PAMs for input to calculateMENTHUGeneSeqGenBank
+				if(input$customCutOpt == 1){ # If customs pams in use
+					suppressWarnings(if(!is.null(input$casType)){ # If pre-made PAMs in use
 						pams         <- pamStitch( input$casType, input$customPamSeq)
 						cutDistances <- distStitch(input$casType, input$cutSite)
 						
-					} else { #If no pre-made PAMs
+					} else { # If no pre-made PAMs
 						print(paste0("Custom PAM Seq: ", input$customPamSeq))
 						pams         <- pamStitch( "", input$customPamSeq)
 						cutDistances <- distStitch("", input$cutSite)
 					}
 					)
-				} else { #If no custom pams
+				} else { # If no custom pams
 					pams         <- input$casType
 					cutDistances <- rep(-3, length(input$casType))
 				}
@@ -573,6 +568,7 @@ shinyServer(function(input, output, session){
 																									info, input$firstExon, input$exonTargetType, exonStuff, progress)
 				
 
+				# Statistics on the number of targets detected
 				output$genbankhits <- renderUI({
 					HTML(paste(
 						paste0("Number of target sites detected: ",                                             stuff[[2]]),
@@ -586,24 +582,18 @@ shinyServer(function(input, output, session){
 				
 				results <<- stuff[[1]]
 				
-				#Order the result table from largest menthuScore to smallest, and drop 0s
+				# Order the result table from largest menthuScore to smallest, and drop 0s
 				results <<- results[which(results$MENTHU_Score > 0), ]
 				results <<- results[order(-results$MENTHU_Score), ]
 
+				# Set the flag to display genbank results
 				rValues$genbankResultsFlag <- TRUE
 				
-				#Set the download button flag to true to render download button visible
+				# Set the download button flag to true to render download button visible
 				rValues$downloadFGB <- TRUE
 				
-				#Output the results in a data table
-				#output$genbankResults <- DT::renderDataTable(results, 
-				#											options  = list(scrollX = TRUE), 
-				#											rownames = FALSE,
-				#											escape   = FALSE)
-				#})
-				
 			} else {
-				#Output error if no genbank file is found
+				# Output error if no genbank file is found
 				output$genbankIdOutcome <- renderText(paste0("Error: Accession '", input$genbankId, "' was not found in database."))
 			}
 		}
@@ -624,7 +614,7 @@ shinyServer(function(input, output, session){
 			talFlag <- 0 #TALENs not selected
 		#}
 		
-		#Run checks for okay custom PAM input
+		# Run checks for okay custom PAM input
 		cusPamFlag <- 2
 		if(input$customCutOpt == 1){
 			if(is.null(validCustomPam()) && is.null(validCustomCutSites())){
@@ -638,7 +628,7 @@ shinyServer(function(input, output, session){
 			cusPamFlag <- 0
 		}
 		
-		#Run checks for okay length match b/w PAM and cut site
+		# Run checks for okay length match b/w PAM and cut site
 		lenMatch <- 2
 		if(input$customCutOpt == 1){
 			if(is.null(validMatchCustomInputLength())){
@@ -652,20 +642,21 @@ shinyServer(function(input, output, session){
 			lenMatch <- 0
 		}
 		
-		#Prevent from running without okay inputs
-		if(is.null(validGeneSeq()) &&           #Check Genbank ID is okay
-			 #is.null(validThreshold()) &&         #Check threshold is okay
-			 is.null(validPAM()) &&               #Check that one of the input options is selected
-			 (cusPamFlag != 2) &&                 #Check if custom PAMs are used, and if they are okay
-			 (talFlag != 2) &&                    #Check if TALENs are used, and if they are okay
+		# Prevent from running without okay inputs
+		if(is.null(validGeneSeq()) &&           # Check Genbank ID is okay
+			 #is.null(validThreshold()) &&         # Check threshold is okay
+			 is.null(validPAM()) &&               # Check that one of the input options is selected
+			 (cusPamFlag != 2) &&                 # Check if custom PAMs are used, and if they are okay
+			 (talFlag != 2) &&                    # Check if TALENs are used, and if they are okay
 			 (lenMatch != 2)){                     
 			
-			#Make a progress object
+			# Make a progress object
 			progress <- shiny::Progress$new()
-			#Make sure the progress option closes regardless of calculation outcome
+			
+			# Make sure the progress option closes regardless of calculation outcome
 			on.exit(progress$close())
 			
-			#If there is not exon input, just set to 0, otherwise use exon input
+			# If there is not exon input, just set to 0, otherwise use exon input
 			if(input$pasteExonType == 0){
 				exonIn <- 0
 				
@@ -678,7 +669,7 @@ shinyServer(function(input, output, session){
 				}
 			}
 			
-			#Set the progress message to display at beginning of calculations
+			# Set the progress message to display at beginning of calculations
 			progress$set(message = "Progress:", value = 0)
 			
 			if(talFlag == 0){
@@ -707,8 +698,8 @@ shinyServer(function(input, output, session){
 				#talSpamax <- spamax
 			}
 			
-			#Format custom PAMs and cut distances for submission to calculateMENTHUGeneSeq
-			suppressWarnings(if(input$customCutOpt == 1){ #If customs pams in use
+			# Format custom PAMs and cut distances for submission to calculateMENTHUGeneSeq
+			suppressWarnings(if(input$customCutOpt == 1){ # If customs pams in use
 				if(is.null(input$casType)){
 					tCasFlag <- FALSE
 				} else {
@@ -719,13 +710,13 @@ shinyServer(function(input, output, session){
 					pams         <- pamStitch( input$casType, input$customPamSeq)
 					cutDistances <- distStitch(input$casType, input$cutSite)
 					
-				} else { #If no pre-made PAMs
+				} else { # If no pre-made PAMs
 					pams         <- pamStitch( "", input$customPamSeq)
 					cutDistances <- distStitch("", input$cutSite)
 					
 				}
 				
-			} else { #If no custom pams
+			} else { # If no custom pams
 				pams <- input$casType
 				cutDistances <- rep(-3, length(input$casType))
 			})
@@ -736,13 +727,13 @@ shinyServer(function(input, output, session){
 				talFlag <- FALSE
 			#}
 			
-			#Calculate the MENTHU score
+			# Calculate the MENTHU score
 			#results <<- calculateMENTHUGeneSeq(pams, cutDistances, wiggle = TRUE, wigRoom = 39, toupper(input$geneSeq), input$threshold, talFlag,
 			#																	 exonIn, progress, talArmin, talArmax, talSpamin, talSpamax, input$scoreScheme)
 			#results <<- calculateMENTHUGeneSeq(pams, cutDistances, wiggle = TRUE, wigRoom = 39, input$geneSeq, input$threshold, 
 			#																	 exonIn, progress, talArmin, talArmax, talSpamin, talSpamax)
 			
-			stuff <<- calculateMENTHUGeneSeq(pams, cutDistances, wiggle = TRUE, wigRoom = 39, input$geneSeq, exonIn, progress)
+			stuff   <<- calculateMENTHUGeneSeq(pams, cutDistances, wiggle = TRUE, wigRoom = 39, input$geneSeq, exonIn, progress)
 			
 			results <<- stuff[[1]]
 			
@@ -750,6 +741,7 @@ shinyServer(function(input, output, session){
 				rValues$geneSeqError <- 1
 			} else {
 				
+				# Output statistics regarding number of target sites found
 				output$geneseqhits <- renderUI({
 					HTML(paste(
 						paste0("Number of target sites detected: ",                                             stuff[[2]]),
@@ -761,23 +753,15 @@ shinyServer(function(input, output, session){
 					))
 				})
 				
-				#Order the result table from largest menthuScore to smallest
+				# Order the result table from largest menthuScore to smallest
 				results <<- results[which(results$MENTHU_Score > 0), ]
 				results <<- results[order(-results$MENTHU_Score),]
 				
 				rValues$geneSeqResultsFlag <- TRUE
 				
-				#Set the download button flag to true to render download button visible
+				# Set the download button flag to true to render download button visible
 				rValues$downloadF <- TRUE
 			}
-			
-			
-			#Output the results in a data table
-			#output$geneSeqResults <- DT::renderDataTable(results, 
-			#																						 options  = list(scrollX = TRUE), 
-			#																						 rownames = FALSE,
-			#																						 escape   = FALSE)
-
 		}
 	})
 	
@@ -800,39 +784,39 @@ shinyServer(function(input, output, session){
 		)
 	})
 	
-	#Action link for inputting an example GenBank accession/session
+	# Action link for inputting an example GenBank accession/session
 	observeEvent(input$exampleGenBank, {
-		reset()        #Clear all the inputs
-		resetOutputs() #Clear the output regions
+		reset()        # Clear all the inputs
+		resetOutputs() # Clear the output regions
 		
-		#Reset/clear the input exon table
+		# Reset/clear the input exon table
 		rValues$rhFrame   <- dfEmpty
 		rValues$resetVal  <- TRUE
 		
-		#Do not display the input exon table
+		# Do not display the input exon table
 		geneSeqExampleFlag <<- FALSE
 		
-		#Update the inputType to GenBank
+		# Update the inputType to GenBank
 		updateRadioButtons(session,
 											 "inputType", 
 											 selected = 1)
 		
-		#Update the PAM selection
+		# Update the PAM selection
 		updateCheckboxGroupInput(session, 
 														 "casType", 
 														 selected = c("NRG", "NNNRRT"))
 		
-		#Pre-populate with the flh zebrafish gene
+		# Pre-populate with the flh zebrafish gene
 		updateTextAreaInput(session,
 												"genbankId",
 												value = "AY214391.1")
 		
-		#Update to use the first exon
+		# Update to use the first exon
 		updateRadioButtons(session,
 											 "firstExon",
 											 selected = 1)
 		
-		#Search all exons
+		# Search all exons
 		updateRadioButtons(session,
 											 "exonTargetType",
 											 selected = 0)
@@ -849,24 +833,23 @@ shinyServer(function(input, output, session){
 		#										 value = 1.5)
 		#}
 		
-		#Use custom PAM input
+		# Use custom PAM input
 		updateRadioButtons(session,
 											 "customCutOpt",
 											 selected = 1)
 		
-		#Make custom PAMs
+		# Make custom PAMs
 		updateTextAreaInput(session,
 												"customPamSeq",
 												value = "NNNGCT")
 		
-		#Make custom PAM distance
+		# Make custom PAM distance
 		updateTextAreaInput(session,
 												"cutSite",
 												value = "-4")
-		
 	})
 	
-	#Example of gene sequence copy/paste input
+	# Example of gene sequence copy/paste input
 	observeEvent(input$exampleGeneSeq, {
 		reset()
 		resetOutputs()
@@ -874,20 +857,20 @@ shinyServer(function(input, output, session){
 		rValues$rhFrame   <- dfExample
 		rValues$resetVal  <- TRUE
 			
-		#Set flag to display 'exon' information
+		# Set flag to display 'exon' information
 		geneSeqExampleFlag <<- TRUE
 		
-		#Change input type to copy/paste
+		# Change input type to copy/paste
 		updateRadioButtons(session,
 											 "inputType",
 											 selected = 2)
 		
-		#Change to custom exon input
+		# Change to custom exon input
 		updateRadioButtons(session,
 											 "pasteExonType",
 											 selected = 1)
 		
-		#Sample copy/paste gene input
+		# Sample copy/paste gene input
 		updateTextAreaInput(session, "geneSeq",
 												value = paste0("CTTTCCTGCGTTATCCCCTGATTCTGTGGATAACCGTATTACCGCCTTTGAGTGAGCTGAT",
 																			 "ACCGCTCGCCGCAGCCGAACGACCGAGCGCAGCGAGTCAGTGAGCGAGGAAGCGGAAGAGC",
@@ -899,26 +882,25 @@ shinyServer(function(input, output, session){
 																			 "TAAAACGAAAGGCCCAGTCTTCCGACTGAGCCTTTCGTTTTATTTGATGCCTGGCAGTTCC",
 																			 "CTACTCTCGCGTTAACGCTAGCATGGATGTTTTCCCAGTCACGACGT"))
 		
-		#Sample PAMs
+		# Sample PAMs
 		updateCheckboxGroupInput(session, 
 														 "casType", 
 														 selected = c("NNGTGA", "NNAGAAW", "NNNVRYAC", "NNNNGMTT"))
 		
-		#Use custom PAM input
+		# Use custom PAM input
 		updateRadioButtons(session,
 											 "customCutOpt",
 											 selected = 1)
 		
-		#Make custom PAMs
+		# Make custom PAMs
 		updateTextAreaInput(session,
 												"customPamSeq",
 												value = "NNNGAG NNNGNG")
 		
-		#Make custom PAM distance
+		# Make custom PAM distance
 		updateTextAreaInput(session,
 												"cutSite",
 												value = "-4 -3")
-		
 		
 		#if(input$scoreScheme == 1){
 			#Change threshold to 30 to show output
@@ -927,11 +909,9 @@ shinyServer(function(input, output, session){
 			#Change threshold to 1.5 to show output
 		#	updateNumericInput(session, "threshold", value = 1.5)
 		#}
-		
-
 	})
 	
-	#When hitting the reset link button, call the reset function
+	# When hitting the reset link button, call the reset function
 	observeEvent(input$reset, {
 		reset()
 		resetOutputs()
@@ -945,40 +925,40 @@ shinyServer(function(input, output, session){
 		}
 	}
 	
-	#Reset function
+	# Reset function
 	reset <- function(){
-		#Reset the geneSeqExample flag input
+		# Reset the geneSeqExample flag input
 		geneSeqExampleFlag <<- FALSE
 		
-		#Update scoring system
+		# Update scoring system
 		#updateRadioButtons(session,
 		#									 "scoreScheme",
 		#									 selected = 2)
 		
-		#Update checkboxes to only have SpCas9 NGG selected
+		# Update checkboxes to only have SpCas9 NGG selected
 		updateCheckboxGroupInput(session, 
 														 "casType", 
 														 selected = "NGG"
 		)
 		
-		#Clear custom pam input
+		# Clear custom pam input
 		updateTextAreaInput(session,
 												"customPamSeq",
 												value = ""
 		)
 		
-		#Clear custom DSB
+		# Clear custom DSB
 		updateTextAreaInput(session,
 												"cutSite",
 												value = "")
 		
-		#Update custom PAM sequence to 'no'
+		# Update custom PAM sequence to 'no'
 		updateRadioButtons(session,
 											 "customCutOpt",
 											 selected = 0)
 
 		if(input$inputType == 2){
-			#Reset geneSeq input
+			# Reset geneSeq input
 			updateTextAreaInput(session, 
 													"geneSeq", 
 													label = "", 
@@ -987,14 +967,15 @@ shinyServer(function(input, output, session){
 			updateRadioButtons(session,
 												 "pasteExonType",
 												 selected = 0)
-			
-			#Reset genbank input
+
+			# Reset genbank input
 			#updateTextAreaInput(session,
 			#										"genbankId",
 			#										label = "",
 			#										value = "")
+			
 		} else if(input$inputType == 1){
-			#Reset genbank input
+			# Reset genbank input
 			updateTextAreaInput(session,
 													"genbankId",
 													label = "",
@@ -1009,50 +990,44 @@ shinyServer(function(input, output, session){
 			#									 "pasteExonType",
 			#									 selected = 0)
 		}
-		
-		
-		
-		#Reset sequence input type
+
+		# Reset sequence input type
 		updateRadioButtons(session, 
 											 "inputType", 
 											 selected = 1
 		)
-		
-		
-		
-		
-		#Reset talen inputs
+
+		# Reset talen inputs
 		#updateNumericInput(session, "spamin", value = 14)
 		#updateNumericInput(session, "spamax", value = 16)
 		#updateRadioButtons(session, "spacer", selected = 0)
 		#updateNumericInput(session, "armin",  value = 15)
 		#updateNumericInput(session, "armax",  value = 15)
 		
-		#Reset talen select
+		# Reset talen select
 		#updateRadioButtons(session, "talenOp", selected = 0)
 		
-		#Reset threshold input
+		# Reset threshold input
 		#updateNumericInput(session, "threshold", value = 1.5)
 		
-		#Reset rhandsontable
+		# Reset rhandsontable
 		rValues$resetVal <- TRUE
 		rValues$rhFrame <- dfEmpty
 		
-		#Set the download flag to not display the download button
+		# Set the download flag to not display the download button
 		rValues$downloadF   <- FALSE
 		rValues$downloadFGB <- FALSE
 		
-		#Empty the result storage
+		# Empty the result storage
 		results <<- 0
-		
-		
 	}
 	
 	resetGenBankOutputs <- function(){
-		#Clear copy/paste outputs
+		# Clear copy/paste outputs
 		output$genbankIdOutcome <- renderText({
 			""
-		})
+		}) 
+		
 		rValues$genbankResultsFlag <- FALSE
 		rValues$geneSeqResultsFlag <- FALSE	
 	}
@@ -1066,7 +1041,7 @@ shinyServer(function(input, output, session){
 		})
 	}
 	
-	#Functions for updating slider input based on user actions
+	# Functions for updating slider input based on user actions
 	observeEvent(input$armin, {
 		updateSliderInput(session = session, inputId = "armax",  min = input$armin)
 	})
@@ -1082,5 +1057,4 @@ shinyServer(function(input, output, session){
 	#observeEvent(input$spamax, {
 	#	updateSliderInput(session = session, inputId = "spamin", max = input$spamax)
 	#})
-	
 })

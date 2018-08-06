@@ -62,12 +62,16 @@ calculateMenthu2 <- function(inData, cutSite = -1, weight = 20, maxdbm = 5){
 		outFrame <- data.frame(seq              = inData,
 													 menthuScore      = ratio,
 													 frameShift       = fShift,
+													 topDel           = threePlus$delSeq[1],
+													 topMH            = threePlus$microhomology[1],
 													 stringsAsFactors = FALSE)
 	} else {
 		#If there are no microhomologies, return an empty-ish frame
 		outFrame <- data.frame(seq              = "", 
 													 menthuScore      = -1, 
 													 frameShift       = "NA", 
+													 topDel           = "",
+													 topMH            = "",
 													 stringsAsFactors = FALSE)
 	}
 
@@ -91,11 +95,11 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 	}
 	
 	#Get the pattern scores for every deletion pattern in the wildtype sequence
-	patternScoreDF <- baeRevised(inData, cutSite, weight)
+	patternScoreDF <- baeRevised(inData, cutSite, weight, mh = 2)
 	patternScoreDF <- patternScoreDF[order(-patternScoreDF$patternScore), ]
 	
 	if(nrow(patternScoreDF) > 0){
-		#Determine if there is a frameshift for each deletion pattern
+		#Determine if there is a frameshift for the top-scoring deletion pattern
 		fShift <- (if(patternScoreDF[1, 3] %% 3 == 0){"No"} else {"Yes"})
 		
 		#Subset the out of frame scores
@@ -138,7 +142,10 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 														outOfFrameScore    = outOfFrameScore,
 														slopeMH3Plus       = linModel3$coefficients[2],
 														frameShift         = fShift,
+														topDel             = top103Plus$seq[1],
 														stringsAsFactors   = FALSE)
+		
+		
 	} else {
 		#Create empty data frame if there are no pattern scores
 		tempFrame <- data.frame(seq                = "",
@@ -148,6 +155,7 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 														stringsAsFactors   = FALSE)
 	}
 	
+	rownames(tempFrame) <- c()
 	return(tempFrame)
 }
 
@@ -163,13 +171,13 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 #'
 #' @examples
 
-baeRevised <- function(seq, cutPosition, weight = 20.0){
+baeRevised <- function(seq, cutPosition, weight = 20.0, mhL = 3){
 	#Split the sequence into upstream and downstream of the cut site
 	upstream   <- substring(seq, 1,                    nchar(seq) / 2)
 	downstream <- substring(seq, (nchar(seq) / 2) + 1, nchar(seq))
 	
 	#Get all common substrings between upstream and downstream sections of sequence
-	commonSubstrings <- allsubstr(upstream, downstream)
+	commonSubstrings <- allsubstr(upstream, downstream, mhL)
 	
 	#Check if there is a 3bp or greater MH
 	if(length(commonSubstrings) > 0){ 
@@ -184,7 +192,7 @@ baeRevised <- function(seq, cutPosition, weight = 20.0){
 		
 		#Find all the starting and ending locations of the common substrings in the upstream portion
 		upStart   <- matchLocsUp$values
-		upEnd     <- matchLocsUp$values + nchar(matchLocsUp$ind)
+		upEnd     <- matchLocsUp$values + nchar(matchLocsUp$ind) - 1
 		
 		#Do the same for the downstream
 		downStart <- matchLocsDown$values + nchar(upstream)
@@ -208,54 +216,85 @@ baeRevised <- function(seq, cutPosition, weight = 20.0){
 		mhDFdown <- mhDFdown[order(nchar(mhDFdown$seq), mhDFdown$seq), ]
 		
 		#Merge the two data frames
-		mhDF <- merge(mhDFup, mhDFdown)
+		mhDF <- suppressMessages(plyr::join(mhDFup, mhDFdown))
 
-		#Create true/false matrices to identify overlapping microhomologies
-		#Create matrix of TRUE/FALSE to determine if an upstream start is greater than another
-		aMat <- sapply(mhDF$upStart,   function(x) x >= mhDF$upStart)
-		diag(aMat) <- FALSE
-		#Create matrix of TRUE/FALSE to determine if an upstream end is less than another
-		bMat <- sapply(mhDF$upEnd,     function(x) x <= mhDF$upEnd)
-		diag(bMat) <- FALSE
-		#Create matrix of TRUE/FALSE to determine if an downstream start is greater than another
-		cMat <- sapply(mhDF$downStart, function(x) x >= mhDF$downStart)
-		diag(cMat) <- FALSE
-		#Create matrix of TRUE/FALSE to determine if an downstream end is less than another
-		dMat <- sapply(mhDF$downEnd,   function(x) x <= mhDF$downEnd)
-		diag(dMat) <- FALSE
-		
-		#Create a TRUE/FALSE matrix comparing all slots in the matrices above to identify redundant microhomologies
-		trueMat <- aMat & bMat & cMat & dMat
-	
-		#Create a list of redunant microhomologies by identifying columns with a "TRUE" value
-		dropList <- which(apply(trueMat, 2, function (x) any(x %in% TRUE)))
-		
-		#Check if there are any entries to be dropped due to overlapping
-		if(length(dropList) != 0){
-			#Drop redundant microhomologies
-			mhDF <- mhDF[-dropList, ]
-		}
-		
 		#Get the lengths of all the deletions
-		leng <- mhDF$downEnd - mhDF$upEnd
+		leng <- mhDF$downEnd - mhDF$upEnd - 1
 		
 		#Get the microhomologies
 		mh   <- mhDF$seq
 		
+		#Create the deletion sequences
+		delSeqs <- unlist(lapply(1:nrow(mhDF), function(x) paste0(substring(seq, 1, mhDF$upEnd[x]),
+																											 paste(rep('-', leng[x]), collapse = ''),
+																											 substring(seq, mhDF$downEnd[x], nchar(seq)))))
+		
+		# Create the sequence that would be observed from the deletion
+		delPattern <- gsub('-', '', delSeqs, fixed = TRUE)
+		
+		
+		oof     <- unlist(lapply(leng, function(x) (if(x %% 3 != 0){1} else {0})))
+		
+		# Create a data frame to hold the information
+		delFrame <- data.frame(seq               = rep(seq, length(delSeqs)),
+													 deletedSeqContext = delSeqs,
+													 delPattern        = delPattern,
+													 microhomology     = mh, 
+													 startDel          = mhDF$upEnd + 1, 
+													 endDel            = mhDF$downEnd, 
+													 mhStart1          = mhDF$upStart, 
+													 mhEnd1            = mhDF$upEnd,
+													 mhStart2          = mhDF$downStart,
+													 mhEnd2            = mhDF$downEnd,
+													 deletedSeq        = delSeqs,
+													 delLength         = leng, 
+													 mhLength          = nchar(mhDF$seq),
+													 GC                = (stringr::str_count(mh, 'G') + stringr::str_count(mh, 'C')) / nchar(mh),
+													 outOfFrame        = oof,
+													 patternScore      = (100 * (round(1 / exp((leng) / weight), 3)) * 
+													 										 	(stringr::str_count(mh, 'G') + stringr::str_count(mh, 'C') + nchar(mh))),
+													 stringsAsFactors  = FALSE)
+		
+		# Order the data frame by microhomology length (descending), and then by pattern score (descending)
+		delFrameOrd <- delFrame[order(-nchar(delFrame$microhomology), -delFrame$patternScore),]
+		
+		# Identify if a row in the data frame produces a deletion pattern produced by a longer microhomology
+		# This eliminates redundant microhomologies which are actually part of a longer, better-scoring microhomology
+		dupes <- sapply(1:nrow(delFrameOrd), function(x) unlist(sapply(1:x, function(y){
+			if(x != y){
+				if(delFrameOrd$delPattern[x] == delFrameOrd$delPattern[y]){
+					TRUE
+				} else {
+					FALSE
+				}
+			} else {
+				FALSE
+			}
+		})))
+		
+		# Drop the duplicates
+		dupeDrop     <- sapply(dupes, function(x) any(x))
+		dupeDropList <- which(dupeDrop)
+		delFrameOrdDeDupe <- delFrameOrd[-dupeDropList,]
+		delFrame          <- delFrameOrdDeDupe[order(-delFrameOrdDeDupe$patternScore), ]
+		
 		#Create the deletion/patternscore data frame
-		psDF <- data.frame(microhomology    = mh,
-											 delLength        = leng,
-											 patternScore     = (100 * (round(1 / exp((leng) / weight), 3)) * 
-											 								    (stringr::str_count(mh, 'G') + stringr::str_count(mh, 'C') + nchar(mh))),
+		psDF <- data.frame(seq              = delFrame$seq,
+											 microhomology    = delFrame$microhomology,
+											 delLength        = delFrame$delLength,
+											 patternScore     = delFrame$patternScore,
+											 delSeq           = delFrame$deletedSeqContext,
 											 stringsAsFactors = FALSE
 		)
 		
 	} else {
 		
 		#Create empty return frame if no MHs detected
-		psDF <- data.frame(microhomology    = as.character(),
+		psDF <- data.frame(seq              = as.character(),
+											 microhomology    = as.character(),
 											 delLength        = as.numeric(),
 											 patternScore     = as.numeric(),
+											 delSeqs          = as.character(),
 											 stringsAsFactors = FALSE)
 	}
 	
@@ -273,14 +312,14 @@ baeRevised <- function(seq, cutPosition, weight = 20.0){
 #'
 #' @examples
 
-allsubstr <- function(upstream, downstream){
+allsubstr <- function(upstream, downstream, mh = 3){
 	#Create empty string to hold upstream strings
 	upstreamStrings   <- list()
 	#Create empty string to hold downstream strings
 	downstreamStrings <- list()
 	
 	#Generate all possible substrings of length >= 3 in the upstream and downstream strings
-	for(i in 3:nchar(upstream)){
+	for(i in mh:nchar(upstream)){
 		upstreamStrings   <- c(upstreamStrings,   unique(substring(upstream,   1:(nchar(upstream)   - i + 1), i:nchar(upstream))))
 		downstreamStrings <- c(downstreamStrings, unique(substring(downstream, 1:(nchar(downstream) - i + 1), i:nchar(downstream))))
 	}

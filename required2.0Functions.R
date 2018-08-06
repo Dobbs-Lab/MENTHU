@@ -1,6 +1,6 @@
 ####Required Function#######
 
-#' Title
+#' calculateMENTHUGeneSeq
 #'
 #' @param casList 
 #' @param wiggle 
@@ -19,14 +19,20 @@
 #'
 #' @examples
 
-calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, threshold, exonDF, progress, armin, armax, spamin, spamax, version){
+#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, threshold, exonDF, progress, armin, armax, spamin, spamax, version){
+calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, threshold, exonDF, progress, armin, armax, spamin, spamax){
 	require(Biostrings)
 	
 	#Rename the input casList to pamList
 	pamList <- casList
 	
+	#If both NGG and NRG are selected in the PAM list, just search for NRG to save time
+	if("NGG" %in% pamList & "NRG" %in% pamList){
+		pamList <- pamList[-1]
+	}
+	
 	#Create an empty list to hold exon sequences
-	set <- NULL
+	set      <- NULL
 	exonSeqs <- NULL
 	
 	#Subset geneSeq to exon sequences
@@ -48,13 +54,15 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 			}
 			
 			#Create new exonSeqs set with 'fixed' context
-			set <- c(set, DNAString(geneSeq)[exStart:exEnd])
+			set      <- c(set, DNAString(geneSeq)[exStart:exEnd])
 			exonSeqs <- DNAStringSet(set)
 		}
 		
 		#Deal with the case in which exons are specified but extra context should not be included
 	} else if((!wiggle) && (class(exonDF) == "data.frame")){
-		exonSeqs <- DNAStringSet(substring(rep(as.character(geneSeq), nrow(exonDF)), exonDF$exonStart, exonDF$exonEnd))
+		exonSeqs <- DNAStringSet(substring(rep(as.character(geneSeq), nrow(exonDF)), 
+																			 exonDF$exonStart, 
+																			 exonDF$exonEnd))
 		
 	} else {
 		#In the case where exons are not specified, treat the whole gene sequence as a single exon
@@ -66,6 +74,7 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 	
 	#If the user is using Cas:
 	if(length(pamList) > 0){
+		
 		#If there is exon information, use it to correct indexing, otherwise, exonStarts is NULL
 		if(class(exonDF) == "data.frame"){
 			pamSites <- pamScan(pamList, 
@@ -96,7 +105,7 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 		
 		#If the user is NOT using CRISPR/Cas system, set pamFlag to FALSE
 		pamSites <- 0
-		pamFlag <- FALSE
+		pamFlag  <- FALSE
 	}
 	
 	#Create data frame to hold results
@@ -121,9 +130,9 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 			#Set all exon starts to the exon starts in the input frame
 			#Submit talen info to talPal
 			talSites <- talPal(exonSeqs,
-												 findcut = TRUE,
-												 wiggle = TRUE,
-												 wigRoom = 39,
+												 findcut    = TRUE,
+												 wiggle     = TRUE,
+												 wigRoom    = 39,
 												 range      = rFlag, 
 												 armin      = armin, 
 												 armax      = armax, 
@@ -135,9 +144,9 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 			#If there are no exon inputs, make exon start null
 			#Submit talen info to talPal
 			talSites <- talPal(exonSeqs,
-												 findcut = TRUE,
-												 wiggle = TRUE,
-												 wigRoom = 39,
+												 findcut    = TRUE,
+												 wiggle     = TRUE,
+												 wigRoom    = 39,
 												 range      = rFlag, 
 												 armin      = armin, 
 												 armax      = armax, 
@@ -154,7 +163,9 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 	
 	#If there is no exon data input, create a dummy data frame to have the 'exon' be the entire gene sequence, starting on nt 1
 	if(class(exonDF) != "data.frame"){
-		exonDF <- data.frame(exonStart = 1, exonEnd = nchar(geneSeq), stringsAsFactors = FALSE)
+		exonDF <- data.frame(exonStart        = 1, 
+												 exonEnd          = nchar(geneSeq), 
+												 stringsAsFactors = FALSE)
 	}
 	
 	#If the user is using PAMS:
@@ -177,9 +188,11 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 						
 						#Make the process bar increment for every potential Cas site
 						if(talFlag == FALSE){
-							progress$inc(1/(length(unlist(pamSites))), detail = paste("Processing ", names(pamSites[i])))
+							progress$inc(1 / (length(unlist(pamSites))), 
+													 detail = paste("Processing ", names(pamSites[i])))
 						} else {
-							progress$inc(1/(length(unlist(pamSites)) + sum(lengths(talSites[[1]][]))), detail = paste("Processing ", names(pamSites[i])))
+							progress$inc(1 / (length(unlist(pamSites)) + sum(lengths(talSites[[1]][]))), 
+													 detail = paste("Processing ", names(pamSites[i])))
 						}
 						
 						if(!is.na(pamSites[[i]][[j]][[k]][[l]])){
@@ -207,11 +220,11 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 								#Boolean value determining if there is enough sequence context (40 bp upstream, 40 bp downstream) of the cut site
 								#in order to run deletion calculation
 								contextCondition <- ((pamSites[[i]][[j]][[k]][[l]] > 40) && 
-																		 	(pamSites[[i]][[j]][[k]][[l]] + 40) < nchar(geneSeq))
+																		 (pamSites[[i]][[j]][[k]][[l]] + 40) < nchar(geneSeq))
 								
 								#Check if there's enough context...
 								if(!is.na(pamSites[[i]][[j]][[k]][[l]]) && !is.null(pamSites[[i]][[j]][[k]][[l]])){
-									
+									version <- 2
 									if(version == 1){
 										if(contextCondition){
 											#Get the sequence context surrounding the cut site
@@ -259,15 +272,28 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 											if(menthuScoreFrame$menthuScore >= threshold){
 												#Get the CRISPR target sequence required to target this site
 												if(strandId == "forward"){
-													crispr <- substr(menthuScoreFrame$seq,
-																					 (40 + -cutDistList[i] - 19), 
-																					 (40 + -cutDistList[i] + nchar(toolTypeI)))
+													#Get the 20 bp targeting sequence
+													baseCrispr <- substr(menthuScoreFrame$seq,
+																							 (40 + -cutDistList[i] - 19), 
+																							 (40 + -cutDistList[i]))
+													#Get the PAM sequence
+													PAM <- substr(menthuScoreFrame$seq,
+																				(40 + -cutDistList[i] + 1), 
+																				(40 + -cutDistList[i] + nchar(toolTypeI)))
+													#Create HTML tagged sequence to display PAMs boldly
+													crispr <- paste0(baseCrispr, "<strong>", PAM, "</strong>")
 
 												} else if(strandId == "complement"){
-													#crispr <- as.character(substr(Biostrings::reverseComplement(DNAString(slopeFrame$seq)), 
-													crispr <- as.character(substr(Biostrings::reverseComplement(DNAString(menthuScoreFrame$seq)),															
-																												(40 + -cutDistList[i] - 19), 
-																												(40 + -cutDistList[i] + nchar(toolTypeI))))
+													#Get the 20 bp targeting sequence
+													baseCrispr <- substr(Biostrings::reverseComplement(DNAString(menthuScoreFrame$seq)),
+																							 (40 + -cutDistList[i] - 19), 
+																							 (40 + -cutDistList[i]))
+													#Get the PAM sequence
+													PAM <- substr(Biostrings::reverseComplement(DNAString(menthuScoreFrame$seq)),
+																				(40 + -cutDistList[i] + 1), 
+																				(40 + -cutDistList[i] + nchar(toolTypeI)))
+													#Create HTML tagged sequence to dispaly PAMs boldly
+													crispr <- paste0(baseCrispr, "<strong>", PAM, "</strong>")
 												}
 												
 												#Create data frame of the current results
@@ -302,17 +328,20 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 			
 			if(length(talSites[[1]][[o]] > 0)){
 				#Get the number of the exon
-				exonNum <- names(talSites[[2]][o])
+				exonNum    <- names(talSites[[2]][o])
 				exonNumAct <- as.numeric(gsub("Exon ", "", exonNum))
 				
 				for(p in 1:length(talSites[[1]][[o]])){
 					#Only do the calculation of the TALEN cut site if it is in the current exon
 					if(length(talSites[[1]][[o]][[p]][]) > 0){
+						
 						#Progress bar for going through sites
 						if(pamFlag == FALSE){
-							progress$inc(1/(sum(lengths(talSites[[1]][]))), detail = paste("Processing TALENs"))
+							progress$inc(1 / (sum(lengths(talSites[[1]][]))), 
+													 detail = paste("Processing TALENs"))
 						} else {
-							progress$inc(1/(length(unlist(pamSites)) + sum(lengths(talSites[[1]][]))), detail = paste("Processing TALENs"))
+							progress$inc(1 / (length(unlist(pamSites)) + sum(lengths(talSites[[1]][]))), 
+													 detail = paste("Processing TALENs"))
 						}
 						
 						if(!is.na(talSites[[1]][[o]][[p]])){
@@ -334,10 +363,11 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 								#Boolean value determining if there is enough sequence context (40 bp upstream, 40 bp downstream) of the cut site
 								#in order to run deletion calculation
 								contextCondition <- ((talSites[[1]][[o]][[p]] > 40) && 
-																		 	(talSites[[1]][[o]][[p]] + 40) <= nchar(geneSeq))
+																		 (talSites[[1]][[o]][[p]] + 40) <= nchar(geneSeq))
 								
 								#Check if there's enough context...
 								if(!is.na(talSites[[1]][[o]][[p]]) && !is.null(talSites[[1]][[o]][[p]])){
+									version <- 2
 									if(version == 1){
 										if(contextCondition){
 											#Get the sequence context surrounding the cut site
@@ -356,13 +386,14 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 													talen <- as.character(reverseComplement(DNAString(talSites[[2]][[o]][[1]][[p]])))
 												}
 												
-												formFrame  <- data.frame(Target_Sequence = talen, 
-																								 MENTHU_Score = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
-																								 Frame_Shift = slopeFrame$frameShift,
-																								 Tool_Type = "TALEN", 
-																								 Strand = strandId, 
-																								 Exon_ID = exonID, 
-																								 Cut_Location = as.integer(talSites[[1]][[o]][[p]], digits = 0))
+												formFrame  <- data.frame(Target_Sequence  = talen, 
+																								 MENTHU_Score     = round(abs(slopeFrame$slopeMH3Plus), digits = 2), 
+																								 Frame_Shift      = slopeFrame$frameShift,
+																								 Tool_Type        = "TALEN", 
+																								 Strand           = strandId, 
+																								 Exon_ID          = exonID, 
+																								 Cut_Location     = as.integer(talSites[[1]][[o]][[p]], digits = 0),
+																								 stringsAsFactors = FALSE)
 												
 												menthuFrame <- rbind(menthuFrame, formFrame)
 											}
@@ -385,13 +416,14 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 													talen <- as.character(reverseComplement(DNAString(talSites[[2]][[o]][[1]][[p]])))
 												}
 												
-												formFrame  <- data.frame(Target_Sequence = talen, 
-																								 MENTHU_Score = round(menthuScoreFrame$menthuScore, digits = 2), 
-																								 Frame_Shift = menthuScoreFrame$frameShift,
-																								 Tool_Type = "TALEN", 
-																								 Strand = strandId, 
-																								 Exon_ID = exonID, 
-																								 Cut_Location = as.integer(talSites[[1]][[o]][[p]], digits = 0))
+												formFrame  <- data.frame(Target_Sequence  = talen, 
+																								 MENTHU_Score     = round(menthuScoreFrame$menthuScore, digits = 2), 
+																								 Frame_Shift      = menthuScoreFrame$frameShift,
+																								 Tool_Type        = "TALEN", 
+																								 Strand           = strandId, 
+																								 Exon_ID          = exonID, 
+																								 Cut_Location     = as.integer(talSites[[1]][[o]][[p]], digits = 0),
+																								 stringsAsFactors = FALSE)
 												
 												menthuFrame <- rbind(menthuFrame, formFrame)
 											}
@@ -512,11 +544,17 @@ pamStitch <- function(pamList, custPamList){
 #'
 #' @examples
 
+#calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, 
+#																					genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress, version){
 calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, 
-																					genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress, version){
+																						genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress){
 	#startTime <- proc.time()
 	#Rename the input casList to pamList
 	pamList <- casList
+	
+	if("NGG" %in% pamList & "NRG" %in% pamList){
+		pamList <- pamList[-1]
+	}
 	
 	#Update progress bar
 	progress$inc(0.01, detail = "Scanning for target sites...")
@@ -566,9 +604,9 @@ calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, w
 		#Set all exon starts to the exon starts in the input frame
 		#Submit talen info to talPal
 		talSites <- talPal(DNAStringSet(exonSeq),
-											 findcut = TRUE,
-											 wiggle = TRUE,
-											 wigRoom = 39,
+											 findcut    = TRUE,
+											 wiggle     = TRUE,
+											 wigRoom    = 39,
 											 range      = rFlag, 
 											 armin      = talenList[[1]], 
 											 armax      = talenList[[2]], 
@@ -655,6 +693,7 @@ calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, w
 										
 										#Check if there's enough context...
 										if(!is.na(pamSites[[i]][[j]][[k]][[l]]) && !is.null(pamSites[[i]][[j]][[k]][[l]])){
+											version <- 2
 											if(version == 1){
 												if(contextCondition){
 													#Get the sequence context surrounding the cut site
@@ -696,9 +735,21 @@ calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, w
 														
 														#Get the CRISPR target sequence required to target this site
 														if(strandId == "forward"){
-															crispr <- substr(menthuScoreFrame$seq, (40 + -cutDistList[i] - 19), (40 + -cutDistList[i] + nchar(toolTypeI)))
+															baseCrispr <- substr(menthuScoreFrame$seq, (40 + -cutDistList[i] - 19), (40 + -cutDistList[i]))
+															PAM <- substr(menthuScoreFrame$seq, (40 + -cutDistList[i] + 1), (40 + -cutDistList[i] + nchar(toolTypeI)))
+															#crispr <- substr(menthuScoreFrame$seq, (40 + -cutDistList[i] - 19), (40 + -cutDistList[i] + nchar(toolTypeI)))
+															crispr <- paste0(baseCrispr, "<strong>", PAM, "</strong>")
 														} else if(strandId == "complement"){
-															crispr <- as.character(substr(Biostrings::reverseComplement(DNAString(menthuScoreFrame$seq)), (40 + -cutDistList[i] - 19),  (40 + -cutDistList[i] + nchar(toolTypeI))))
+															baseCrispr <- as.character(substr(Biostrings::reverseComplement(DNAString(menthuScoreFrame$seq)), 
+																																(40 + -cutDistList[i] - 19),  
+																																(40 + -cutDistList[i])))
+															PAM <-as.character(substr(Biostrings::reverseComplement(DNAString(menthuScoreFrame$seq)), 
+																												(40 + -cutDistList[i] + 1),  
+																												(40 + -cutDistList[i] + nchar(toolTypeI))))
+															crispr <- paste0(baseCrispr, "<strong>", PAM, "</strong>")
+															#crispr <- as.character(substr(Biostrings::reverseComplement(DNAString(menthuScoreFrame$seq)), 
+															#															(40 + -cutDistList[i] - 19),  
+															#															(40 + -cutDistList[i] + nchar(toolTypeI))))
 														}
 														
 														formFrame  <- data.frame(Target_Sequence = crispr, 
@@ -766,7 +817,7 @@ calculateMENTHUGeneSeqGenBank <- function(casList, cutDistList, wiggle = TRUE, w
 									
 									#Check if there's enough context...
 									if(!is.na(talSites[[1]][[o]][[p]]) && !is.null(talSites[[1]][[o]][[p]])){
-										
+										version == 2
 										if(version == 1){
 											if(contextCondition){
 												#Get the sequence context surrounding the cut site

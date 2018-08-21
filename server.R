@@ -112,9 +112,8 @@ shinyServer(function(input, output, session){
 				#Check for not DNA input
 				need(!stringr::str_detect(input$geneSeq, "[^ACGTacgt0-9\\s\\n]"), 
 						 paste0("Error: Input DNA sequence contains non-standard nucleotides. ", 
-						 			 "Allowed nucleotides are A, C, G, and T."))#,
+						 			 "Allowed nucleotides are A, C, G, and T.")),
 				
-<<<<<<< HEAD
 				# Prevent users from blowing up the server; disabled  for running locally
 				#need(nchar(input$geneSeq) < 5000, 
 				#		 paste0("The DNA sequence has >5000 nucleotides. For sequences of this size,",
@@ -125,12 +124,10 @@ shinyServer(function(input, output, session){
 						 paste0("The DNA sequence has <80 nucleotides. MENTHU requires at least 40 nucleotides upstream", 
 						 			 "and 40 nucleotides downstream of the DSB site in order to properly calculate the MENTHU score."))
 			
-=======
 				#Prevent users from blowing up the server
 				#need(nchar(input$geneSeq) < 5000, 
 				#		 paste0("The DNA sequence has >5000 nucleotides. For sequences of this size,",
 				#		 			 " please use the local version of MENTHU, which can be accessed via the 'Tools and Downloads' tab."))
->>>>>>> 5c9fddeb98cbb521ec96d5fb7eb0545d787621e2
 			)
 			
 		} else if(input$inputType == 2) {
@@ -1061,11 +1058,9 @@ shinyServer(function(input, output, session){
 	#	updateSliderInput(session = session, inputId = "spamax", min = input$spamin)
 	#})
 	
-<<<<<<< HEAD
+
 	#observeEvent(input$spamax, {
 	#	updateSliderInput(session = session, inputId = "spamin", max = input$spamax)
 	#})
 })
-=======
-})
->>>>>>> 5c9fddeb98cbb521ec96d5fb7eb0545d787621e2
+

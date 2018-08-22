@@ -128,7 +128,7 @@ wonkyGenBankHandler <- function(gba, apikey = ""){
 	apikey <- "" 
 	
 	# If the user does not supply their own API key:
-	if(apikey != ""){
+	if(apikey == ""){
 		# Use rentrez API to get genbank flat file coresponding to gba accession
 		gbFile <- rentrez:::entrez_fetch(db = "nucleotide", 
 																		 gba, 

@@ -21,7 +21,7 @@ RUN R -e "install.packages(c('shiny', 'XML', 'shinyjs', 'rhandsontable', 'plyr',
 
 # Copy MENTHU to image
 RUN mkdir /root/menthu/
-COPY menthu /root/menthu
+COPY / /root/menthu
 
 COPY Rprofile.site /usr/lib/R/etc/
 

@@ -125,10 +125,10 @@ wonkyGenBankHandler <- function(gba, apikey = ""){
 	require(rentrez)
 	# In future releases allowing for high-throughput GenBank retrieval, the UI will allow users to specify an API key
 	# to allow for faster returns from NCBI. 
-	apikey <- "" 
+	apikey <- "" # Enable for running locally
 	
 	# If the user does not supply their own API key:
-	if(apikey != ""){
+	if(apikey == ""){
 		# Use rentrez API to get genbank flat file coresponding to gba accession
 		gbFile <- rentrez:::entrez_fetch(db = "nucleotide", 
 																		 gba, 

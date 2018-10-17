@@ -1,3 +1,43 @@
+#' getGenbankFile
+#'
+#' @param accession 
+#' @param file 
+#' @param deleteTempFile 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+
+getGenbankFile <- function(accession, file = 'temp.gb', deleteTempFile = TRUE){
+	require(curl)
+	# Get database from accession format
+	#db <- .getDatabaseFromAccession(accession)
+	db <- 'nuccore'
+	
+	# Construct the URL
+	baseURL <- 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
+	rettype <- 'gbwithparts'
+	retmode <- 'text'
+	tURL    <- paste0(baseURL, "?db=", db, "&id=", accession, "&retmode=", retmode, "&rettype=", rettype)
+	
+	# Get file from URL using curl
+	curl::curl_download(url = tURL, file)
+	
+	# Read in file contents
+	gbContents <- readLines(file)
+	
+	# Delete temporary file
+	if(deleteTempFile){
+		file.remove(file)
+	}
+	
+	# Format the file contents
+	gbContents <- formatApe(gbContents)
+	
+	return(gbContents)
+}
+
 #' getExon
 #' 
 #' Function that fetches exon data from a GenBank accesion ID
@@ -12,7 +52,7 @@
 #' @export 
 #'  
 
-getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTargetType, firstExon, exonStuff) {
+getExon <- function(genbankInfo, wiggle = TRUE, wiggleRoom = 39, gbFlag, exonTargetType, firstExon, exonStuff) {
 	require(Biostrings)
 	gbFlag <- FALSE
 	
@@ -69,7 +109,6 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 	
 	# Variable initialization
 	set     <- NULL
-	exonSeq <- NULL
 	
 	# Calculation of number of exons to extract from percent parameter
 	#numExons <- floor(percent/100*length(exonInfo$start))
@@ -84,18 +123,18 @@ getExon <- function(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTarget
 			# Ensure that there is enough wiggle room to add sequence context at beginning of exon 
 			# (e.g., if exon 1 starts at base 23, there is not 39 bases of wiggle room to add)
 			
-			if(exonInfo$start[numExons[i]] - wigRoom < 1){
+			if(exonInfo$start[numExons[i]] - wiggleRoom < 1){
 				exStart <- 1
 			} else {
-				exStart <- exonInfo$start[numExons[i]] - wigRoom
+				exStart <- exonInfo$start[numExons[i]] - wiggleRoom
 			}
 			
 			# Ensure there is enough wiggle room to add sequence context at end of exon 
 			# (e.g., if exon 10 ends at base 455, and the sequence ends at base 450, there is not 39 bases of wiggle room)
-			if(exonInfo$end[numExons[i]] + wigRoom > nchar(as.character(genSeq))){
+			if(exonInfo$end[numExons[i]] + wiggleRoom > nchar(as.character(genSeq))){
 				exEnd <- nchar(as.character(genSeq))
 			} else {
-				exEnd <- exonInfo$end[numExons[i]] + wigRoom
+				exEnd <- exonInfo$end[numExons[i]] + wiggleRoom
 			}
 			
 			set <- c(set, as.character(genSeq[exStart:exEnd]))

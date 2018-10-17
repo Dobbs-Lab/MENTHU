@@ -12,7 +12,7 @@ library(shinyjs)
 library(rhandsontable)
 library(shinyIncubator)
 
-shinyUI(
+shinyUI(function(request){
 	####Creates the navbar set-up####
 	navbarPage(id = 'mainPage',
 						 windowTitle = "MENTHU",
@@ -21,7 +21,7 @@ shinyUI(
 						 theme = "ogtheme.css", 
 						 
 						 #Page title box
-						 tags$div("MENTHU v2.0.5", 
+						 tags$div("MENTHU v2.0.7", 
 						 				 style = "color:white"),
 						 
 						 ########ABOUT TAB#################################################
@@ -89,40 +89,48 @@ shinyUI(
 						 				 ##Sidebar############################################################
 						 				 #Adds a sidebar for users to pre-populate fields with an example, and reset the form
 						 				 column(2, wellPanel(
+						 				 	style = "background-color:#F1BE48",
+						 				 	# Attempts to get the sidebar floating have failed thus far
 						 				 	#style = "position:fixed;width:inherit;",
+						 				 	
+						 				 	p(strong("Example Inputs", style = "color:black;")),
+						 				 	p('Please click the links below to pre-populate this form with example inputs:'),
 						 				 	
 						 				 	#GenBank Example
 						 				 	actionLink("exampleGenBank",
-						 				 						 label = "GenBank Gene ID Example"),
-						 				 	p(""),
+						 				 						 label = "[GenBank Gene ID Example]",
+						 				 						 style = "color:black;"),
+						 				 	
+						 				 	br(),
+						 				 	tags$br(),
+						 				 	
+						 				 	# Ensembl input example; input$exampleEnsembl
+						 				 	actionLink("exampleEnsembl",
+						 				 						 label = "[Ensembl ID Example]",
+						 				 						 style = "color:black;"),
+						 				 	
+						 				 	br(),
+						 				 	tags$br(),
 						 				 	
 						 				 	#Cut/Paste cDNA example; input$example
 						 				 	actionLink("exampleGeneSeq", 
-						 				 						 label = "Pasted Sequence Example"),
-						 				 	
-						 				 	p(""),
+						 				 						 label = "[Pasted Sequence Example]",
+						 				 						 style = "color:black;"),
+
+						 				 	br(),
+						 				 	tags$br(),
 						 				 	
 						 				 	#Reset Button; input$reset
 						 				 	actionLink("reset", 
-						 				 						 label = "Reset Form")
+						 				 						 label = "Reset Form",
+						 				 						 style = "color:black;")
+						 				 	
+						 				 
 						 				 )),
 						 				 
-						 				 
 						 				 ####Main Bar#########################################################
-						 				 #Main panel for entering information and submitting job
-						 				 #column(9, wellPanel(
+						 				 # Main panel for entering information and submitting job
 						 				 column(9, 
-						 				 			 #wellPanel(
-						 				 			 	####Choose Scoring Scheme - For local only
-						 				 			 	#radioButtons("scoreScheme",
-						 				 			 	#						 label = "0. Select the scoring scheme you wish to use:",
-						 				 			 	#						 choices = list("Version 1.0 (Slope competition)" = 1,
-						 				 			 	#						 							  "Version 2.0 (Ratio competition)" = 2),
-						 				 			 	#						 selected = 2,
-						 				 			 	#						 inline = TRUE
-						 				 			 							 
-						 				 			 	#)
-						 				 			 #),
 						 				 			 
 						 				 			 ####Choose PAM sequence#############################################
 						 				 			 wellPanel(
@@ -136,7 +144,7 @@ shinyUI(
 						 				 			 										 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'"  = "NNAGAAW",
 						 				 			 										 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'"       = "NNNVRYAC",
 						 				 			 										 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT"),
-						 				 			 										 #CPF1 is not currently supported, but may be in future releases
+						 				 			 										 # CPF1 is not currently supported, but may be in future releases
 						 				 			 										 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTTN",
 						 				 			 										 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
 						 				 			 										 #"Francisella FnCpf1: 5'-TTN-3'" = "TTN",
@@ -165,27 +173,26 @@ shinyUI(
 						 				 			 							 selected = 0, 
 						 				 			 							 inline = TRUE),
 						 				 			 	
+						 				 			 	# When users use a custom input PAM sequence
 						 				 			 	conditionalPanel(
 						 				 			 		condition = "input.customCutOpt == 1",
 						 				 			 		textOutput("validmatchcustominputlength"),
 						 				 			 		textOutput("validcustompam"),
+						 				 			 		
+						 				 			 		# Area to input PAM sequences
 						 				 			 		textAreaInput("customPamSeq",
 						 				 			 									label = paste0("Input your nucleotide PAM sequence in the 5'-3' direction (e.g., 'NGG' for SpCas9).", 
 						 				 			 																 "You can enter multiple sequences by separating the PAMs with a comma or a space, e.g.", 
 						 				 			 																 "'NGG NRG NNVRYAC', etc.:"), 
-						 				 			 									#\nIf your sequence allows for ambiguity, please use the IUPAC one-letter codes: R = A or G; Y = C or T; 
-						 				 			 									#S = G or C; W = A or T; K = G or T; M = A or C; B = not A; D = not C; H = not G; V = not T; N = any base.",
 						 				 			 									value = "",
 						 				 			 									placeholder = "Please input PAM sequence(s) in 5'-3' direction..."),
 						 				 			 		textOutput("validcustomcutsites"),
+						 				 			 		
+						 				 			 		# Area to input cut patterns
 						 				 			 		textAreaInput("cutSite",
 						 				 			 									label = paste0("Please specify where your nuclease cuts in relation to your PAM ", 
 						 				 			 																 "(negative values for upstream). If you entered multiple PAM sequences,", 
 						 				 			 																 " please list the DSB locations in the ORDER YOU INPUT THE PAM SEQUENCES, e.g. '-3 -3 3', etc.:"),
-						 				 			 									#If the double-strand break site (DSB) is 5' to the PAM, count the number of bases between the DSB site
-						 				 			 									#and the FIRST base of your PAM. For example, SpCas9 generally induces a DSB three bases upstream of 'NGG',
-						 				 			 									# so the input value would be -3. If the cut is 3' to the PAM, count the number of bases between the LAST 
-						 				 			 									#base of your PAM and the DSB site.",
 						 				 			 									value = "",
 						 				 			 									placeholder = "Input the DSB site(s) in relation to your PAM(s)...")
 						 				 			 		)
@@ -278,11 +285,12 @@ shinyUI(
 						 				 			 
 						 				 			 wellPanel(
 						 				 			 	####Choose Input Type###############################################
+						 				 			 	# Choose whether to use GenBank/RefSeq ID, Ensembl ID, or copy/paste input (used to correctly choose processing machinery)
 						 				 			 	radioButtons("inputType",
 						 				 			 							 label = "2. What type of sequence input do you want to use?",
 						 				 			 							 choices = list("GenBank/RefSeq ID"        = 1,
-						 				 			 							 							 #"Ensembl ID"               = 3,
-						 				 			 							 							 "Copy/paste gene sequence" = 2
+						 				 			 							 							 "Ensembl ID"                = 3,
+						 				 			 							 							 "Copy/paste gene sequence"  = 2
 						 				 			 							 ),
 						 				 			 							 selected = 1),
 						 				 			 	
@@ -294,12 +302,29 @@ shinyUI(
 						 				 			 		textAreaInput("genbankId",
 						 				 			 									label       = paste0("Enter your GenBank or RefSeq ID here. ", 
 						 				 			 																			 "For a full list of supported and not supported input types, ", 
-						 				 			 																			 "please see the 'FAQs' section in the 'Instructions and FAQs' tab. ", 
-						 				 			 																			 "Please input sequences between 80 and 5000 nucleotides in length."),
-						 				 			 									value       = NULL,
+						 				 			 																			 "please see the 'FAQs' section in the 'Instructions and FAQs' tab. "),
+						 				 			 									value       = "",
 						 				 			 									placeholder = "Enter GenBank gene ID here..."),
+						 				 			 		
+						 				 			 		# Validation check outputs
 						 				 			 		textOutput("validgenbankid"),
 						 				 			 		textOutput("genbankidexists")
+						 				 			 		
+						 				 			 	),
+						 				 			 	
+						 				 			 	# If user uses Ensembl accession
+						 				 			 	conditionalPanel(
+						 				 			 		condition = "input.inputType == 3",
+						 				 			 		textAreaInput("ensemblId",
+						 				 			 									label       = paste0("Enter your Ensembl ID here. ",
+						 				 			 																			 "We can analyze sequences from Ensembl transcript, exon, and protein IDs. ",
+						 				 			 																			 "Please see the 'FAQs' section in the 'Instructions and FAQs' tab for more information."),
+						 				 			 									value       = "",
+						 				 			 									placeholder = "Enter Ensembl transcript, exon, or protein ID here..."),
+						 				 			 		
+						 				 			 		# Validation check outputs
+						 				 			 		#textOutput("validensemblid"),
+						 				 			 		textOutput("ensemblidexists")
 						 				 			 		
 						 				 			 	),
 						 				 			 	
@@ -309,7 +334,7 @@ shinyUI(
 						 				 			 		
 						 				 			 		#Text area to copy/paste gene sequence
 						 				 			 		textAreaInput("geneSeq",
-						 				 			 									label       = "",
+						 				 			 									label       = "Please input your genomic sequence of interest (sequences should be between 80 and 5000 nucleotides in length.)",
 						 				 			 									value       = "",
 						 				 			 									placeholder = "Paste gene sequence here..."),
 						 				 			 		
@@ -321,7 +346,7 @@ shinyUI(
 						 				 			 		radioButtons("pasteExonType", 
 						 				 			 								 label    = "Does your pasted sequence have multiple exons, and do you wish to find a target within those exons?",
 						 				 			 								 choices  = list("No"  = 0, 
-						 				 			 								 								"Yes" = 1),
+						 				 			 								 								 "Yes" = 1),
 						 				 			 								 selected = 0, 
 						 				 			 								 inline   = TRUE),
 						 				 			 		
@@ -333,25 +358,22 @@ shinyUI(
 						 				 			 							 " type '63' into 'exonStart' and '145' into 'exonEnd'.")),
 						 				 			 			p(paste0("If you need to add more exons, right-click or command-click and select 'Insert Row'.", 
 						 				 			 							 " You do not need to remove extra rows.")),
-						 				 			 			#uiOutput("inputTable"),
 						 				 			 			rHandsontableOutput("exonInfo"),
 						 				 			 			textOutput("validexoninfo")
 						 				 			 		)
 						 				 			 	)
 						 				 			 ),
 						 				 			 
-						 				 			 
-						 				 			 
 						 				 			 ############Exon Options#########################
 						 				 			 conditionalPanel(
-						 				 			 	condition = "input.inputType == 1",
+						 				 			 	condition = "input.inputType == 1 | input.inputType == 3",
 						 				 			 	
 						 				 			 	wellPanel(
 						 				 			 		#Choose whether to include first exon in future determinations
 						 				 			 		radioButtons("firstExon",
 						 				 			 								 label = "2a. Do you want to find targets in the first exon? (Not recommended for gene knockouts.)",
-						 				 			 								 choices = list("No" = 0,
-						 				 			 								 							 "Yes" = 1),
+						 				 			 								 choices = list("No"  = 0,
+						 				 			 								 							  "Yes" = 1),
 						 				 			 								 selected = 0,
 						 				 			 								 inline = TRUE),
 						 				 			 		
@@ -359,21 +381,21 @@ shinyUI(
 						 				 			 		p(tags$b("Which exon(s) do you want to target?")),
 						 				 			 		radioButtons("exonTargetType",
 						 				 			 								 label = "Do you want to: ",
-						 				 			 								 choices = list("Search all exons - Please note if 2a = 'No', the first exon will not be searched" = 0,
-						 				 			 								 							 "Search for a target within a specified percentage of exons of the beginning of the sequence" = 1,
-						 				 			 								 							 "Search for a target within a specified percentage of exons of the end of the sequence" = 2,
-						 				 			 								 							 "Provide a list of exons to target" = 3),
+						 				 			 								 choices = list("Search all exons - Please note if 2a = 'No', the first exon will not be searched"            = 0,
+						 				 			 								 							  "Search for a target within a specified percentage of exons of the beginning of the sequence" = 1,
+						 				 			 								 							  "Search for a target within a specified percentage of exons of the end of the sequence"       = 2,
+						 				 			 								 							  "Provide a list of exons to target"                                                           = 3),
 						 				 			 								 selected = 0),
 						 				 			 		
 						 				 			 		#When working from the beginning of the sequence
 						 				 			 		conditionalPanel(
 						 				 			 			condition = "input.exonTargetType == 1",
-						 				 			 			p(paste0("Specify a percentage of exons, starting from the beginning of the sequence,", 
-						 				 			 							 " to search (this includes the first exon if you chose 'yes' in 3, and excludes it if you chose 'no'.)", 
-						 				 			 							 " For gene knockouts, it is recommended that you use 30%. ",
-						 				 			 							 "For example, if your gene has 10 exons and you choose not to look for targets in the first exon,", 
-						 				 			 							 " a value of '30%' will search exons 2, 3, and 4 for target sites. ",
-						 				 			 							 "If you chose to look for targets in the first exon, a value of 30% will search exons 1, 2, and 3.")),
+						 				 			 			p(paste0("Specify a percentage of exons, starting from the beginning of the sequence, ", 
+						 				 			 							 "to search (this includes the first exon if you chose 'yes' in 3, and excludes it if you chose 'no'.) ", 
+						 				 			 							 "For gene knockouts, it is recommended that you use 30%. ",
+						 				 			 							 "For example, if your gene has 10 exons and you choose not to look for targets in the first exon, ", 
+						 				 			 							 "a value of '30%' will search exons 2, 3, and 4 for target sites. ",
+						 				 			 							 "If you chose to look for targets in the first exon, a value of 30% will search exons 1, 2, and 3. ")),
 						 				 			 			p("You can look for targets in every exon (100%) by changing the value to '100'. Minimum value is 1%."),
 						 				 			 			
 						 				 			 			numericInput("exonBegPercentage",
@@ -383,7 +405,7 @@ shinyUI(
 						 				 			 									 value = 30)
 						 				 			 		),
 						 				 			 		
-						 				 			 		#When working from the end of the sequence
+						 				 			 		# When working from the end of the sequence
 						 				 			 		conditionalPanel(
 						 				 			 			condition = "input.exonTargetType == 2",
 						 				 			 			p("Specify a percentage of exons, starting from the end of the sequence, to search. "),
@@ -409,7 +431,33 @@ shinyUI(
 						 				 			 																	 "and exon 11 through 13, type '3,5-7,9,11-13'.)"), 
 						 				 			 										placeholder = "Enter exons here...")
 						 				 			 		)
-						 				 			 	)
+						 				 			 	)#,
+						 				 			 	
+						 				 			 	#wellPanel(
+						 				 			 	#	
+						 				 			 		# Allow user to choose if context consideration can run over into exon region
+						 				 			 	#	radioButtons("contextWiggleType",
+						 				 			 	#							 label    = paste0("2c. Do you want to include target sites where the double-strand break site will occur within an exon, ",
+						 				 			 	#							 									"but the contextual information used to calculate the MENTHU score may include intronic sequences?"),
+						 				 			 	#							 choices  = c("No" = 0,
+						 				 			 	#							 						 "Yes" = 1),
+						 				 			 	#							 selected = 0,
+						 				 			 	#							 inline   = TRUE
+						 				 			 	#	),
+						 				 			 		
+						 				 			 		# Allow user to choose if gRNA can run over into exon region
+						 				 			 	#	radioButtons("gRNAWiggleType",
+						 				 			 	#							 label    = paste0("2b. Do you want to include target sites where the double-strand break ",
+						 				 			 	#							 							     "site will occur within an exon, but the gRNA may run over the exon boundary into an intron?"),
+						 				 			 	#							 choices  = c("No"  = 0,
+						 				 			 	#							 						  "Yes" = 1),
+						 				 			 	#							 selected = 0,
+						 				 			 	#							 inline   = TRUE
+						 				 			 	#	)
+						 				 			 	#	
+						 				 			 	#	
+						 				 			 	#	
+						 				 			 	#)
 						 				 			 ),
 						 				 			 
 						 				 			 ###########THRESHOLD#############################
@@ -428,22 +476,69 @@ shinyUI(
 						 				 			 
 						 				 			 wellPanel(	
 						 				 			 	
-						 				 			 	#Submit panel for GenBank subissions
+						 				 			 	#Submit panel for GenBank submissions
 						 				 			 	conditionalPanel(
-						 				 			 		condition = "input.inputType == 1",
-						 				 			 		actionButton("genbankSubmit", "Submit"), #Submit button
-						 				 			 		tags$br(),
-						 				 			 		p("Your results may take a few minutes to calculate. Please do not close this web page until your calculation is finished."),
-						 				 			 		#DT::dataTableOutput("downOutGenbank"), #Download button; should only display when there are results to download
-						 				 			 		uiOutput("downOutGB"),
+						 				 			 		# If GenBank/RefSeq
+						 				 			 		condition = "input.inputType == 1", 
+						 				 			 		
+						 				 			 		#Submit button
+						 				 			 		actionButton("genbankSubmit", "Submit"), 
 						 				 			 		tags$br(),
 						 				 			 		
-						 				 			 		textOutput('genbankIdOutcome'), #Indicates if there is a problem with the supplied s
+						 				 			 		p("Your results may take a few minutes to calculate. Please do not close this web page until your calculation is finished."),
+						 				 			 		
+						 				 			 		# Generate the UI for the download button
+						 				 			 		uiOutput("downOutGB"),
+						 				 			 		br(), 
+						 				 			 		
+						 				 			 		# Generate button to bookmark inputs
+						 				 			 		bookmarkButton(label = "Bookmark Session Inputs",
+						 				 			 									 title = "Click here to generate a URL that can be copy/pasted into a web browser to easily reproduce your analysis"),
+						 				 			 		br(),
+						 				 			 		
+						 				 			 		#Indicates if there is a problem with the supplied ID
+						 				 			 		textOutput('genbankIdOutcome'), 
 						 				 			 		tags$style("#genbankIdOutcome{color: red;}"),
+						 				 			 		
+						 				 			 		# Output information regarding the number of hits and misses
 						 				 			 		#uiOutput('genbankhits'),
 						 				 			 		#tags$br(),
+						 				 			 		
 						 				 			 		#Output results
 						 				 			 		uiOutput('genbankResults')
+						 				 			 	),
+						 				 			 	
+						 				 			 	#Submit panel for Ensembl submissions
+						 				 			 	conditionalPanel(
+						 				 			 		# If Ensembl
+						 				 			 		condition = "input.inputType == 3",
+						 				 			 		
+						 				 			 		# Submit button
+						 				 			 		actionButton("ensemblSubmit", "Submit"), 
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		p("Your results may take a few minutes to calculate. Please do not close this web page until your calculation is finished."),
+						 				 			 		
+						 				 			 		# Generate UI for download button
+						 				 			 		uiOutput("downOutEns"),
+						 				 			 		br(), 
+						 				 			 		
+						 				 			 		# Generate button to bookmark inputs
+						 				 			 		bookmarkButton(label = "Bookmark Session Inputs",
+						 				 			 									 title = "Click here to generate a URL that can be copy/pasted into a web browser to easily reproduce your analysis"),
+						 				 			 		br(),
+						 				 			 		
+						 				 			 		# Indicates if there is a problem with the supplied ID or connection to Ensembl
+						 				 			 		#textOutput('ensemblIdOutcome'), 
+						 				 			 		#tags$style("#ensemblIdOutcome{color: red;}"),
+						 				 			 		textOutput('ensemblUp'),
+						 				 			 		tags$style("#ensemblUp{color: red;"),
+						 				 			 		
+						 				 			 		#uiOutput('ensemblhits'),
+						 				 			 		br(),
+						 				 			 		
+						 				 			 		#Output results
+						 				 			 		uiOutput('ensemblResults')
 						 				 			 	),
 						 				 			 	
 						 				 			 	conditionalPanel(
@@ -452,7 +547,9 @@ shinyUI(
 						 				 			 		tags$br(),
 						 				 			 		p("Your results may take a few minutes to appear. Please do not close this web page until your calculation is finished."),
 						 				 			 		uiOutput("downOutGS"),
-						 				 			 		tags$br(),
+						 				 			 		br(), 
+						 				 			 		bookmarkButton(),
+						 				 			 		br(),
 						 				 			 		
 						 				 			 		textOutput('geneseqerrors'),
 						 				 			 		#Output results
@@ -466,46 +563,7 @@ shinyUI(
 						 ),
 						 
 						 ##########Pre-COMPUTED GENES TAB#################################
-						 
-						 #tabPanel(
-						 	#tags$div("Pre-Computed Genes", style = "color:white"),
-						 	#titlePanel(""),
-						 	
-						 	#Sidebar panel with links
-						 	#column(2, wellPanel(
-						 		#tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
-						 		#										 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
-						 		#tags$br(),
-						 		#tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
-						 		#										 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
-						 		#tags$br(),
-						 		#tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
-						 		#										 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
-						 		#tags$br(),
-						 		#tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
-						 		#										 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
-						 	#)),
-						 	
-						 	#Text area in center of page
-						 	#column(9, wellPanel(
-						 		
-						 	#	selectInput("pcSpeciesSelect",
-						 	#							label = "1. Choose your species of interest: ",
-						 	#							choices = c("Human (GRCh38.p1)" = "human",
-						 	#													"Zebrafish (Danio Rerio, GRCz11)" = "drerio")
-						 	#							),
-						 		
-						 	#	uiOutput("pcGeneSelect"),
-						 	#	uiOutput("pcExonSelect")
-						 	#),
-						 	
-						 	#wellPanel(
-						 	#	plotOutput("genePlot", click = "plot_single_click"),#, brush = "plot_brush", hover = "plot_hover"),
-						 	#	verbatimTextOutput("siteInfo")
-						 	#)
-						 	#)
-						 #),
-						 
+						# This is being moved to its own app
 						 
 						 ##########TOOLS AND DOWNLOADS TAB#################################
 						 
@@ -652,6 +710,7 @@ shinyUI(
 						 		includeHTML("www/changelog.html")
 						 	))
 						 )
-	))
+	)}
+	)
 
 #

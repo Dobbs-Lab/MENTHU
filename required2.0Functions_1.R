@@ -4,7 +4,7 @@
 #'
 #' @param casList 
 #' @param wiggle 
-#' @param wigRoom 
+#' @param wiggleRoom 
 #' @param geneSeq 
 #' @param threshold 
 #' @param exonDF 
@@ -19,11 +19,11 @@
 #'
 #' @examples
 
-#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, threshold, talFlag,
+#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wiggleRoom = 39, geneSeq, threshold, talFlag,
 #																	 exonDF, progress, armin, armax, spamin, spamax, version){
-#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, threshold, talFlag,
+#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wiggleRoom = 39, geneSeq, threshold, talFlag,
 #																	 exonDF, progress, armin, armax, spamin, spamax){
-calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, exonDF, progress){
+calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wiggleRoom = 39, geneSeq, exonDF, progress){
 	require(Biostrings)
 	require(plyr)
 	
@@ -47,10 +47,10 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 	# Deal with the case in which exons are specified and extra context should be included to examine sites where the gRNA would run off the exon
 	if((wiggle == TRUE) && (class(exonDF) == "data.frame")){
 		# Ensure extra context doesn't run off the end of the whole sequence
-		exStart <- sapply(1:nrow(exonDF), function(x) if((exonDF$exonStart[x] - wigRoom) < 1){1}                           else {exonDF$exonStart[x] - wigRoom})
+		exStart <- sapply(1:nrow(exonDF), function(x) if((exonDF$exonStart[x] - wiggleRoom) < 1){1}                           else {exonDF$exonStart[x] - wiggleRoom})
 		
 		# Ensure extra context doesn't run off the end of the whole sequence
-		exEnd   <- sapply(1:nrow(exonDF), function(x) if((exonDF$exonEnd[x]   + wigRoom) > nchar(geneSeq)){nchar(geneSeq)} else {exonDF$exonEnd[x]   + wigRoom})
+		exEnd   <- sapply(1:nrow(exonDF), function(x) if((exonDF$exonEnd[x]   + wiggleRoom) > nchar(geneSeq)){nchar(geneSeq)} else {exonDF$exonEnd[x]   + wiggleRoom})
 		
 		# Create new exonSeqs with 'fixed' context
 		exonSeqs <- substring(rep(toupper(geneSeq), length(exStart)), exStart, exEnd)
@@ -83,18 +83,18 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom)
+													wiggleRoom = wiggleRoom)
 			
 		} else {
 			pamSites <- pamScan(pamList, 
 													cutDistList, 
 													exonSeqs,
-													exonList   = "1",
-													exonStarts = NULL, 
+													exonList   = 1,
+													exonStarts = 1, 
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom)
+													wiggleRoom = wiggleRoom)
 		}
 		
 		# Count the number of Cas target sites
@@ -165,7 +165,7 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 				talSites <- talPal(exonSeqs,
 													 findCut    = TRUE,
 													 wiggle     = TRUE,
-													 wigRoom    = 39,
+													 wiggleRoom    = 39,
 													 range      = rFlag, 
 													 armin      = armin, 
 													 armax      = armax, 
@@ -180,7 +180,7 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 				talSites <- talPal(exonSeqs,
 													 findCut    = TRUE,
 													 wiggle     = TRUE,
-													 wigRoom    = 39,
+													 wiggleRoom    = 39,
 													 range      = rFlag, 
 													 armin      = armin, 
 													 armax      = armax, 
@@ -390,11 +390,11 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 				baseCrispr <- sapply(1:nrow(pamSites), 
 														 function(x) if(pamSites$Orientation[x] == "forward"){
 														 	substr(pamSites$seq[x], 
-														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 20, 
+														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
 														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])     
 														 } else {
 														 	substr(reverseComplement(pamSites$seq[x]), 
-														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 20, 
+														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
 														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])
 														 })
 				
@@ -521,11 +521,11 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 #'
 #' @examples
 
-#calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, talFlag,
+#calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, talFlag,
 #																					genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress, version){
-#calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, 
+#calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, 
 #																					genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress){
-calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, 
+calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, 
 																					genbankInfo, firstExon, exonTargetType, exonStuff, progress){
 	version <- 2
 	require(plyr)
@@ -540,7 +540,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 	progress$inc(0.01, detail = "Processing GenBank accession...")
 	
 	# Get exon sequences and information through getExon
-	exon <- getExon(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTargetType, firstExon, exonStuff)
+	exon <- getExon(genbankInfo, wiggle = TRUE, wiggleRoom = 39, gbFlag, exonTargetType, firstExon, exonStuff)
 	
 	# Get exon indices
 	exonInfo <- exon[[1]]
@@ -559,7 +559,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 		# Update progress bar
 		progress$inc(0.01, detail = "Scanning for target sites...")
 		
-		if(length(exonInfo > 0)){
+		if(length(exonInfo) > 0){
 			# If there is exon information, use it to correct indexing, otherwise, exonStarts is NULL
 			pamSites <- pamScan(pamList, 
 													cutDistList, 
@@ -569,7 +569,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = TRUE, 
-													wigRoom    = 39)
+													wiggleRoom    = 39)
 		} else {
 			pamSites <- pamScan(pamList, 
 													cutDistList, 
@@ -579,7 +579,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom)
+													wiggleRoom    = wiggleRoom)
 		}
 		
 		siteCount <- nrow(pamSites)
@@ -631,7 +631,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 			talSites <- talPal(exonSeq,
 												 findCut    = TRUE,
 												 wiggle     = TRUE,
-												 wigRoom    = 39,
+												 wiggleRoom    = 39,
 												 range      = rFlag, 
 												 armin      = talenList[[1]], 
 												 armax      = talenList[[2]], 
@@ -644,7 +644,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 			talSites <- talPal(exonSeq,
 												 findCut    = TRUE,
 												 wiggle     = TRUE,
-												 wigRoom    = 39,
+												 wiggleRoom    = 39,
 												 range      = rFlag,
 												 armin      = talenList[[1]], 
 												 armax      = talenList[[2]], 
@@ -843,11 +843,11 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 			baseCrispr <- sapply(1:nrow(pamSites), 
 													 function(x) if(pamSites$Orientation[x] == "forward"){
 													 	substr(pamSites$seq[x], 
-													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 20, 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
 													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])     
 													 } else {
 													 	substr(reverseComplement(pamSites$seq[x]), 
-													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 20, 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
 													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])
 													 })
 			
@@ -950,6 +950,460 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 		return(list(talFormFrame, siteCount, siteCountC, critOne, critTwo, critBoth))
 	}
 }
+
+
+#' calculateMENTHUEnsembl
+#'
+#' @param pamList 
+#' @param talenList 
+#' @param gbFlag 
+#' @param gbhFlag 
+#' @param genbankInfo 
+#' @param threshold 
+#' @param firstExon 
+#' @param exonTargetType 
+#' @param exonStuff 
+#' @param progress 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+
+#stuff    <- calculateMENTHUEnsembl(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, 
+#																	 info, input$firstExon, input$exonTargetType, exonStuff, progress)
+
+#calculateMENTHUEnsembl <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, talFlag,
+#																					genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress, version){
+#calculateMENTHUEnsembl <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, 
+#																					genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress){
+calculateMENTHUEnsembl <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, ensemblInfo, exonStuff, progress){
+	version <- 2
+	require(plyr)
+	
+	# If NGG and NRG are both selected, only search for NGG to save time
+	if("NGG" %in% pamList & "NRG" %in% pamList){
+		pamList     <- pamList[-1]
+		cutDistList <- cutDistList[-1]
+	}
+	
+	# Update progress bar
+	progress$inc(0.01, detail = "Processing Ensembl sites...")
+	
+	exonSubset <- ensemblInfo[which(as.numeric(ensemblInfo$rank) %in% as.numeric(exonStuff)), ]
+	
+	# Get the exon sequences
+	exonSeq  <- exonSubset$sequence
+	
+	# Create a data frame to hold information about the exon sequence
+	exonDF <- data.frame(Exon_Num         = as.numeric(exonSubset$rank),
+											 absStart         = as.numeric(exonSubset$contextStart),
+											 absEnd           = as.numeric(exonSubset$contextEnd),
+											 exonStart        = 0 + as.numeric(exonSubset$exp5),
+											 exonEnd          = nchar(exonSubset$sequence) - as.numeric(exonSubset$exp3),
+											 seq              = exonSeq,
+											 stringsAsFactors = FALSE)
+	
+	# If the user is using Cas:
+	if(length(pamList) > 0){
+		# Update progress bar
+		progress$inc(0.01, detail = "Scanning for target sites...")
+		
+		#if(length(exonStuff) > 0){
+			# If there is exon information, use it to correct indexing, otherwise, exonStarts is NULL
+			pamSites <- pamScan(pamList, 
+													cutDistList, 
+													exonSeq, 
+													exonList   = exonDF$Exon_Num, 
+													exonStarts = NULL, 
+													findCut    = TRUE, 
+													type       = "cas9", 
+													wiggle     = wiggle, 
+													wiggleRoom    = wiggleRoom)
+		#} else {
+		#	pamSites <- pamScan(pamList, 
+		#											cutDistList, 
+		#											exonSeqs,
+		#											exonList   = "1",
+		#											exonStarts = NULL, 
+		#											findCut    = TRUE, 
+		#											type       = "cas9", 
+		#											wiggle     = wiggle, 
+		#											wiggleRoom    = wiggleRoom)
+		#}
+		
+		siteCount <- nrow(pamSites)
+		
+		# Set pamFlag TRUE - PAMs are used
+		pamFlag <- TRUE
+		
+		# Update progress bar
+		progress$inc(0.01, detail = "Pre-processing CRISPR target sites...")
+		pamSites        <- unique(suppressMessages(plyr::join(pamSites, exonDF, by = 'Exon_Num')))
+		
+		# THIS IS WRONG
+		pamSites$absCut <- pamSites$CutIndex + pamSites$absStart
+		
+		# Drop target sites where the cut site is not within the exon boundaries
+		keep     <- sapply(1:nrow(pamSites), function(x) pamSites$CutIndex[x] %in% seq(from = pamSites$exonStart[x], to = pamSites$exonEnd[x], by = 1))
+		pamSites <- pamSites[keep, ]
+		
+		# Identify sites with enough sequence context to do calculations
+		pamSites$contextCondition[intersect(which(pamSites$CutIndex >= 40), which((pamSites$CutIndex + 40) <= nchar(pamSites$seq)))  ] <- TRUE
+		pamSites      <- pamSites[intersect(which(pamSites$CutIndex >= 40), which((pamSites$CutIndex + 40) <= nchar(pamSites$seq))), ]
+		
+		siteCountC <- nrow(pamSites)
+		
+		# Get the sequence context surrounding the cut site
+		context <- unlist(lapply(1:nrow(pamSites), function (x) substr(pamSites$seq[x], pamSites$CutIndex[x] - 39, pamSites$CutIndex[x] + 40)))
+		
+		# Set the sequence context in the frame
+		pamSites$seq = context
+		
+	} else {
+		# If the user is NOT using Cas, set pamFlag to FALSE
+		pamSites   <- 0
+		pamFlag    <- FALSE
+		
+		siteCount  <- 0
+		siteCountC <- 0
+	}
+	
+	# Set a flag to be true if there are TALEN inputs
+	talFlag <- talenList[1] != "" && talenList[2] != "" && talenList[3] != "" && talenList[4] != ""
+	
+	# If there are TALEN inputs
+	if(talFlag){
+		# Set the range flag to true
+		rFlag <- TRUE
+		
+		# Set all exon starts to the exon starts in the input frame
+		# Submit talen info to talPal
+		# If there are exon inputs
+		if(length(exonInfo) > 0){
+			talSites <- talPal(exonSeq,
+												 findCut    = TRUE,
+												 wiggle     = TRUE,
+												 wiggleRoom    = 39,
+												 range      = rFlag, 
+												 armin      = talenList[[1]], 
+												 armax      = talenList[[2]], 
+												 spamin     = talenList[[3]], 
+												 spamax     = talenList[[4]], 
+												 exonList   = exonInfo$exonNum,
+												 exonStarts = exonInfo$start)
+			
+		} else {
+			talSites <- talPal(exonSeq,
+												 findCut    = TRUE,
+												 wiggle     = TRUE,
+												 wiggleRoom    = 39,
+												 range      = rFlag,
+												 armin      = talenList[[1]], 
+												 armax      = talenList[[2]], 
+												 spamin     = talenList[[3]], 
+												 spamax     = talenList[[4]], 
+												 exonStarts = NULL,
+												 exonList   = "1")
+		}
+		
+		# Update progress bar
+		progress$inc(0.01, detail = "Pre-processing TALEN target sites...")
+		talSites <- unique(suppressMessages(plyr::join(talSites, exonDF, by = 'Exon_Num')))
+		
+		# Drop target sites where the cut site is not within the exon boundaries
+		keepT     <- sapply(1:nrow(talSites), function(x) talSites$CutIndex[x] %in% seq(from = talSites$exonStart[x], to = talSites$exonEnd[x], by = 1))
+		talSites  <- talSites[keepT, ]
+		
+		# Identify sites with enough sequence context to do calculations
+		talSites$contextCondition[intersect(which(talSites$CutIndex >= 40), which((talSites$CutIndex + 40) <= nchar(geneSeq)))  ] <- TRUE
+		talSites      <- talSites[intersect(which(talSites$CutIndex >= 40), which((talSites$CutIndex + 40) <= nchar(geneSeq))), ]
+		
+		# Get the sequence context surrounding the cut site
+		contextT <- unlist(lapply(1:nrow(talSites), function (x) substr(geneSeq, talSites$CutIndex[x] - 39, talSites$CutIndex[x] + 40)))
+		
+		# Set the sequence context in the frame
+		talSites$seq = contextT
+		
+	} else {
+		# If TALENs are not used, set talSites list to empty
+		talSites <- 0
+	}
+	
+	# Create data frame to hold results
+	menthuFrame <- data.frame(Target_Sequence  = as.character(), 
+														MENTHU_Score     = as.numeric(), 
+														Frame_Shift      = as.character(), 
+														Tool_Type        = as.character(), 
+														Strand           = as.character(), 
+														Exon_ID          = as.numeric(), 
+														Cut_Location     = as.integer(),
+														stringsAsFactors = FALSE)
+	if(version == 1){
+		if(pamFlag){
+			# Update progress bar
+			progress$inc(0.01, detail = "Calculating MENTHUv1.0 scores for CRISPR sites...")
+			
+			slopeFrameFunc <- function(x){
+				# Increment progress
+				if(talFlag){
+					progress$inc(1 / (nrow(pamSites) + nrow(talSites)))
+					
+				} else {
+					progress$inc(1 / nrow(pamSites))
+					
+				}
+				
+				# Return calculation
+				return(calculateSlopeCompetition(as.character(x), cutSite = 40, weight = 20, top = 10))
+			}
+			
+			# Calculate slope competition on all the context
+			slopeFrame <- as.data.frame(matrix(unlist(sapply(context, slopeFrameFunc)), ncol = 6, byrow = TRUE), stringsAsFactors = FALSE)
+			
+			# Update progress bar
+			progress$inc(0.01, detail = "Formatting CRISPR site results...")
+			
+			# Clean up the resulting data frame
+			colnames(slopeFrame) <- c("seq", "microhomology_score", "OOF_Score", "slopeMH3Plus", "frameShift", "topDel")
+			rownames(slopeFrame) <- c()
+			
+			# Merge slope frame and pamSites
+			pamSites <- unique(suppressMessages(plyr::join(pamSites, slopeFrame)))
+			
+			# Generate the crispr target sequences
+			pamSites$crispr <- sapply(1:nrow(pamSites), 
+																function(x) substring((if(pamSites$Orientation[x] == "forward"){pamSites$seq[x]} else {reverseComplement(pamSites$seq[x])}),
+																											40 - pamSites$CutDist[x] - 19,
+																											40 - pamSites$CutDist[x] + nchar(pamSites$Target[x])))
+			# Clean the data frame
+			row.names(pamSites) <- c()
+			
+			# Create a new data frame of the results
+			pamFormFrame <- data.frame(Target_Sequence = pamSites$crispr,
+																 MENTHU_Score    = round(abs(as.numeric(pamSites$slopeMH3Plus)), digits = 2),
+																 Frame_Shift     = pamSites$frameShift,
+																 Tool_Type       = pamSites$Target,
+																 Strand          = pamSites$Orientation,
+																 Exon_ID         = pamSites$Exon_Num,
+																 Cut_Location    = pamSites$CutIndex,
+																 Top_Deletion    = pamSites$topDel,
+																 stringsAsFactors = FALSE)
+		}
+		
+		if(talFlag){
+			# Update progress bar
+			progress$inc(0.01, detail = "Calculating MENTHUv1.0 scores for TALEN sites...")
+			
+			slopeFrameTFunc <- function(x){
+				# Increment progress
+				if(pamFlag){
+					progress$inc(1 / (nrow(talSites) + nrow(pamSites)))
+					
+				} else {
+					progress$inc(1 / nrow(talSites))
+					
+				}
+				
+				# Return calculation
+				return(calculateSlopeCompetition(as.character(x), weight = 20, top = 10))
+			}
+			
+			# Calculate slope competition on all the context
+			slopeFrameT <- as.data.frame(matrix(unlist(sapply(contextT, slopeFrameTFunc)), ncol = 6, byrow = TRUE), stringsAsFactors = FALSE)
+			
+			# Update progress bar
+			progress$inc(0.01, detail = "Formatting TALEN site results...")
+			
+			# Clean up the resulting data frame
+			colnames(slopeFrameT) <- c("seq", "microhomology_score", "OOF_Score", "slopeMH3Plus", "frameShift", "topDel")
+			rownames(slopeFrameT) <- c()
+			
+			# Merge slope frame and pamSites
+			talSites <- unique(suppressMessages(plyr::join(talSites, slopeFrameT)))
+			
+			talenGenFunc <- function(talRow){
+				dim  <- unlist(strsplit(talRow$Target, "/"))
+				arm1 <- as.numeric(dim[1])
+				spa1 <- as.numeric(dim[2])
+				arm2 <- as.numeric(dim[3])
+				
+				armL <- substr(talRow$seq, start = 40 - (spa1 / 2) - arm1, stop = 40 - (spa1 / 2) - 1)
+				spac <- substr(talRow$seq, start = 40 - (spa1 / 2),        stop = 40 + (spa1 / 2) - 1)
+				armR <- substr(talRow$seq, start = 40 + (spa1 / 2),        stop = 40 + (spa1 / 2) - 1 + arm2)
+				
+				return(paste0("<strong>", armL, "</strong>", spac, "<strong>", armR, "</strong>"))
+			}
+			
+			# Generate the crispr target sequences
+			talSites$talen <- sapply(1:nrow(talSites), function(x) talenGenFunc(talSites[x, ]))
+			
+			# Clean the data frame
+			row.names(talSites) <- c()
+			
+			# Create a new data frame of the results
+			talFormFrame <- data.frame(Target_Sequence = talSites$talen,
+																 MENTHU_Score    = round(abs(as.numeric(talSites$slopeMH3Plus)), digits = 2),
+																 Frame_Shift     = talSites$frameShift,
+																 Tool_Type       = talSites$Target,
+																 Strand          = talSites$Orientation,
+																 Exon_ID         = talSites$Exon_Num,
+																 Cut_Location    = talSites$CutIndex,
+																 Top_Deletion    = talSites$topDel,
+																 stringsAsFactors = FALSE)
+		}
+	} else {
+		if(pamFlag){
+			progress$inc(0.01, detail = "Calculating MENTHUv2.0 scores for CRISPR sites...")
+			
+			# Function to calculate MENTHU v2.0 score
+			menthuFrameFunc <- function(x){
+				if(talFlag){
+					progress$inc(1 / (nrow(pamSites) + nrow(talSites)))
+				} else {
+					progress$inc(1 /  nrow(pamSites))
+				}
+				
+				return(calculateMenthu2(as.character(x), cutSite = 40, weight = 20, maxdbm = 5))
+			}
+			
+			# Get the menthu scores
+			menthuFrame <- as.data.frame(matrix(unlist(sapply(context, menthuFrameFunc)), ncol = 5, byrow = TRUE), stringsAsFactors = FALSE)
+			
+			# Update progress bar
+			progress$inc(0.01, detail = "Formatting CRISPR site results...")
+			
+			row.names(menthuFrame)  <- c()
+			colnames(menthuFrame)   <- c("seq", "menthuScore", "frameShift", "topDel", "topMH")
+			menthuFrame$menthuScore <- as.numeric(menthuFrame$menthuScore)
+			
+			# Get the critOne success count
+			critOne <- nrow(menthuFrame[which(menthuFrame$frameShift != "NA"), ])
+			
+			# Get the critTwo success count
+			critTwo <- nrow(menthuFrame[which(menthuFrame$menthuScore >= 1.5), ])
+			
+			# Get both success count
+			critBoth <- nrow(menthuFrame[which(menthuFrame$menthuScore >= 1.5 & menthuFrame$frameShift != "NA"), ])
+			
+			pamSites <- unique(suppressMessages(plyr::join(pamSites, menthuFrame)))
+			
+			# Drop 0s
+			pamSites <- pamSites[which(pamSites$menthuScore > 0), ]
+			
+			# Format the output
+			# Generate the 20bp CRISPR guide
+			baseCrispr <- sapply(1:nrow(pamSites), 
+													 function(x) if(pamSites$Orientation[x] == "forward"){
+													 	substr(pamSites$seq[x], 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])     
+													 } else {
+													 	substr(reverseComplement(pamSites$seq[x]), 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])
+													 })
+			
+			# Generate the PAM sequence
+			pam        <- sapply(1:nrow(pamSites), 
+													 function(x) (if(pamSites$Orientation[x] == "forward"){
+													 	substr(pamSites$seq[x], 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] + 1, 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] + nchar(pamSites$Target[x]))      
+													 } else {
+													 	substr(reverseComplement(pamSites$seq[x]), 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] + 1, 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] + nchar(pamSites$Target[x]))
+													 }))
+			
+			# Get the CRISPR target sequence required to target this site, and bold the PAM
+			crispr <- sapply(1:length(baseCrispr), function(x) paste0(baseCrispr[x], "<strong>", pam[x], "</strong>"))
+			
+			# Create data frame of the current results
+			pamFormFrame  <- data.frame(Target_Sequence  = crispr, 
+																	MENTHU_Score     = round(as.numeric(pamSites$menthuScore), digits = 2), 
+																	Frame_Shift      = pamSites$frameShift,
+																	Tool_Type        = pamSites$Target, 
+																	Strand           = pamSites$Orientation, 
+																	Exon_ID          = pamSites$Exon_Num, 
+																	Cut_Location     = pamSites$CutIndex,
+																	Top_Deletion     = pamSites$topDel,
+																	stringsAsFactors = FALSE)
+		}
+		
+		if(talFlag){
+			# Update progress bar
+			progress$inc(0.01, detail = "Calculating MENTHUv2.0 scores for TALEN sites...")
+			
+			menthuFrameTFunc <- function(x){
+				# Increment progress
+				if(pamFlag){
+					progress$inc(1 / (nrow(talSites) + nrow(pamSites)))
+					
+				} else {
+					progress$inc(1 / nrow(talSites))
+					
+				}
+				
+				# Return calculation
+				return(calculateMenthu2(as.character(x), weight = 20, maxdbm = 5))
+			}
+			
+			# Calculate slope competition on all the context
+			menthuFrameT <- as.data.frame(matrix(unlist(sapply(contextT, menthuFrameTFunc)), ncol = 5, byrow = TRUE), stringsAsFactors = FALSE)
+			
+			# Update progress bar
+			progress$inc(0.01, detail = "Formatting TALEN site results...")
+			
+			# Clean up the resulting data frame
+			colnames(menthuFrameT) <- c("seq", "menthuScore", "frameShift", "topDel", "topMH")
+			rownames(menthuFrameT) <- c()
+			
+			# Merge slope frame and pamSites
+			talSites <- unique(suppressMessages(plyr::join(talSites, menthuFrameT)))
+			
+			talenGenFunc <- function(talRow){
+				dim  <- unlist(strsplit(talRow$Target, "/"))
+				arm1 <- as.numeric(dim[1])
+				spa1 <- as.numeric(dim[2])
+				arm2 <- as.numeric(dim[3])
+				
+				armL <- substr(talRow$seq, start = 40 - (spa1 / 2) - arm1, stop = 40 - (spa1 / 2) - 1)
+				spac <- substr(talRow$seq, start = 40 - (spa1 / 2),        stop = 40 + (spa1 / 2) - 1)
+				armR <- substr(talRow$seq, start = 40 + (spa1 / 2),        stop = 40 + (spa1 / 2) - 1 + arm2)
+				
+				return(paste0("<strong>", armL, "</strong>", spac, "<strong>", armR, "</strong>"))
+			}
+			
+			# Generate the crispr target sequences
+			talSites$talen <- sapply(1:nrow(talSites), function(x) talenGenFunc(talSites[x, ]))
+			
+			# Clean the data frame
+			row.names(talSites) <- c()
+			
+			# Create a new data frame of the results
+			talFormFrame <- data.frame(Target_Sequence = talSites$talen,
+																 MENTHU_Score    = round(abs(as.numeric(talSites$menthuScore)), digits = 2),
+																 Frame_Shift     = talSites$frameShift,
+																 Tool_Type       = talSites$Target,
+																 Strand          = talSites$Orientation,
+																 Exon_ID         = talSites$Exon_Num,
+																 Cut_Location    = talSites$CutIndex,
+																 Top_Deletion    = talSites$topDel,
+																 stringsAsFactors = FALSE)
+		}
+	}
+	
+	# Return frame
+	if(pamFlag && talFlag){
+		return(list(rbind(pamFormFrame, talFormFrame), siteCount, siteCountC, critOne, critTwo, critBoth))
+	} else if(pamFlag && !talFlag){
+		return(list(pamFormFrame, siteCount, siteCountC, critOne, critTwo, critBoth))
+	} else {
+		return(list(talFormFrame, siteCount, siteCountC, critOne, critTwo, critBoth))
+	}
+}
+
 
 #' convertToNumeric
 #'

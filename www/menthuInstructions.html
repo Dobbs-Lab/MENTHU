@@ -14,6 +14,8 @@
 <p>Step 2) Choose your sequence input type. If using a GenBank gene id, select the "GenBank Gene ID" radio button and then paste the ID into the box (Please see the FAQs section for a complete listing of supported and unsupported accession types.). If copy/pasting the gene sequence, select the "Copy/paste gene sequence" radio button and then paste your sequence into the box. If copy/pasting, you will then be asked if your pasted sequence has multiple exons, and if you want to target a specific exon within the sequence. If you choose "No", MENTHU will search for target sites within the entirety of your pasted sequence. If you choose "Yes", MENTHU will display table in which you can enter exon information for your sequence.</p>
 <p>The exon table has two columns - one to specify the location of the first nucleotide in the exon (exonStart) and one to specify the location of the last nucleotide in the exon (exonEnd). For example, if you paste a gene sequence that has 300 nucleotides in it, and the first exon runs from the 34th to the 121st nucleotides in the sequence, you would click on the box in the first row under "exonStart" and type "34", then click on the box in the first row under "exonEnd" and type "121". Note that you cannot have negative values in the table, and your "exonEnd" must be smaller than the length of your sequence (your exon can't end after the sequence does.) If you are only interested in one exon, you can enter that information in the first row and leave the remaining rows blank. If you are interested in multiple exons, you can enter that information into the provided rows. If you have more than five exons of interests, you can right-click or CMD+click on the fifth row and choose "Insert row below" to add additional rows.</p>
 <p>Step 2a) This step will be displayed if you choose to submit a GenBank gene ID by selecting the "GenBank Gene ID" radio button. You will then be prompted as to which exons in the corresponding GenBank gene should be targeted.</p>
+<!--<p>Step 2b) Choose whether or not to consider sites where the double-strand break site will occur within an exon, but the context considered by MENTHU may include intronic sequences. Keep in mind that intronic sequences are generally not as well conserved as exon sequences, so the intron sequences from GenBank, RefSeq, and Ensembl may be very different from the introns in your model system. (We also can't guarantee the reference exons will match your organism closely, either, but exons are generally better conserved and this is less of an issue.) In order for MENTHU to accurately choose sites with a single predominant outcome <i>in vivo</i>, your organism's genomic DNA must closely match the input given to MENTHU. </p>
+<p>Step 2c) Choose whether or not to consider sites where the double-strand break site will occur within an exon, but the gRNA may run over the exon boundary into an intron. As discussed above, the intron sequences from GenBank, RefSeq, and Ensembl may be different from your organism's intron sequences. Therefore, if you choose "Yes" here, MENTHU does not guarantee that the output gRNA sequence will actually closely match the target in your organism; the portion of the gRNA crossing into the intron could be very, very different in your organism. If this option is selected, 2b will automatically be set to "Yes" as well, as it is impossible to have a gRNA span into an intron without also considering intron context in the MENTHU score.</p>-->
 <!--<p>Step 3) Choose a score threshold for reporting results. If using the Version 2 scoring system, we recommend you use only use sites with a score greater than or equal to 1.5. If using the legacy Version 1.0 scoring system, we highly recommend that you choose to <b>DISPLAY</b> sites with a competition score greater than or equal to 40 (and so enter '40' in the threshold box), but only <b>USE</b> sites with a score greater than or equal to 50. Sites scoring 40-50 may be used if no sites with a score of >50 are present, as many sequences do not have any sites with a score greater than 50. Therefore, if you choose 40 as the threshold cutoff, you will display all targets worth consideration.</p>-->
 <p>At this point you can click the 'Submit' button. Depending on several factors (including whether a GenBank/RefSeq accession was used, the length of sequence to be searched, the number of PAMs selected/specified, etc.), it may take a few seconds to a few minutes to calculate your scores. Please <strong>DO NOT</strong> leave the page until your results are finished calculating.</p>
 <p><strong>Interpreting results:</strong></p>
@@ -35,17 +37,19 @@
 <p>No. Your data inputs are only available to MENTHU for as long as your MENTHU session is active, and are only used to calculate your results during that time. The file containing your results is only generated when you click the 'Download' button - no results files are actually created or stored on our server. Once you exit the MENTHU browser window, everything you did in the session is completely gone. (The flip side of this is that if you do not save your results, you will have to perform the analysis again.)</p>
 <br>
 <p><b>What accession types are supported?</b></p>
-<p>MENTHU supports the following RefSeq input types:</p>
-<li>Nucleotide inputs</li>
-<li>mRNA accessions (RefSeq NM or XM prefixes; please note that if you want to use targets at the beginning or end of an exon, mRNAs and other CDS-based GenBank/RefSeq entries may not have enough context to identify these targets. Use a primary DNA sequence instead.</li>
+<p>MENTHU supports the following input types:</p>
+<li>GenBank and RefSeq nucleotide inputs</li>
+<li>RefSeq mRNA accessions (RefSeq NM or XM prefixes; please note that if you want to use targets at the beginning or end of an exon, mRNAs and other CDS-based GenBank/RefSeq entries may not have enough context to identify these targets. Use a primary DNA sequence instead.)</li>
+<li>Ensembl transcripts, exons, and proteins (check the Ensembl Stable ID prefixes <a href="https://useast.ensembl.org/info/genome/stable_ids/prefixes.html" target = "_blank">here</a>.) </li>
 <li>Nucleotide accessions not on the unsupported list (check the GenBank prefixes <a href="https://www.ncbi.nlm.nih.gov/Sequin/acc.html" target = "_blank">here</a>.)</li>
 <br>
-<p><b>What accession types are not supported?</b></p>
+<p><b>What accession types are NOT supported?</b></p>
 <p>MENTHU DOES NOT support the following accession types: </p>
-<li>Non-nucleotide accessions (GenBank accessions with 3 letter prefix followed by 5 numerals, RefSeq accessions with AP, NP, YP, XP, or WP prefixes)</li>
+<li>Non-nucleotide accessions from GenBank and RefSeq</li>
 <li>Whole genome sequences (GenBank accession with a 4 letter prefix followed by 6-10 numerals, RefSeq IDs with AC, NC, or NZ prefixes)</li>
 <li>(Incomplete) Genomic regions (RefSeq accession with NG prefix)</li>
 <li>Contigs and scaffolds (RefSeq accession with NT or NW prefixes)</li>
+<li>Ensembl genes (ID ends in a "G" character)</li>
 <li></li>
 <p><b>I used an ENSEMBL/Rfam/Pfam/UNIPROT/PDB/NDB/EMBL/BioCyc/PROSITE ID, and didn't get results. Why?</b></p>
 <p>MENTHU currently only supports GenBank/RefSeq accessions, and will only perform an analysis on DNA sequences. Check your input to make sure you're using a GenBank or RefSeq ID, and that the ID corresponds to a DNA entry.</p>
@@ -73,6 +77,13 @@
 <p></p>
 <p>We are working on a solution to this.</p>
 <br>
+<p><b>Why don't you support Ensembl gene IDs?</b></p>
+<p>We don't support Ensembl genes at the moment because Ensembl genes may have several associated transcripts (splicing isoforms), and we don't know which one you're interested in. We are working on implementing support for Ensembl genes soon.</p>
+<br>
+<p><b>I tried running the same gene from GenBank and Ensembl with otherwise identical settings, but there are some results in the Ensembl output that aren't in the GenBank output. What's happening?</b></p>
+<p>Most likely, one of two things is ocurring.</p>
+<p>1.) Ensembl transcripts will generally include the 5' UTR as part of the first exon, and the 3' UTR as part of the final exon. GenBank entries are far more hit and miss on this - some GenBank entries will include the (unlabeled) UTRs with the exons, while other GenBank entries do not include them as part of the exon, if they are labeled at all. So, the Ensembl entry may have more results because there are targets in the UTRs which are NOT present in the GenBank entry. We recommend checking your results carefully to ensure that you are only targeting a UTR if that is your intent.</p>
+<p>2.) More rarely, there may be differences in the gene sequences deposited in GenBank vs Ensembl (this may be due to SNPs or different sequence versions). It is possible for these changes to impact whether a site has a single predominant outcome, and thus appears in the results.</p>
 </div>
 </body>
 </html>

@@ -64,7 +64,7 @@ getEnsemblGeneFile <- function(accession){
 	
 	# Construct the URL
 	server <- 'https://rest.ensembl.org/sequence/id/'
-
+	
 	ext <- paste0(accession, "?type=genomic")
 	
 	# Get file from URL
@@ -74,7 +74,7 @@ getEnsemblGeneFile <- function(accession){
 	
 	# Read in file contents
 	ensContents <- httr::content(r)
-
+	
 	ensContents <- processEnsSequence(ensContents)
 	
 	return(ensContents)
@@ -180,7 +180,7 @@ getEnsemblIdType   <- function(id, check = FALSE){
 		
 		# Remove the context
 		suffix <- gsub("[0-9.]+", "", gsub(species$Id, "", id))
-
+		
 		# Because life is generally unfair, Ensembl and FlyBase (which is where  Ensembl's drosophila 
 		# stuff comes from) have different naming schemes. WHICH, BY THE WAY, ARE NOT 
 		# EXPLAINED ON ENSEMBL'S STABLE ID PAGE. So THANKS, guys. </sarcasm>
@@ -194,11 +194,11 @@ getEnsemblIdType   <- function(id, check = FALSE){
 				type <- 'protein'
 			} #else if(suffix == ){
 			
-		  #} 
+			#} 
 			else {
 				type <- 'unknown'
 			}
-				
+			
 		} else {
 			# For all the not-drosophila entries out there, that conform to these standards:
 			if(       suffix == "G"  | suffix == "g"){
@@ -249,7 +249,7 @@ lookupEnsemblInfo <- function(accession){
 	#httr::stop_for_status(r)
 	
 	resTable <- data.frame(t(sapply(httr::content(r),c)), stringsAsFactors = FALSE)
-
+	
 	return(resTable)
 }
 
@@ -325,7 +325,7 @@ ensemblIdSpecies <- function(id, ensIdList = ensIds, bool = FALSE){
 	} else if(substr(id, 1, 2) == "FB"){
 		# Pull out the drosophila matches, which for some inexplicable reason have their own type formatting
 		prefix <- "FB"
-	
+		
 	} else {
 		# Get the ID number and the preceding two letters
 		suffix <- unlist(stringr::str_extract_all(id, "[A-Za-z][A-Za-z][0-9.]+"))
@@ -440,7 +440,7 @@ getEnsemblExonSequence <- function(accession, strand, exp5 = 0, exp3 = 0){
 	if(as.numeric(ensContents$strand) == 1){
 		ensContents$start <- ensContents$start + exp5
 		ensContents$end   <- ensContents$end   - exp3
- 
+		
 	} else if(as.numeric(ensContents$strand) == -1){
 		ensContents$start <- ensContents$start + exp5
 		ensContents$end   <- ensContents$end   - exp3 

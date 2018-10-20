@@ -245,20 +245,15 @@ getFeatureValues <- function(featureLines){
 }
 
 getExonLocus <- function(gene){
-	# Get the features
 	geneF <- getFeatures(gene)
-	# Set the coding sequence flag to false
 	cdsFlag <- FALSE
-	# Get a list of the features classified as 'exon'
 	exonList <- which(sapply(sapply(geneF, "[", 2), "[", 1) == "exon")
 	
-	# If there are no features classified as 'exon', try for features classified as "CDS"
 	if(length(exonList) < 1){
 		exonList <- which(sapply(sapply(geneF, "[", 2), "[", 1) == "CDS")
 		cdsFlag <- TRUE
 	}
-	
-	# If there are no exons or CDS regions, give up
+
 	if(length(exonList) < 1){
 		return("Error: No exons or CDS")
 		
@@ -285,7 +280,7 @@ getExonLocus <- function(gene){
 			geneExons <- geneF[exonList]
 		}
 		
-		exonTable <- data.frame(start       = as.numeric(),
+		exonTable <- data.frame(start       = as.numeric(), 
 														end         = as.numeric(),
 														width       = as.numeric(),
 														type        = as.character(),
@@ -294,42 +289,34 @@ getExonLocus <- function(gene){
 														stringsAsFactors = FALSE)
 		
 		#Determine if exons are numbered
-		numberedLength <- "number" %in% unlist(geneExons)
-		
-		#print(numberedLength)
+		numberedLength <- "number" %in% sapply(geneExons, "[[", 1)
 		
 		if(numberedLength){
 			for(i in 1:length(geneExons)){
-				
-				#print(i)
-				#print(length(geneExons))
-				#print(head(exonTable))
+
 				
 				# Deal with joins
 				if(is.na(geneExons[[i]][2, 2]) && is.na(geneExons[[i]][3, 2])){
 					exonStartList <- unlist(geneExons[[i]][5, 2])
 					exonEndList   <- unlist(geneExons[[i]][6, 2])
-					tempTable <- data.frame(start       = as.numeric(exonStartList),
+					tempTable <- data.frame(start       = as.numeric(exonStartList), 
 																	end         = as.numeric(exonEndList),
 																	width       = as.numeric(exonEndList - exonStartList),
 																	type        = rep(geneExons[[i]][1, 2], length(exonStartList)),
 																	orientation = rep(geneExons[[i]][4, 2], length(exonStartList)),
 																	number      = rep(geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2], length(exonStartList)),
 																	stringsAsFactors = FALSE)
-					colnames(tempTable) <- c("start", "end", "width", "type", "orientation", "number")
 					
 				} else {
-					tempTable <- data.frame(start       = as.numeric(geneExons[[i]][2, 2]),
+					tempTable <- data.frame(start       = as.numeric(geneExons[[i]][2, 2]), 
 																	end         = as.numeric(geneExons[[i]][3, 2]),
 																	width       = as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2]),
 																	type        = geneExons[[i]][1, 2],
 																	orientation = geneExons[[i]][4, 2],
 																	number      = geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2],
 																	stringsAsFactors = FALSE)
-					colnames(tempTable) <- c("start", "end", "width", "type", "orientation", "number")
 				}
 				
-				#print(head(tempTable))
 				exonTable <- rbind(exonTable, tempTable)
 				
 			}
@@ -339,7 +326,7 @@ getExonLocus <- function(gene){
 				if(is.na(geneExons[[i]][2, 2]) && is.na(geneExons[[i]][3, 2])){
 					exonStartList <- unlist(geneExons[[i]][5, 2])
 					exonEndList   <- unlist(geneExons[[i]][6, 2])
-					tempTable <- data.frame(start       = as.numeric(exonStartList),
+					tempTable <- data.frame(start       = as.numeric(exonStartList), 
 																	end         = as.numeric(exonEndList),
 																	width       = as.numeric(exonEndList - exonStartList),
 																	type        = rep(geneExons[[i]][1, 2], length(exonStartList)),
@@ -350,7 +337,7 @@ getExonLocus <- function(gene){
 					
 				} else {
 					for(i in 1:length(geneExons)){
-						tempTable <- data.frame(start       = as.numeric(geneExons[[i]][2, 2]),
+						tempTable <- data.frame(start       = as.numeric(geneExons[[i]][2, 2]), 
 																		end         = as.numeric(geneExons[[i]][3, 2]),
 																		width       = as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2]),
 																		type        = geneExons[[i]][1, 2],
@@ -361,11 +348,10 @@ getExonLocus <- function(gene){
 				}
 				exonTable <- rbind(exonTable, tempTable)
 			}
-		}
-		
+			}
+			
 		return(exonTable)
 	}
 }
-
 
 

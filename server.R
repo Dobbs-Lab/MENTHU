@@ -1,7 +1,7 @@
 # Required packages
 library(shiny)
 library(shinyjs)
-library(shinyTable)
+#library(shinyTable)
 library(rhandsontable)
 library(stringr)
 library(stringi)
@@ -18,15 +18,7 @@ source("genbankAccessoryFunctions.R")
 source("menthu2.0AccessoryFunctions.R")
 source("required2.0Functions_1.R")
 source("targetAccessoryFunctions2.0.R")
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 source("ensemblAccessoryFunctions.R")
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
-source("ensemblAccessoryFunctions.R")
-source("ensemblProcessingFunctions.R")
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 
 shinyServer(function(input, output, session){
 	########################################################
@@ -38,9 +30,9 @@ shinyServer(function(input, output, session){
 	
 	# Empty data frame for displaying when users are inputting exon information
 	dfEmpty   <<- data.frame(Exon_Num         = rep(0, 5),
-												   exonStart        = rep(0, 5), 
-												   exonEnd          = rep(0, 5), 
-												   stringsAsFactors = FALSE)
+													 exonStart        = rep(0, 5), 
+													 exonEnd          = rep(0, 5), 
+													 stringsAsFactors = FALSE)
 	
 	# Example data frame for when the paste gene seq example is selected
 	dfExample <<- data.frame(Exon_Num         = c(1,     2,   3,   4,   5),
@@ -54,29 +46,15 @@ shinyServer(function(input, output, session){
 														geneSeqResultsFlag = FALSE,   # Flag for displaying gene seq results table
 														genbankResultsFlag = FALSE,   # Flag for displaying genbank results table
 														rhFrame            = dfEmpty, # Slot to hold exon information data frame
-<<<<<<< HEAD
-														resetVal           = FALSE,   #  for if the reset button has been clicked
-<<<<<<< HEAD
-														geneSeqError       = 0)       # Error messages for geneSeq submission
-=======
 														resetVal           = FALSE,   # For if the reset button has been clicked
 														geneSeqError       = 0,       # Error messages for geneSeq submission
 														downloadFEns       = FALSE,   # Flag for displaying download button (for Ensembl)
 														ensemblResultsFlag = FALSE,   # Flag for displaying Ensembl results table
 														validExonListFlag  = TRUE
-=======
-														geneSeqError       = 0,       # Error messages for geneSeq submission
-														downloadFEns       = FALSE,   # Flag for displaying download button (for Ensembl)
-														ensemblResultsFlag = FALSE    # Flag for displaying Ensembl results table
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	)
 	
 	# Load Ensembl ID table
 	ensIds <<- readRDS("2018-09-21_ensIds.RDS")
-<<<<<<< HEAD
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	
 	# Flag for displaying example table when clicking example geneSeq link
 	geneSeqExampleFlag <<- FALSE
@@ -90,7 +68,7 @@ shinyServer(function(input, output, session){
 		if(input$genbankId != ""){
 			#Let RefSeq RNA accessions through
 			if(stringr::str_detect(input$genbankId, regex("^(NM|NR|XM|XR)_[0-9]{6}", ignore_case = TRUE))){
-	
+				
 				#Catch RefSeq protein accesssions
 			} else if(stringr::str_detect(input$genbankId, regex("^(AP|NP|YP|XP|WP)_[0-9]{6}", ignore_case = TRUE))){
 				shiny::validate(
@@ -106,7 +84,7 @@ shinyServer(function(input, output, session){
 				#			 			 "issues surrounding exon identification. You can use a GenBank or RefSeq nucleotide entry ", 
 				#			 			 "corresponding to your gene of interest."))
 				#)
-			
+				
 				# Catch GenBank protein accessions
 			} else if(stringr::str_detect(input$genbankId, regex("^[A-Z]{3}[0-9]{5}", ignore_case = TRUE))){
 				shiny::validate(
@@ -117,20 +95,15 @@ shinyServer(function(input, output, session){
 			} else {
 				shiny::validate(
 					need((((stringr::str_detect(input$genbankId, regex("^[a-zA-Z]{2}[0-9]{6}",                  ignore_case = TRUE)))  | 
-								 (stringr::str_detect(input$genbankId, regex("^[a-zA-Z]{1}[0-9]{5}",                  ignore_case = TRUE)))) |
-								 (stringr::str_detect(input$genbankId, regex("^(AC|NC|NG|NT|NW|NZ)_[0-9]{6}\\.[0-9]", ignore_case = TRUE)))) |
-							 	 (stringr::str_detect(input$genbankId, regex("^[a-zA-Z]{4}[0-9]{8,10}",               ignore_case = TRUE))),
+								 	(stringr::str_detect(input$genbankId, regex("^[a-zA-Z]{1}[0-9]{5}",                  ignore_case = TRUE)))) |
+									(stringr::str_detect(input$genbankId, regex("^(AC|NC|NG|NT|NW|NZ)_[0-9]{6}\\.[0-9]", ignore_case = TRUE)))) |
+							 	(stringr::str_detect(input$genbankId, regex("^[a-zA-Z]{4}[0-9]{8,10}",               ignore_case = TRUE))),
 							 paste0("Error: The entered ID does not match a known Genbank NUCLEOTIDE or RefSeq NUCLEOTIDE ID format.", 
 							 			 "Please check your submitted accession to make sure you are using a NUCLEOTIDE entry.")))
 			}
 		} 
 	})
 	
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	####Validate Ensembl accession format####
 	validEnsemblId <- reactive({
 		# Check that the input is not empty
@@ -152,59 +125,36 @@ shinyServer(function(input, output, session){
 							 
 					)
 				)
-<<<<<<< HEAD
-=======
-				
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 			}
 		}
 	})
 	
-<<<<<<< HEAD
+	
 	# Check if the Ensembl ID actually exists
+	# If we can make contact with Ensembl
 	ensemblIdExists <- reactive({
 		if((input$inputType == 3) & input$ensemblId != ""){
 			if(is.null(validEnsemblId())){
-				
-				# If we can make contact with Ensembl
-=======
-	ensemblIdExists <- reactive({
-		if((input$inputType == 3) & input$ensemblId != ""){
-			if(is.null(validEnsemblId())){
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 				if(isEnsemblUp()){
 					shiny::validate(
 						need(!grepl("not found", lookupEnsemblInfo(input$ensemblId)),
 								 "Error: The input Ensembl ID was not found in Ensembl's database. Please check your input ID."
-<<<<<<< HEAD
 						)
 					)
 					
-				# If we can't contact Ensembl
-=======
-								 
-						)
-					)
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
+					# If we can't contact Ensembl
+					
 				} else {
 					shiny::validate(
 						need(1 == 2,
 								 "Warning: Ensembl is not responding to our requests. Please try again in a few minutes."
-<<<<<<< HEAD
 						)
-=======
-								 )
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 					)
 				}
 			}
 		}
 	})
 	
-<<<<<<< HEAD
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	####Validate copy/paste sequence input####
 	validGeneSeq <- reactive({
 		#If the input type is copy/paste gene seq and text has been entered
@@ -219,12 +169,12 @@ shinyServer(function(input, output, session){
 				need(!stringr::str_detect(input$geneSeq, "[^ACGTacgt0-9\\s\\n]"), 
 						 paste0("Error: Input DNA sequence contains non-standard nucleotides. ", 
 						 			 "Allowed nucleotides are A, C, G, and T.")),
-
+				
 				# Prevent users from submitting too short sequences
 				need(nchar(input$geneSeq) > 80,
 						 paste0("The DNA sequence has <80 nucleotides. MENTHU requires at least 40 nucleotides upstream", 
 						 			 "and 40 nucleotides downstream of the DSB site in order to properly calculate the MENTHU score."))#,
-			
+				
 				#Prevent users from blowing up the server
 				#need(nchar(input$geneSeq) < 5000, 
 				#		 paste0("The DNA sequence has >5000 nucleotides. For sequences of this size, ",
@@ -262,24 +212,24 @@ shinyServer(function(input, output, session){
 	#Valid TALEN inputs
 	#validTalen <- reactive({
 	#	shiny::validate(
-			#need(input$armin   <= input$armax,
-			#		 "Error: Maximum TALEN arm length must be greater than or equal to minimum TALEN arm length."),
-			
-			#need(input$spamin  <= input$spamax,
-			#		 "Error: Maximum spacer length must be greater than or equal to minimum spacer length."),
-			
-			#need((input$spamin >= 14),
-			#		 "Error: Minimum spacer length is 14 nucleotides."),
-			
-			#need((input$spamax <= 16),
-			#		 "Error: Maximum spacer length is 16 nucleotides."),
-			
+	#need(input$armin   <= input$armax,
+	#		 "Error: Maximum TALEN arm length must be greater than or equal to minimum TALEN arm length."),
+	
+	#need(input$spamin  <= input$spamax,
+	#		 "Error: Maximum spacer length must be greater than or equal to minimum spacer length."),
+	
+	#need((input$spamin >= 14),
+	#		 "Error: Minimum spacer length is 14 nucleotides."),
+	
+	#need((input$spamax <= 16),
+	#		 "Error: Maximum spacer length is 16 nucleotides."),
+	
 	#		need((input$armin  >= 15),
 	#				 "Error: Minimum TALEN arm length is 15 nucleotides."),
-			
+	
 	#		need((input$armax  <= 18),
 	#				 "Error: Maximum TALEN arm length is 18 nucleotides.")
-			
+	
 	#	)
 	#})
 	
@@ -327,8 +277,8 @@ shinyServer(function(input, output, session){
 			 (input$customCutOpt != "")){
 			shiny::validate(
 				need(length(as.character(distStitch("", input$cutSite))) == length(pamStitch("", input$customPamSeq)),
-				paste0("Error: The number of custom PAM sequences does not match the number of custom DSB sites. ", 
-							 "Please make sure that each PAM has one distance to its cut site specified."))
+						 paste0("Error: The number of custom PAM sequences does not match the number of custom DSB sites. ", 
+						 			 "Please make sure that each PAM has one distance to its cut site specified."))
 			)
 		}
 	})
@@ -339,8 +289,8 @@ shinyServer(function(input, output, session){
 				shiny::validate(
 					need(1 == 2,
 							 paste0("Error: Some or all of the exons in this list are not found in the input accession. ",
-							 			  "Please check the exon numbering of your accession (ESPECIALLY if you're using Ensembl), ",
-							 			  "as GenBank, RefSeq, and Ensembl may have inconsistent exon numbering. "))
+							 			 "Please check the exon numbering of your accession (ESPECIALLY if you're using Ensembl), ",
+							 			 "as GenBank, RefSeq, and Ensembl may have inconsistent exon numbering. "))
 				)
 			}
 		}
@@ -478,12 +428,8 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+	
 	# Download button for Ensembl results
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	output$downOutEns <- renderUI({
 		if(rValues$downloadFEns){
 			downloadButton("downRes", "Download Results")
@@ -492,10 +438,6 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-<<<<<<< HEAD
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	# Output function for copy/paste results
 	output$geneSeqResults <- renderUI({
 		if(rValues$geneSeqResultsFlag){
@@ -519,44 +461,10 @@ shinyServer(function(input, output, session){
 																								escape   = FALSE)
 			DT::dataTableOutput("placeholder")
 		} else {
-		  ""
-		}
-	})
-	
-<<<<<<< HEAD
-	# Download handler
-	output$downRes <- downloadHandler(
-		filename = function(){
-			#Name file in the form "YYYY-MM-DD_HH-MM-SS_targets.csv
-			paste(gsub("CDT", "", gsub(" ", "_", Sys.time())), "_targets.csv")},
-		
-		content = function(file){
-			
-			resOut     <- results
-			resOut[,1] <- gsub("<strong>|</strong>", "", results[,1], ignore.case = TRUE, perl = TRUE)
-			#write.csv( , file, row.names = FALSE, append = FALSE)
-			write.table(resOut, file, row.names = FALSE, append = TRUE, quote = FALSE, sep = ",")
-		}
-	)
-	
-	output$ensemblResults <- renderUI({
-		if(rValues$ensemblResultsFlag){
-			output$placeholder <- DT::renderDataTable(results, 
-																								options  = list(scrollX = TRUE),
-																								rownames = FALSE,
-																								escape   = FALSE)
-			DT::dataTableOutput("placeholder")
-		} else {
 			""
 		}
 	})
 	
-<<<<<<< HEAD
-	#output$plotHoverInfo <- renderPrint({
-	#	cat("")
-	#})
-=======
-	# Output function for Ensembl results
 	output$ensemblResults <- renderUI({
 		if(rValues$ensemblResultsFlag){
 			output$placeholder <- DT::renderDataTable(results, 
@@ -596,9 +504,6 @@ shinyServer(function(input, output, session){
 			write.table(resOut, file, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = ",")
 		}
 	)
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	
 	########################################################
 	#################Submission Handling####################
@@ -615,7 +520,7 @@ shinyServer(function(input, output, session){
 		#		talFlag <- 2 #Problems with input TALEN
 		#	}
 		#} else {
-			talFlag <- 0 # TALENs not selected
+		talFlag <- 0 # TALENs not selected
 		#}
 		
 		cusPamFlag <- 2
@@ -712,7 +617,7 @@ shinyServer(function(input, output, session){
 				} else if(input$exonTargetType == 3){
 					exonStuff <- input$exonTargetList	
 				}
-
+				
 				# Handle cut distances and PAMs for input to calculateMENTHUGeneSeqGenBank
 				if(input$customCutOpt == 1){ # If customs pams in use
 					suppressWarnings(if(!is.null(input$casType)){ # If pre-made PAMs in use
@@ -728,11 +633,11 @@ shinyServer(function(input, output, session){
 					pams         <- input$casType
 					cutDistances <- rep(-3, length(input$casType))
 				}
-					
+				
 				#if(input$talenOp == 1){
 				#	talFlag <- TRUE
 				#} else {
-					talFlag <- FALSE
+				talFlag <- FALSE
 				#}
 				#Calculate the MENTHU score
 				#results <<- calculateMENTHUGeneSeqGenBank(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, talFlag,
@@ -743,7 +648,7 @@ shinyServer(function(input, output, session){
 				stuff    <- calculateMENTHUGeneSeqGenBank(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, 
 																									info, input$firstExon, input$exonTargetType, exonStuff, progress)
 				
-
+				
 				# Statistics on the number of targets detected
 				output$genbankhits <- renderUI({
 					HTML(paste(
@@ -761,7 +666,7 @@ shinyServer(function(input, output, session){
 				# Order the result table from largest menthuScore to smallest, and drop 0s
 				results <<- results[which(results$MENTHU_Score > 0), ]
 				results <<- results[order(-results$MENTHU_Score), ]
-
+				
 				# Set the flag to display genbank results
 				rValues$genbankResultsFlag <- TRUE
 				
@@ -775,11 +680,6 @@ shinyServer(function(input, output, session){
 		}
 	})
 	
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	observeEvent(input$ensemblSubmit,{
 		timeX <- Sys.time()
 		#talFlag <- 2
@@ -819,7 +719,6 @@ shinyServer(function(input, output, session){
 		}
 		
 		# Prevent the whole shebang from running without okay inputs
-<<<<<<< HEAD
 		if(is.null(validEnsemblId())  && # Check Ensembl ID is okay
 			 is.null(ensemblIdExists()) && # Make sure the ID actually exists
 			 #is.null(validThreshold()) && # Check threshold is okay
@@ -827,14 +726,6 @@ shinyServer(function(input, output, session){
 			 (cusPamFlag != 2)          && # Check if custom PAMs are used, and if they are okay
 			 (talFlag    != 2)          && # Check if TALENs are used, and if they are okay
 			 (lenMatch   != 2)){                    
-=======
-		if(is.null(validEnsemblId()) && # Check Ensembl ID is okay
-			 #is.null(validThreshold()) &&         # Check threshold is okay
-			 is.null(validPAM()) &&               # Check that one of the input options is selected
-			 (cusPamFlag != 2) &&                 # Check if custom PAMs are used, and if they are okay
-			 (talFlag != 2) &&                    # Check if TALENs are used, and if they are okay
-			 (lenMatch != 2)){                    
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 			
 			# Create a new progress object
 			progress <- shiny::Progress$new()
@@ -865,8 +756,6 @@ shinyServer(function(input, output, session){
 			
 			# Make sure Ensembl is up and responsive
 			if(isEnsemblUp()){
-<<<<<<< HEAD
-				
 				ensemblInfo <- handleEnsemblInput(input$ensemblId, wiggle = TRUE, wiggleRoom = 39)
 				
 				progress$set(detail = "Processing Ensembl entry...", value = 0.1)
@@ -874,21 +763,11 @@ shinyServer(function(input, output, session){
 				# If the entry is NOT an exon
 				if(getEnsemblIdType(input$ensemblId, check = TRUE) != "exon"){
 					
-=======
-				ensemblInfo      <- handleEnsemblInput(input$ensemblId, wiggle = TRUE, wiggleRoom = 39)
-				
-				# If the entry is NOT an exon
-				if(getEnsemblIdType(input$ensemblId, check = TRUE) != "exon"){
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 					ensemblInfo$rank <- as.numeric(ensemblInfo$rank)
 					
 					maxR <- max(ensemblInfo$rank)
 					
-<<<<<<< HEAD
 					if(input$firstExon == 1 | max(ensemblInfo$rank == 1)){
-=======
-					if(input$firstExon == 1){
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 						minR <- 1
 					} else {
 						minR <- 2
@@ -898,19 +777,13 @@ shinyServer(function(input, output, session){
 					if(input$exonTargetType == 0){
 						exonStuff <- seq(minR, maxR)
 						
-<<<<<<< HEAD
 					} else if(input$exonTargetType == 1){
 						exonStuff <- seq(minR,   ceiling(minR + (maxR * input$exonBegPercentage / 100)))
-=======
-					} else	if(input$exonTargetType == 1){
-						exonStuff <- seq(minR, ceiling(minR + (maxR * input$exonBegPercentage / 100 )))
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 						
 					} else if(input$exonTargetType == 2){
 						exonStuff <- seq(max(minR, floor(maxR - (maxR * input$exonEndPercentage / 100))), maxR)
 						
 					} else if(input$exonTargetType == 3){
-<<<<<<< HEAD
 						exonStuff <- unique(c(minR, convertToNumeric(input$exonTargetList)))
 						
 						# Make sure that all of the exons in the list are actually in what is retrieved from Ensembl
@@ -922,10 +795,6 @@ shinyServer(function(input, output, session){
 							rValues$validExonListFlag <- FALSE
 							
 						}
-=======
-						exonStuff <- unique(c(minR, input$exonTargetList))
-						
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 					}
 					
 				} else {
@@ -934,99 +803,77 @@ shinyServer(function(input, output, session){
 					
 				}
 				
-<<<<<<< HEAD
 				if(rValues$validExonListFlag){
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
-				# Handle cut distances and PAMs for input to calculateMENTHUEnsembl
-				if(input$customCutOpt == 1){ # If custom PAMs in use
-					suppressWarnings(if(!is.null(input$casType)){ # If pre-made PAMs are also in use
-						pams         <- pamStitch( input$casType, input$customPamSeq)
-						cutDistances <- distStitch(input$casType, input$cutSite)
-						
-					} else { # If no pre-made PAMs
-						pams         <- pamStitch( "", input$customPamSeq)
-						cutDistances <- distStitch("", input$cutSite)
+					
+					# Handle cut distances and PAMs for input to calculateMENTHUEnsembl
+					if(input$customCutOpt == 1){ # If custom PAMs in use
+						suppressWarnings(if(!is.null(input$casType)){ # If pre-made PAMs are also in use
+							pams         <- pamStitch( input$casType, input$customPamSeq)
+							cutDistances <- distStitch(input$casType, input$cutSite)
+							
+						} else { # If no pre-made PAMs
+							pams         <- pamStitch( "", input$customPamSeq)
+							cutDistances <- distStitch("", input$cutSite)
+						}
+						)
+					} else { # If no custom pams
+						pams         <- input$casType
+						cutDistances <- rep(-3, length(input$casType))
 					}
-					)
-				} else { # If no custom pams
-					pams         <- input$casType
-					cutDistances <- rep(-3, length(input$casType))
-				}
-				
-				#if(input$talenOp == 1){
-				#	talFlag <- TRUE
-				#} else {
-				talFlag <- FALSE
-				#}
-				#Calculate the MENTHU score
-				#results <<- calculateMENTHUGeneSeqGenBank(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, talFlag,
-				#																					info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, 
-				#																					progress, input$scoreScheme)
-				#results <<- calculateMENTHUGeneSeqGenBank(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, 
-				#																					info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, progress)
-				stuff    <- calculateMENTHUEnsembl(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, ensemblInfo, exonStuff, progress)
-				
-				
-				# Statistics on the number of targets detected
-				output$ensemblHits <- renderUI({
-					HTML(paste(
-						paste0("Number of target sites detected: ",                                             stuff[[2]]),
-						paste0("Number of target sites with sufficient sequence context to calculate score: ",  stuff[[3]]),
-						paste0("Number of target sites with 3bp microhomology arms within 5bp of each other: ", stuff[[4]]),
-						paste0("Number of target sites with score above 1.5 threshold: ",                       stuff[[5]]),
-						paste0("Number of target sites satisfying 3bp mh and threshold constraints: ",          stuff[[6]]),
-						sep = "<br>"
-					))
-				})
-				
-				results <<- stuff[[1]]
-				
-				# Order the result table from largest menthuScore to smallest, and drop 0s
-<<<<<<< HEAD
-				results <<- results[which( results$MENTHU_Score > 0), ]
-				results <<- results[order(-results$MENTHU_Score),     ]
-=======
-				results <<- results[which(results$MENTHU_Score > 0), ]
-				results <<- results[order(-results$MENTHU_Score), ]
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
-				
-				# Set the flag to display genbank results
-				rValues$ensemblResultsFlag <- TRUE
-				
-				# Set the download button flag to true to render download button visible
-				rValues$downloadFEns <- TRUE 
-				print(paste0("Time to calculate: ", Sys.time() - timeX))
-<<<<<<< HEAD
-				
+					
+					#if(input$talenOp == 1){
+					#	talFlag <- TRUE
+					#} else {
+					talFlag <- FALSE
+					#}
+					#Calculate the MENTHU score
+					#results <<- calculateMENTHUGeneSeqGenBank(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, talFlag,
+					#																					info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, 
+					#																					progress, input$scoreScheme)
+					#results <<- calculateMENTHUGeneSeqGenBank(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, 
+					#																					info, input$threshold, input$firstExon, input$exonTargetType, exonStuff, progress)
+					stuff    <- calculateMENTHUEnsembl(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, talenList, ensemblInfo, exonStuff, progress)
+					
+					
+					# Statistics on the number of targets detected
+					output$ensemblHits <- renderUI({
+						HTML(paste(
+							paste0("Number of target sites detected: ",                                             stuff[[2]]),
+							paste0("Number of target sites with sufficient sequence context to calculate score: ",  stuff[[3]]),
+							paste0("Number of target sites with 3bp microhomology arms within 5bp of each other: ", stuff[[4]]),
+							paste0("Number of target sites with score above 1.5 threshold: ",                       stuff[[5]]),
+							paste0("Number of target sites satisfying 3bp mh and threshold constraints: ",          stuff[[6]]),
+							sep = "<br>"
+						))
+					})
+					
+					results <<- stuff[[1]]
+					
+					# Order the result table from largest menthuScore to smallest, and drop 0s
+					results <<- results[which( results$MENTHU_Score > 0), ]
+					results <<- results[order(-results$MENTHU_Score),     ]
+					
+					# Set the flag to display genbank results
+					rValues$ensemblResultsFlag <- TRUE
+					
+					# Set the download button flag to true to render download button visible
+					rValues$downloadFEns <- TRUE 
+					print(paste0("Time to calculate: ", Sys.time() - timeX))
 				} else {
 					
 				}
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
-							
+				
 			} else {
 				# Output error if no genbank file is found
 				output$ensemblIdOutcome <- renderText(paste0("Error: Accession '", input$ensemblId, "' was not found in database."))
 			}
 			
-<<<<<<< HEAD
-=======
-			
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 		} else {
 			# Output error if Ensembl is down
 			output$ensemblUp <- renderText(paste0("Error: MENTHU was unable to connect to Ensembl."))
 		}
-<<<<<<< HEAD
-		
 	})
 	
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
-	})
-	
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	#Copy/paste Submit Handler
 	observeEvent(input$geneSeqSubmit, {
 		
@@ -1039,7 +886,7 @@ shinyServer(function(input, output, session){
 		#		talFlag <- 2 #Problems with input TALEN
 		#	}
 		#} else {
-			talFlag <- 0 #TALENs not selected
+		talFlag <- 0 #TALENs not selected
 		#}
 		
 		# Run checks for okay custom PAM input
@@ -1115,7 +962,7 @@ shinyServer(function(input, output, session){
 				#	} else if(input$spacer == 1){
 				#		spamin <- 16
 				#		spamax <- 16
-			#			} else {
+				#			} else {
 				#			spamin <- 14
 				#			spamax <- 16
 				#		}
@@ -1152,7 +999,7 @@ shinyServer(function(input, output, session){
 			#if(input$talenOp == 1){
 			#	talFlag <- TRUE
 			#} else {
-				talFlag <- FALSE
+			talFlag <- FALSE
 			#}
 			
 			# Calculate the MENTHU score
@@ -1349,7 +1196,7 @@ shinyServer(function(input, output, session){
 		
 		rValues$rhFrame   <- dfExample
 		rValues$resetVal  <- TRUE
-			
+		
 		# Set flag to display 'exon' information
 		geneSeqExampleFlag <<- TRUE
 		
@@ -1396,10 +1243,10 @@ shinyServer(function(input, output, session){
 												value = "-4 -3")
 		
 		#if(input$scoreScheme == 1){
-			#Change threshold to 30 to show output
+		#Change threshold to 30 to show output
 		#	updateNumericInput(session, "threshold", value = 30)
 		#} else {
-			#Change threshold to 1.5 to show output
+		#Change threshold to 1.5 to show output
 		#	updateNumericInput(session, "threshold", value = 1.5)
 		#}
 	})
@@ -1451,7 +1298,7 @@ shinyServer(function(input, output, session){
 		updateRadioButtons(session,
 											 "customCutOpt",
 											 selected = 0)
-
+		
 		if(input$inputType == 2){
 			# Reset geneSeq input
 			updateTextAreaInput(session, 
@@ -1462,7 +1309,7 @@ shinyServer(function(input, output, session){
 			updateRadioButtons(session,
 												 "pasteExonType",
 												 selected = 0)
-
+			
 			# Reset genbank input
 			#updateTextAreaInput(session,
 			#										"genbankId",
@@ -1484,23 +1331,14 @@ shinyServer(function(input, output, session){
 			#updateRadioButtons(session,
 			#									 "pasteExonType",
 			#									 selected = 0)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 			
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 		} else if(input$inputType == 3){
 			updateTextAreaInput(session,
 													"ensemblId",
 													label = "",
 													value = "")
-<<<<<<< HEAD
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 		}
-
+		
 		# Reset exon targets table
 		if(input$inputType == 1 | input$inputType == 3){
 			updateRadioButtons( session, "firstExon",         selected = 0)
@@ -1517,7 +1355,7 @@ shinyServer(function(input, output, session){
 											 selected = 1
 		)
 		
-
+		
 		# Reset talen inputs
 		#updateNumericInput(session, "spamin", value = 14)
 		#updateNumericInput(session, "spamax", value = 16)
@@ -1531,25 +1369,11 @@ shinyServer(function(input, output, session){
 		# Reset threshold input
 		#updateNumericInput(session, "threshold", value = 1.5)
 		
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+		
 		# Reset intronic controls
 		updateRadioButtons(session, "contextWiggleType", selected = 0)
 		updateRadioButtons(session, "gRNAWiggleType",    selected = 0)
 		
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
-		# Reset intronic controls
-		updateRadioButtons(session,
-											 "contextWiggleType",
-											 selected = 0)
-		
-		updateRadioButtons(session,
-											 "gRNAWiggleType",
-											 selected = 0)
-		
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 		# Reset rhandsontable
 		rValues$resetVal <- TRUE
 		rValues$rhFrame <- dfEmpty
@@ -1558,22 +1382,10 @@ shinyServer(function(input, output, session){
 		rValues$validExonFlag <- TRUE
 		
 		# Set the download flag to not display the download button
-<<<<<<< HEAD
-<<<<<<< HEAD
-		rValues$downloadF   <- FALSE
-		rValues$downloadFGB <- FALSE
-=======
 		rValues$downloadF    <- FALSE
 		rValues$downloadFGB  <- FALSE
 		rValues$downloadFEns <- FALSE
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 		
-=======
-		rValues$downloadF    <- FALSE
-		rValues$downloadFGB  <- FALSE
-		rValues$downloadFEns <- FALSE
-	
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
 		# Empty the result storage
 		results <<- 0
 	}
@@ -1584,28 +1396,14 @@ shinyServer(function(input, output, session){
 		output$genbankIdOutcome <- renderText({
 			""
 		}) 
-<<<<<<< HEAD
 		
-<<<<<<< HEAD
-		rValues$genbankResultsFlag <- FALSE
-		rValues$geneSeqResultsFlag <- FALSE	
-=======
 		clearOutputFlags()
-=======
-		clearOutputFlags()
-		
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
 	}
 	
 	# Clear the Ensembl unique outputs and also all output flags
 	resetEnsemblOutputs <- function(){
-<<<<<<< HEAD
 		clearOutputFlags()
->>>>>>> parent of 7157e4f... Revert "Added Ensembl validation checks; updated download file name to include Ensembl/Genbank ID; updated resets to include Ensembl inputs"
-=======
-
-		clearOutputFlags()
->>>>>>> parent of 8dd04fe... Revert "Added Ensembl support"
+		
 	}
 	
 	# Clear the gene sequence copy/paste unique outputs and also all output flags
@@ -1638,7 +1436,7 @@ shinyServer(function(input, output, session){
 	#	updateSliderInput(session = session, inputId = "spamax", min = input$spamin)
 	#})
 	
-
+	
 	#observeEvent(input$spamax, {
 	#	updateSliderInput(session = session, inputId = "spamin", max = input$spamax)
 	#})

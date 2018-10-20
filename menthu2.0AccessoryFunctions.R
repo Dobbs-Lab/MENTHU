@@ -38,11 +38,11 @@ calculateMenthu2 <- function(inData, cutSite = -1, weight = 20, maxdbm = 5){
 			ratio    <- 0
 			fShift   <- "NA"
 			
-		# If only one entry complies with criterion, set an infinite ratio and determine fShift
+			# If only one entry complies with criterion, set an infinite ratio and determine fShift
 		} else if(nrow(threePlus) == 1) { 
 			ratio    <- Inf
 			fShift   <- (if(threePlus$delLength[1] %% 3 == 0){"No"} else {"Yes"})
-		
+			
 		} else { 
 			# Calculation of MENTHU score 2.0	
 			ratio    <- threePlus$patternScore[1] / threePlus$patternScore[2]
@@ -74,7 +74,7 @@ calculateMenthu2 <- function(inData, cutSite = -1, weight = 20, maxdbm = 5){
 													 topMH            = "",
 													 stringsAsFactors = FALSE)
 	}
-
+	
 	return(outFrame)
 }
 
@@ -109,7 +109,7 @@ calculateSlopeCompetition <- function(inData, cutSite = -1, weight = 20, top = 1
 		mhScore <- sum((nchar(patternScoreDF$microhomology) +
 											stringr::str_count(toupper(patternScoreDF$microhomology), "G") +
 											stringr::str_count(toupper(patternScoreDF$microhomology), "C")) *
-									 	  (1 / exp((patternScoreDF$delLength) / weight)) * 100)
+									 	(1 / exp((patternScoreDF$delLength) / weight)) * 100)
 		
 		#Calculate the out-of-frame score according to Bae algorithm
 		outOfFrameScore <- (sum((nchar(outOfFrameInst$microhomology) +
@@ -217,7 +217,7 @@ baeRevised <- function(seq, cutPosition, weight = 20.0, mhL = 3){
 		
 		#Merge the two data frames
 		mhDF <- suppressMessages(plyr::join(mhDFup, mhDFdown))
-
+		
 		#Get the lengths of all the deletions
 		leng <- mhDF$downEnd - mhDF$upEnd - 1
 		
@@ -226,8 +226,8 @@ baeRevised <- function(seq, cutPosition, weight = 20.0, mhL = 3){
 		
 		#Create the deletion sequences
 		delSeqs <- unlist(lapply(1:nrow(mhDF), function(x) paste0(substring(seq, 1, mhDF$upEnd[x]),
-																											 paste(rep('-', leng[x]), collapse = ''),
-																											 substring(seq, mhDF$downEnd[x], nchar(seq)))))
+																															paste(rep('-', leng[x]), collapse = ''),
+																															substring(seq, mhDF$downEnd[x], nchar(seq)))))
 		
 		# Create the sequence that would be observed from the deletion
 		delPattern <- gsub('-', '', delSeqs, fixed = TRUE)

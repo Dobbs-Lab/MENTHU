@@ -990,7 +990,6 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, wiggle = TRUE, wiggleRo
 	# Update progress bar
 	progress$inc(0.01, detail = "Processing Ensembl sites...")
 	
-	# Generate a subset of exons
 	exonSubset <- ensemblInfo[which(as.numeric(ensemblInfo$rank) %in% as.numeric(exonStuff)), ]
 	
 	# Get the exon sequences

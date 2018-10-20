@@ -10,7 +10,6 @@
 #' 
 #' @result list of PAM start sites for all PAMs in pamList in both 
 #' strands for all targets queried
-#' 
 #' @examples 
 #' 
 #' @export 

@@ -4,7 +4,7 @@
 #'
 #' @param casList 
 #' @param wiggle 
-#' @param wigRoom 
+#' @param wiggleRoom 
 #' @param geneSeq 
 #' @param threshold 
 #' @param exonDF 
@@ -19,11 +19,11 @@
 #'
 #' @examples
 
-#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, threshold, talFlag,
+#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wiggleRoom = 39, geneSeq, threshold, talFlag,
 #																	 exonDF, progress, armin, armax, spamin, spamax, version){
-#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, threshold, talFlag,
+#calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wiggleRoom = 39, geneSeq, threshold, talFlag,
 #																	 exonDF, progress, armin, armax, spamin, spamax){
-calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom = 39, geneSeq, exonDF, progress){
+calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wiggleRoom = 39, geneSeq, exonDF, progress){
 	require(Biostrings)
 	require(plyr)
 	
@@ -47,10 +47,10 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 	# Deal with the case in which exons are specified and extra context should be included to examine sites where the gRNA would run off the exon
 	if((wiggle == TRUE) && (class(exonDF) == "data.frame")){
 		# Ensure extra context doesn't run off the end of the whole sequence
-		exStart <- sapply(1:nrow(exonDF), function(x) if((exonDF$exonStart[x] - wigRoom) < 1){1}                           else {exonDF$exonStart[x] - wigRoom})
+		exStart <- sapply(1:nrow(exonDF), function(x) if((exonDF$exonStart[x] - wiggleRoom) < 1){1}                           else {exonDF$exonStart[x] - wiggleRoom})
 		
 		# Ensure extra context doesn't run off the end of the whole sequence
-		exEnd   <- sapply(1:nrow(exonDF), function(x) if((exonDF$exonEnd[x]   + wigRoom) > nchar(geneSeq)){nchar(geneSeq)} else {exonDF$exonEnd[x]   + wigRoom})
+		exEnd   <- sapply(1:nrow(exonDF), function(x) if((exonDF$exonEnd[x]   + wiggleRoom) > nchar(geneSeq)){nchar(geneSeq)} else {exonDF$exonEnd[x]   + wiggleRoom})
 		
 		# Create new exonSeqs with 'fixed' context
 		exonSeqs <- substring(rep(toupper(geneSeq), length(exStart)), exStart, exEnd)
@@ -83,18 +83,18 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom)
+													wiggleRoom = wiggleRoom)
 			
 		} else {
 			pamSites <- pamScan(pamList, 
 													cutDistList, 
 													exonSeqs,
-													exonList   = "1",
-													exonStarts = NULL, 
+													exonList   = 1,
+													exonStarts = 1, 
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom)
+													wiggleRoom = wiggleRoom)
 		}
 		
 		# Count the number of Cas target sites
@@ -165,7 +165,7 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 				talSites <- talPal(exonSeqs,
 													 findCut    = TRUE,
 													 wiggle     = TRUE,
-													 wigRoom    = 39,
+													 wiggleRoom    = 39,
 													 range      = rFlag, 
 													 armin      = armin, 
 													 armax      = armax, 
@@ -180,7 +180,7 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 				talSites <- talPal(exonSeqs,
 													 findCut    = TRUE,
 													 wiggle     = TRUE,
-													 wigRoom    = 39,
+													 wiggleRoom    = 39,
 													 range      = rFlag, 
 													 armin      = armin, 
 													 armax      = armax, 
@@ -390,11 +390,11 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 				baseCrispr <- sapply(1:nrow(pamSites), 
 														 function(x) if(pamSites$Orientation[x] == "forward"){
 														 	substr(pamSites$seq[x], 
-														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 20, 
+														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
 														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])     
 														 } else {
 														 	substr(reverseComplement(pamSites$seq[x]), 
-														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 20, 
+														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
 														 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])
 														 })
 				
@@ -521,11 +521,11 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, wiggle = TRUE, wigRoom 
 #'
 #' @examples
 
-#calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, talFlag,
+#calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, talFlag,
 #																					genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress, version){
-#calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, 
+#calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, 
 #																					genbankInfo, threshold, firstExon, exonTargetType, exonStuff, progress){
-calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wigRoom = 39, talenList, gbFlag, gbhFlag, 
+calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, wiggleRoom = 39, talenList, gbFlag, gbhFlag, 
 																					genbankInfo, firstExon, exonTargetType, exonStuff, progress){
 	version <- 2
 	require(plyr)
@@ -540,7 +540,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 	progress$inc(0.01, detail = "Processing GenBank accession...")
 	
 	# Get exon sequences and information through getExon
-	exon <- getExon(genbankInfo, wiggle = TRUE, wigRoom = 39, gbFlag, exonTargetType, firstExon, exonStuff)
+	exon <- getExon(genbankInfo, wiggle = TRUE, wiggleRoom = 39, gbFlag, exonTargetType, firstExon, exonStuff)
 	
 	# Get exon indices
 	exonInfo <- exon[[1]]
@@ -559,7 +559,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 		# Update progress bar
 		progress$inc(0.01, detail = "Scanning for target sites...")
 		
-		if(length(exonInfo > 0)){
+		if(length(exonInfo) > 0){
 			# If there is exon information, use it to correct indexing, otherwise, exonStarts is NULL
 			pamSites <- pamScan(pamList, 
 													cutDistList, 
@@ -569,7 +569,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = TRUE, 
-													wigRoom    = 39)
+													wiggleRoom    = 39)
 		} else {
 			pamSites <- pamScan(pamList, 
 													cutDistList, 
@@ -579,7 +579,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 													findCut    = TRUE, 
 													type       = "cas9", 
 													wiggle     = wiggle, 
-													wigRoom    = wigRoom)
+													wiggleRoom    = wiggleRoom)
 		}
 		
 		siteCount <- nrow(pamSites)
@@ -631,7 +631,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 			talSites <- talPal(exonSeq,
 												 findCut    = TRUE,
 												 wiggle     = TRUE,
-												 wigRoom    = 39,
+												 wiggleRoom    = 39,
 												 range      = rFlag, 
 												 armin      = talenList[[1]], 
 												 armax      = talenList[[2]], 
@@ -644,7 +644,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 			talSites <- talPal(exonSeq,
 												 findCut    = TRUE,
 												 wiggle     = TRUE,
-												 wigRoom    = 39,
+												 wiggleRoom    = 39,
 												 range      = rFlag,
 												 armin      = talenList[[1]], 
 												 armax      = talenList[[2]], 
@@ -843,11 +843,11 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 			baseCrispr <- sapply(1:nrow(pamSites), 
 													 function(x) if(pamSites$Orientation[x] == "forward"){
 													 	substr(pamSites$seq[x], 
-													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 20, 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
 													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])     
 													 } else {
 													 	substr(reverseComplement(pamSites$seq[x]), 
-													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 20, 
+													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x] - 19, 
 													 				 (nchar(pamSites$seq[x]) / 2) - pamSites$CutDist[x])
 													 })
 			
@@ -952,7 +952,10 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 
 #' calculateMENTHUEnsembl
 #'
@@ -992,7 +995,10 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, wiggle = TRUE, wiggleRo
 	# Update progress bar
 	progress$inc(0.01, detail = "Processing Ensembl sites...")
 	
+<<<<<<< HEAD
 	# Generate a subset of exons
+=======
+>>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 	exonSubset <- ensemblInfo[which(as.numeric(ensemblInfo$rank) %in% as.numeric(exonStuff)), ]
 	
 	# Get the exon sequences
@@ -1408,7 +1414,10 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, wiggle = TRUE, wiggleRo
 }
 
 
+<<<<<<< HEAD
 >>>>>>> parent of 6a4cadd... Revert "Added comment for clarity"
+=======
+>>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 #' convertToNumeric
 #'
 #' This function takes an input string of comma- or whitespace-separated numbers and converts to a numeric vector

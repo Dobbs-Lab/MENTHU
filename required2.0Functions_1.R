@@ -953,7 +953,10 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, wiggle = TRUE, w
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 =======
 >>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 
@@ -996,7 +999,10 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, wiggle = TRUE, wiggleRo
 	progress$inc(0.01, detail = "Processing Ensembl sites...")
 	
 <<<<<<< HEAD
+<<<<<<< HEAD
 	# Generate a subset of exons
+=======
+>>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 =======
 >>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 	exonSubset <- ensemblInfo[which(as.numeric(ensemblInfo$rank) %in% as.numeric(exonStuff)), ]
@@ -1415,7 +1421,10 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, wiggle = TRUE, wiggleRo
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 6a4cadd... Revert "Added comment for clarity"
+=======
+>>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 =======
 >>>>>>> parent of f2dd323... Revert "Added functions for Ensembl support; fixed issues with generating 20 bp gRNA base; fixed several parentheses"
 #' convertToNumeric

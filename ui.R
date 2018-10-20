@@ -89,13 +89,11 @@ shinyUI(function(request){
 						 				 ##Sidebar############################################################
 						 				 #Adds a sidebar for users to pre-populate fields with an example, and reset the form
 						 				 column(2, wellPanel(
-						 				 	# Color the sidebar gold to make it more visible
 						 				 	style = "background-color:#F1BE48",
-						 				 	
 						 				 	# Attempts to get the sidebar floating have failed thus far
 						 				 	#style = "position:fixed;width:inherit;",
 						 				 	
-						 				 	p(h4("Example Inputs", style = "color:black;")),
+						 				 	p(strong("Example Inputs", style = "color:black;")),
 						 				 	p('Please click the links below to pre-populate this form with example inputs:'),
 						 				 	
 						 				 	#GenBank Example
@@ -127,6 +125,7 @@ shinyUI(function(request){
 						 				 						 label = "Reset Form",
 						 				 						 style = "color:black;")
 						 				 	
+						 				 
 						 				 )),
 						 				 
 						 				 ####Main Bar#########################################################
@@ -372,16 +371,16 @@ shinyUI(function(request){
 						 				 			 	wellPanel(
 						 				 			 		#Choose whether to include first exon in future determinations
 						 				 			 		radioButtons("firstExon",
-						 				 			 								 label    = "2a. Do you want to find targets in the first exon? (Not recommended for gene knockouts.)",
-						 				 			 								 choices  = list("No"  = 0,
-						 				 			 								 							   "Yes" = 1),
+						 				 			 								 label = "2a. Do you want to find targets in the first exon? (Not recommended for gene knockouts.)",
+						 				 			 								 choices = list("No"  = 0,
+						 				 			 								 							  "Yes" = 1),
 						 				 			 								 selected = 0,
-						 				 			 								 inline   = TRUE),
+						 				 			 								 inline = TRUE),
 						 				 			 		
 						 				 			 		#Choose option for specifying exon input
 						 				 			 		p(tags$b("Which exon(s) do you want to target?")),
 						 				 			 		radioButtons("exonTargetType",
-						 				 			 								 label   = "Do you want to: ",
+						 				 			 								 label = "Do you want to: ",
 						 				 			 								 choices = list("Search all exons - Please note if 2a = 'No', the first exon will not be searched"            = 0,
 						 				 			 								 							  "Search for a target within a specified percentage of exons of the beginning of the sequence" = 1,
 						 				 			 								 							  "Search for a target within a specified percentage of exons of the end of the sequence"       = 2,
@@ -401,8 +400,8 @@ shinyUI(function(request){
 						 				 			 			
 						 				 			 			numericInput("exonBegPercentage",
 						 				 			 									 label = "",
-						 				 			 									 min   = 1,
-						 				 			 									 max   = 100,
+						 				 			 									 min = 1,
+						 				 			 									 max = 100,
 						 				 			 									 value = 30)
 						 				 			 		),
 						 				 			 		
@@ -414,8 +413,8 @@ shinyUI(function(request){
 						 				 			 			numericInput("exonEndPercentage",
 						 				 			 									 label = "",
 						 				 			 									 value = 30,
-						 				 			 									 min   = 1,
-						 				 			 									 max   = 100)
+						 				 			 									 min = 1,
+						 				 			 									 max = 100)
 						 				 			 		),
 						 				 			 		
 						 				 			 		#When listing exons to target
@@ -430,9 +429,7 @@ shinyUI(function(request){
 						 				 			 																	 "You can specify multiple ranges and/or multiple exons using commas ",
 						 				 			 																	 "(e.g., to select exon 3, exon 5 through 7, exon 9, ",
 						 				 			 																	 "and exon 11 through 13, type '3,5-7,9,11-13'.)"), 
-						 				 			 										placeholder = "Enter exons here...",
-						 				 			 										value       = ""),
-						 				 			 			textOutput("validexonlist")
+						 				 			 										placeholder = "Enter exons here...")
 						 				 			 		)
 						 				 			 	)#,
 						 				 			 	
@@ -518,7 +515,7 @@ shinyUI(function(request){
 						 				 			 		
 						 				 			 		# Submit button
 						 				 			 		actionButton("ensemblSubmit", "Submit"), 
-						 				 			 		br(),
+						 				 			 		tags$br(),
 						 				 			 		
 						 				 			 		p("Your results may take a few minutes to calculate. Please do not close this web page until your calculation is finished."),
 						 				 			 		
@@ -547,7 +544,6 @@ shinyUI(function(request){
 						 				 			 	conditionalPanel(
 						 				 			 		condition = "input.inputType == 2",
 						 				 			 		actionButton("geneSeqSubmit", "Submit"),
-						 				 			 		
 						 				 			 		tags$br(),
 						 				 			 		p("Your results may take a few minutes to appear. Please do not close this web page until your calculation is finished."),
 						 				 			 		uiOutput("downOutGS"),
@@ -556,10 +552,9 @@ shinyUI(function(request){
 						 				 			 		br(),
 						 				 			 		
 						 				 			 		textOutput('geneseqerrors'),
-						 				 			 		
 						 				 			 		#Output results
 						 				 			 		#uiOutput('geneseqhits'),
-						 				 			 		#br(),
+						 				 			 		#tags$br(),
 						 				 			 		uiOutput('geneSeqResults')
 						 				 			 		#tags$head(tags$style("#geneSeqResults table {background-color: white; }", media = "screen", type = "text/css"))
 						 				 			 		

@@ -4,7 +4,7 @@ This is a repository for the MENTHU knockout site recommender.
 You can run MENTHU online through a web interface here: http://genesculpt.org/menthu/
  
 
-### If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU#run-menthu-locally) to immmediately start running MENTHU locally.
+### If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU#3-run-menthu-locally) to immmediately start running MENTHU locally.
 
 ### If you are having issues running MENTHU locally, please check the [Troubleshooting](https://github.com/Dobbs-Lab/MENTHU#troubleshooting) section before requesting help.
  

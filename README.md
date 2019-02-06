@@ -1,7 +1,7 @@
 # MENTHU
 This is a repository for the MENTHU knockout site recommender.
 
-You can run MENTHU online through a web interface here: http://ll-g2f.gdcb.iastate.edu/menthu/
+You can run MENTHU online through a web interface here: http://genesculpt.org/menthu/
  
 
 ### If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU#run-menthu-locally) to immmediately start running MENTHU locally.

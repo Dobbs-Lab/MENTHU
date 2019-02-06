@@ -84,19 +84,15 @@ install.packages(c("shiny", "shinyjs", "Rcpp", "plyr", "stringr", "stringi", "sh
 source("https://bioconductor.org/biocLite.R")
 biocLite("Biostrings")
 
-#Install 'ShinyIncubator' and 'ShinyTable' from GitHub
+#Install 'ShinyIncubator' from GitHub
 devtools::install_github("rstudio/shiny-incubator", force = TRUE)
-devtools::install_github("trestletech/shinyTable",  force = TRUE)
 ```
 
 ### Run this code every time you want to use the tool, including the first time:
 
 ```
-#Load Shiny in the R/RStudio Environment
-library(shiny)
-
 #Retrieve, load, and run MENTHU from GitHub
-runGitHub("MENTHU", "Dobbs-Lab")
+shiny::runGitHub("MENTHU", "Dobbs-Lab")
 ```
 
 You're all set!

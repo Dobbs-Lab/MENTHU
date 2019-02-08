@@ -78,7 +78,7 @@ You can copy and paste the code blocks below into your R/RStudio console to run 
 
 #Install CRAN packages
 install.packages(c("shiny", "shinyjs", "Rcpp", "plyr", "stringr", "stringi", "shinyTable", 
-                   "rentrez", "rlist", "DT", "xlsx", "devtools", "rhandsontable"))
+                   "rentrez", "rlist", "DT", "xlsx", "devtools", "rhandsontable", "httr", "jsonlite", "xml2"))
 
 #Install 'Biostrings' package from Bioconductor
 source("https://bioconductor.org/biocLite.R")

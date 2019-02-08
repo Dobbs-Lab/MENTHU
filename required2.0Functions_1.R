@@ -1673,3 +1673,50 @@ reverseComplement.list <- function(seq, type = "DNA"){
 	}
 	return(unlist(retList))
 }
+				  
+				  #' stripWhiteSpace
+#'
+#' This function removes all white space from character vectors. If it is passed a data frame, it will remove all white space from all columns with character data types.
+#'
+#' @param wsco An object to be stripped of white space
+#'
+#' @return stripped The object, stripped of white space
+#' @export
+#'
+#' @examples
+#' stripWhiteSpace(c("red", " gre en ", "  ", " blue "))
+#' V1 <- c("  1", " 2 ", "    3")
+#' V2 <- c(1, 2, 3)
+#' dummyDF <- data.frame(V1, V2, stringsAsFactors=FALSE)
+#' dummyDF
+#' stripWhiteSpace(dummyDF)
+
+stripWhiteSpace <- function(wsco) UseMethod("stripWhiteSpace")
+
+#Default method; will not run the method unless it is passed a data frame with at least one column of characters or a character vector
+stripWhiteSpace.default <- function(wsco){
+	stop("Object is not a character vector")
+}
+
+#For handling character vectors
+stripWhiteSpace.character <- function(wsco){
+	stripped <- gsub('\\s+', '', wsco)
+	return(stripped)
+}
+
+#For handling data frames with at least one character column type
+stripWhiteSpace.data.frame <- function(wsco){
+	count <- 0
+	dDF <- wsco
+	for(i in 1:ncol(wsco)){
+		if(class(wsco[,i])=="character"){
+			dDF[,i] <- stripWhiteSpace(wsco[,i])
+			count <- count + 1
+		}
+	}
+	#Determine if any of the columns are character vectors; stop execution if they are not
+	if(count == 0){
+		stop("Data frame has no character columns")
+	}
+	return(dDF)
+}

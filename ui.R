@@ -21,7 +21,7 @@ shinyUI(function(request){
 						 theme = "ogtheme.css", 
 						 
 						 #Page title box
-						 tags$div("MENTHU v2.0.7", 
+						 tags$div("MENTHU v2.0.8", 
 						 				 style = "color:white"),
 						 
 						 ########ABOUT TAB#################################################

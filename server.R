@@ -11,6 +11,9 @@ library(rlist)
 library(DT)
 library(plyr)
 library(curl)
+library(httr)
+library(jsonlite)
+library(xml2)
 
 # Required supporting files
 source("apeShiftFunctions.R")

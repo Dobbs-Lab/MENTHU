@@ -1008,7 +1008,7 @@ shinyServer(function(input, output, session){
 			#results <<- calculateMENTHUGeneSeq(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, input$geneSeq, input$threshold, 
 			#																	 exonIn, progress, talArmin, talArmax, talSpamin, talSpamax)
 			
-			stuff   <<- calculateMENTHUGeneSeq(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, input$geneSeq, exonIn, progress)
+			stuff   <<- calculateMENTHUGeneSeq(pams, cutDistances, wiggle = TRUE, wiggleRoom = 39, stripWhiteSpace(input$geneSeq), exonIn, progress)
 			
 			results <<- stuff[[1]]
 			

@@ -352,6 +352,7 @@ ensemblIdSpecies <- function(id, ensIdList = ensIds, bool = FALSE){
 	
 	# Match Ensembl id to list of Ensembl Ids
 	match <- prefix %in% ensIdList$Id
+	
 	if(match){
 		species <- ensIdList[which(ensIdList$Id == prefix), ]
 		
@@ -411,7 +412,7 @@ isEnsemblUp <- function(){
 #' @examples
 #' 
 
-getEnsemblExonSequence <- function(accession, strand, exp5 = 0, exp3 = 0){
+getEnsemblExonSequence <- function(accession, strand = 0, exp5 = 0, exp3 = 0){
 	require(httr)
 	
 	# Construct the URL
@@ -444,7 +445,7 @@ getEnsemblExonSequence <- function(accession, strand, exp5 = 0, exp3 = 0){
 	} else if(as.numeric(ensContents$strand) == -1){
 		ensContents$start <- ensContents$start + exp5
 		ensContents$end   <- ensContents$end   - exp3 
-	}
+	} 
 	
 	return(ensContents)
 }
@@ -647,7 +648,7 @@ processEnsSequence <- function(inSeq){
 	return(ensTable)
 }
 
-#' handleChromosome
+#' getChromosomeInfo
 #'
 #' @return
 #' @export
@@ -655,6 +656,94 @@ processEnsSequence <- function(inSeq){
 #' @examples
 #' 
 
-#handleChromosomeRegion <- function(chromosome, regionStart, regionEnd){
-#	https://rest.ensembl.org/documentation/info/sequence_region
-#}
+getChromosomeInfo <- function(species){
+	# Get the chromosome information for homo_sapiens
+	server <- "https://rest.ensembl.org"
+	ext    <- "/info/assembly/homo_sapiens?"
+	
+	r <- httr::GET(paste(server, ext, sep = ""), httr::content_type("application/json"))
+	
+	# Get the info from the retrieval
+	struc <- sapply(httr::content(r), c)
+	
+	# Format Ensembl return 
+	strucChrome <- struc$top_level_region[union(union(which(lapply(struc$top_level_region, "[[", 1) == "chromosome"), 
+																										which(lapply(struc$top_level_region, "[[", 2) == "chromosome")),  
+																							which(lapply(struc$top_level_region, "[[", 3) == "chromosome"))]
+	
+	# Generate a data frame of the chromosome data
+	chromeTable <- as.data.frame(matrix(unlist(strucChrome), ncol = 3))
+	
+	# Convert chromosome length to numeric
+	chromeTable <- as.data.frame(dplyr::bind_rows(strucChrome), stringsAsFactors = FALSE)
+	chromeTable$length <- as.numeric(chromeTable$length)
+	
+	# Order by chromosome length
+	chromeTable <- chromeTable[order(-chromeTable$length), ]
+	
+	return(chromeTable)
+}
+
+
+processChromosome <- function(species, chromosome, chromeTable, wiggle = FALSE, wiggleRoom = 0){
+	# Generate server info for next retrieval
+	server     <- "https://rest.ensembl.org" 
+	ext        <- "/overlap/region/"
+	
+	# Get the info for the current chromosome
+	chromInfo <- chromeTable[which(chromeTable$name == chromosome), ]
+	
+	# Generate a table to contain information about the regions
+	regions <- seq(from = 1, to = chromInfo$length, by = 5000000)
+	
+	# Fill in the end
+	regionTable           <- data.frame(regionStart = regions, stringsAsFactors = FALSE)
+	regionTable$regionEnd <- c(seq(from = 5000000, to = chromInfo$length, by = 5000000), chromInfo$length)
+	
+	returnData <- list()
+	
+	# Get the exons within the region
+	for(i in 1:nrow(regionTable)){
+		print(i)
+		
+		serverCall <- paste0(server, 
+												 ext, 
+												 species, "/", 
+												 chromosome, ":", 
+												 format(regionTable$regionStart[i], scientific = FALSE), "-", 
+												 format(regionTable$regionEnd[i],   scientific = FALSE), 
+												 "?feature=exon;")
+		
+		r2 <- httr::GET(serverCall, httr::content_type("application/json"))
+		r3 <- jsonlite::fromJSON(jsonlite::toJSON(httr::content(r2)))
+		returnData <- c(returnData, r3)
+	}
+	
+	# Generate unique list of exons
+	idList <- unique(returnData$exon_id)
+	
+	
+	if(wiggle){
+		exonSeqs <- getEnsemblExonSequence(idList[1], exp5 = wiggleRoom, exp3 = wiggleRoom)
+		# Get the exon sequences for all exons
+		for(j in 2:length(idList)){
+			tExon    <- getEnsemblExonSequence(idList[j], exp5 = wiggleRoom, exp3 = wiggleRoom)
+			
+			exonSeqs <- rbind(exonSeqs, tExon)
+		}
+		
+	} else {
+		exonSeqs <- getEnsemblExonSequence(idList[1], exp5 = wiggleRoom, exp3 = wiggleRoom)
+		
+		# Get the exon sequences for all exons
+		for(j in 2:length(idList)){
+			tExon    <- getEnsemblExonSequence(idList[j])
+			
+			exonSeqs <- rbind(exonSeqs, tExon)
+		}
+	}
+	
+	
+	return(exonSeqs)
+	
+}

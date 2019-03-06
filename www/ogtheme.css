@@ -1,25 +1,63 @@
-body, 
-#selector, 
-.container, 
+body {
+	font-size: 18px;
+	font-family: Arial, Helvetica, sans-serif;
+	color: black;
+}
+
 .navbar-inner {
-    background-color: #ffffff !important;
+    background-color: #FFFFFF;
 } 
 
 .navbar-static-top {
   position: static;
-  margin-bottom: 0px;
-  background-color: #C8102E !important;
-  
+  margin-bottom: 0;
+  background-color: #CC0000;
 }
 
-.tab-above > .nav  > li[class=active] > a {background-color: #F1BE48; color: black}
-
-.navbar-default.navbar-brand{
-	color: #F1BE48 !important
+/* Make code look better */
+code {
+	background-color: white;
+	color: blue;
+	border: 1px solid gray;
 }
 
+/* Default coloring and styling of the navbar panel tabs */
+.nav.navbar-nav li a {
+	color: white;
+	font-size: 25px;
+}
+
+/* Color the active top navbar panel tab*/
+.nav.navbar-nav li[class=active] a, .nav.navbar-nav li[class=active] a:hover {
+	background-color: #F1BE48; 
+	color: black;
+}
+
+/* Highlight the navbar panel tab with hover*/
+.nav.navbar-nav li a:hover {
+	background-color: #DDDDDD;
+	color: black;
+}
+
+.navbar-default.navbar-brand {
+	color: #F1BE48;
+}
+
+/* Make error validation output text red and large*/
 .shiny-output-error-validation {
   color: red;
+  font-size: 20px;
+}
+
+/* Style Example Panel */
+.examplePanel {
+	background-color: #F1BE48;
+	color: black;
+	text-align: center;
+}
+
+.examplePanel a {
+	color: black;
 }
 
 .checkcol {
@@ -30,9 +68,10 @@ body,
 	column-count: 2;
 	-moz-column-fill: auto;
 	-column-fill: auto;
-					}
+}
 					
+/* Style the Shiny progress bar */	
 .progress-bar{
-	\\color: #08E00c !important;
+  color: #08E00c;
 	background-color: #08E00C;
 }

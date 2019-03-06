@@ -1,5 +1,43 @@
 ##########Contains functions for dealing with target site identification
 
+#' getPreGenPamList
+#'
+#' @param pamList 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+
+getPreGenPamList <- function(pamList){
+	# Pre-defined lists
+	cas9Like   <- c('NGG', 'NRG', 'NNNRRT', 'NNGRRT', 'NNGTGA', 'NNAGAAW', 'NNNVRYAC', 'NNNNGMTTT')
+	cas12aLike <- c('TTTN', 'TTTV', 'TTN', 'YTN')
+	
+	# Drop 'redundant' PAMs to save time; retain the broader case
+	if("NGG" %in% pamList && "NRG" %in% pamList){
+		pamList <- pamList[-which(pamList == "NGG")] 
+	}
+	
+	if("TTTV" %in% pamList && "TTTN" %in% pamList){
+		pamList <- pamList[-which(pamList == "TTTN")] 
+	}
+	
+	if("TTN" %in% pamList && "YTN" %in% pamList){
+		pamList <- pamList[-which(pamList == "TTN")] 
+	}
+	
+	# Create data frame to hold all this info, and assign cut distances and overhangs
+	pamListFrame <- data.frame(pamList = pamList,
+														 cutDist = sapply(pamList, function(x) {if(x %in% cas9Like){-3} else if(x %in% cas12aLike){18}}),
+														 ohList  = sapply(pamList, function(x) {if(x %in% cas9Like){ 0} else if(x %in% cas12aLike){ 5}}),
+														 stringsAsFactors = FALSE)
+	
+	return(pamListFrame)
+}
+
+
 #' pamScan
 #' 
 #' Function than searches a list of PAM sites in list of DNA targets
@@ -15,10 +53,11 @@
 #' @export 
 #' 
 
-pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NULL, findCut = FALSE, type = NULL, wiggle = TRUE, wiggleRoom = 39) {
+pamScan <- function(pamList, cutDistList, ohList, targetList, exonList, exonStarts = NULL, findCut = FALSE, type = NULL, wiggle = TRUE, wiggleRoom = 39) {
 	require(Biostrings)
 	cutDLFrame <- data.frame(Target = pamList, CutDist = cutDistList, stringsAsFactors = FALSE)
-
+	ohLenFrame <- data.frame(Target = pamList, ohLen   = ohList,      stringsAsFactors = FALSE)
+	
 	if(!is.null(exonStarts)){
 		exonMergeFrame <- data.frame(Exon_Num = exonList, exonStarts = exonStarts, stringsAsFactors = FALSE)
 
@@ -49,6 +88,7 @@ pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NUL
 															Sites            = matchesPos,
 															MatchLength      = rep(nchar(pamList), length(matchesPos)),
 															CutIndex         = rep(0,              length(matchesPos)),
+															ohLength         = rep(1,              length(matchesPos)),
 															contextCondition = rep(FALSE,          length(matchesPos)),
 															stringsAsFactors = FALSE)
 		
@@ -59,6 +99,7 @@ pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NUL
 															Sites            = matchesNeg + 1,
 															MatchLength      = rep(nchar(pamList), length(matchesNeg)),
 															CutIndex         = rep(0,              length(matchesNeg)),
+															ohLength         = rep(2,              length(matchesNeg)),
 															contextCondition = rep(FALSE,          length(matchesNeg)),
 															stringsAsFactors = FALSE)
 		
@@ -82,6 +123,7 @@ pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NUL
 															Sites            = posStack[ , 1],
 															MatchLength      = nchar(as.character(posStack[ , 2])),
 															CutIndex         = rep(0,         nrow(posStack)),
+															ohLength         = rep(3,         nrow(posStack)),
 															contextCondition = rep(FALSE,     nrow(posStack)),
 															stringsAsFactors = FALSE)
 		
@@ -91,6 +133,7 @@ pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NUL
 															Sites            = negStack[ , 1] + 1,
 															MatchLength      = nchar(as.character(negStack[ , 2])),
 															CutIndex         = rep(0,            nrow(negStack)),
+															ohLength         = rep(4,            nrow(negStack)),
 															contextCondition = rep(FALSE,        nrow(negStack)),
 															stringsAsFactors = FALSE)
 		
@@ -113,7 +156,8 @@ pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NUL
 														Exon_Num         = posStack[ , 1],
 														Sites            = posStack[ , 4],
 														MatchLength      = nchar(posStack[ , 2]),
-														CutIndex         = rep(0, nrow(posStack)),
+														CutIndex         = rep(0,     nrow(posStack)),
+														ohLength         = rep(4,     nrow(posStack)),
 														contextCondition = rep(FALSE, nrow(posStack)),
 														stringsAsFactors = FALSE)
 	
@@ -122,7 +166,8 @@ pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NUL
 														Exon_Num         = negStack[ , 1],
 														Sites            = negStack[ , 4] + 1,
 														MatchLength      = nchar(negStack[ , 2]),
-														CutIndex         = rep(0, nrow(negStack)),
+														CutIndex         = rep(0,     nrow(negStack)),
+														ohLength         = rep(4,     nrow(negStack)),
 														contextCondition = rep(FALSE, nrow(negStack)),
 														stringsAsFactors = FALSE)
 	}
@@ -134,6 +179,10 @@ pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NUL
 	# Add cut distance to each row based on PAM
 	pamFramePos <- plyr::join(pamFramePos, cutDLFrame, by = "Target")
 	pamFrameNeg <- plyr::join(pamFrameNeg, cutDLFrame, by = "Target")
+	
+	# Add overhang length to each row based on PAM
+	pamFramePos <- plyr::join(pamFramePos, ohLenFrame, by = "Target")
+	pamFrameNeg <- plyr::join(pamFrameNeg, ohLenFrame, by = "Target")
 	
 	if(!is.null(exonStarts)){
 		# Add exon starts to each exon
@@ -211,7 +260,7 @@ pamScan <- function(pamList, cutDistList, targetList, exonList, exonStarts = NUL
 #' @export 
 #' 
 
-talPal <- function(targetList, findCut = TRUE, wiggle = TRUE, wiggleRoom = 39, range = FALSE, 
+talPal <- function(targetList, findCut = TRUE, wiggle = TRUE, wiggleRoom = 39, range = TRUE, 
 									 armin = 15, armax = 18, spamin = 14, spamax = 16, exonList, exonStarts = NULL, Exon_Num = NULL) {
 	require(stringr)
 	require(plyr)
@@ -220,6 +269,7 @@ talPal <- function(targetList, findCut = TRUE, wiggle = TRUE, wiggleRoom = 39, r
 	
 	if(!is.null(exonStarts)){
 		exonMergeFrame <- data.frame(Exon_Num = exonList, exonStarts = exonStarts, stringsAsFactors = FALSE)
+		
 	}
 	
 	# Variable definition and initialization
@@ -239,24 +289,24 @@ talPal <- function(targetList, findCut = TRUE, wiggle = TRUE, wiggleRoom = 39, r
 		
 		#Find all TALEN matches in all sequences
 		matchesPosT <- sapply(patternPos, function(x) sapply(targetList, function(y) gregexpr(x, y, perl = TRUE)))
-		matchesNegT <- sapply(patternNeg, function(x) sapply(targetList, function(y) gregexpr(x, y, perl = TRUE)))
+		#matchesNegT <- sapply(patternNeg, function(x) sapply(targetList, function(y) gregexpr(x, y, perl = TRUE)))
 		
 		if(class(matchesPosT) == "list"){
 			#Extract the matches
 			matchesPosT <- sapply(1:length(matchesPosT), function(x) matchesPosT[[x]][1:length(matchesPosT[[x]])])
-			matchesNegT <- sapply(1:length(matchesNegT), function(x) matchesNegT[[x]][1:length(matchesNegT[[x]])])
+			#matchesNegT <- sapply(1:length(matchesNegT), function(x) matchesNegT[[x]][1:length(matchesNegT[[x]])])
 			
 			#Rename the lists
 			names(matchesPosT) <- armSpaList
-			names(matchesNegT) <- armSpaList
+			#names(matchesNegT) <- armSpaList
 			
 			#Stack the lists
 			posStackT <- stack(matchesPosT)
-			negStackT <- stack(matchesNegT)
+			#negStackT <- stack(matchesNegT)
 			
 			#Get the length of the arms+spacer for the TALEN
 			matchLengthsPos <- sapply(1:nrow(posStackT), function(x) sum(as.numeric(unlist(strsplit(as.character(posStackT[x, 2]), "/")))))
-			matchLengthsNeg <- sapply(1:nrow(negStackT), function(x) sum(as.numeric(unlist(strsplit(as.character(negStackT[x, 2]), "/")))))
+			#matchLengthsNeg <- sapply(1:nrow(negStackT), function(x) sum(as.numeric(unlist(strsplit(as.character(negStackT[x, 2]), "/")))))
 			
 			#Format the results matches
 		  talFramePos <- data.frame(Target           = as.character(posStackT[ , 2]),
@@ -264,34 +314,35 @@ talPal <- function(targetList, findCut = TRUE, wiggle = TRUE, wiggleRoom = 39, r
 																Exon_Num         = rep(1,          nrow(posStackT)),
 																Sites            = posStackT[ , 1],
 																MatchLength      = nchar(as.character(posStackT[ , 2])),
-																CutIndex         = rep(0, nrow(posStackT)),
-																contextCondition = rep(FALSE, nrow(posStackT)),
+																CutIndex         = rep(0,        nrow(posStackT)),
+																contextCondition = rep(FALSE,    nrow(posStackT)),
 																stringsAsFactors = FALSE)
 			
-			talFrameNeg <- data.frame(Target           = as.character(negStackT[ , 2]),
-																Orientation      = rep("complement", nrow(negStackT)),
-																Exon_Num         = rep(1,            nrow(negStackT)),
-																Sites            = negStackT[ , 1],
-																MatchLength      = nchar(as.character(negStackT[ , 2])),
-																CutIndex         = rep(0, nrow(negStackT)),
-																contextCondition = rep(FALSE, nrow(negStackT)),
-																stringsAsFactors = FALSE)
+			# talFrameNeg <- data.frame(Target           = as.character(negStackT[ , 2]),
+			# 													Orientation      = rep("complement", nrow(negStackT)),
+			# 													Exon_Num         = rep(1,            nrow(negStackT)),
+			# 													Sites            = negStackT[ , 1],
+			# 													MatchLength      = nchar(as.character(negStackT[ , 2])),
+			# 													CutIndex         = rep(0,        nrow(negStackT)),
+			# 													contextCondition = rep(FALSE,    nrow(negStackT)),
+			# 													stringsAsFactors = FALSE)
+			
 		} else {
 			#Rename resulting matrix columns (PAMs)
 			colnames(matchesPosT) <- armSpaList	
-			colnames(matchesNegT) <- armSpaList
+			#colnames(matchesNegT) <- armSpaList
 			
 			#Rename resulting matrix rows (target sequences)
 			row.names(matchesPosT) <- exonList
-			row.names(matchesNegT) <- exonList
+			#row.names(matchesNegT) <- exonList
 			
 			#Unstack matrix into nice data frame
 			posStackT <- stack(matchesPosT)
-			negStackT <- stack(matchesNegT)
+			#negStackT <- stack(matchesNegT)
 			
 			#Get the length of the arms+spacer for the TALEN
 			matchLengthsPos <- sapply(1:nrow(posStackT), function(x) sum(as.numeric(unlist(strsplit(as.character(posStackT[x, 2]), "/")))))
-			matchLengthsNeg <- sapply(1:nrow(negStackT), function(x) sum(as.numeric(unlist(strsplit(as.character(negStackT[x, 2]), "/")))))
+			#matchLengthsNeg <- sapply(1:nrow(negStackT), function(x) sum(as.numeric(unlist(strsplit(as.character(negStackT[x, 2]), "/")))))
 			
 			#Create data frame to hold all TALEN info
 			talFramePos <- data.frame(Target           = as.character(posStackT[ , 2]),
@@ -299,49 +350,51 @@ talPal <- function(targetList, findCut = TRUE, wiggle = TRUE, wiggleRoom = 39, r
 																Exon_Num         = posStackT[ , 1],
 																Sites            = posStackT[ , 4],
 																MatchLength      = matchLengthsPos,
-																CutIndex         = rep(0, nrow(posStackT)),
-																contextCondition = rep(FALSE, nrow(posStackT)),
+																CutIndex         = rep(0,        nrow(posStackT)),
+																contextCondition = rep(FALSE,    nrow(posStackT)),
 																stringsAsFactors = FALSE)
 			
-			talFrameNeg <- data.frame(Target           = as.character(negStackT[ , 2]),
-																Orientation      = rep("complement", nrow(negStackT)),
-																Exon_Num         = negStackT[ , 1],
-																Sites            = negStackT[ , 4] + 1,
-																MatchLength      = matchLengthsNeg,
-																CutIndex         = rep(0, nrow(negStackT)),
-																contextCondition = rep(FALSE, nrow(negStackT)),
-																stringsAsFactors = FALSE)
+			# talFrameNeg <- data.frame(Target           = as.character(negStackT[ , 2]),
+			# 													Orientation      = rep("complement", nrow(negStackT)),
+			# 													Exon_Num         = negStackT[ , 1],
+			# 													Sites            = negStackT[ , 4] + 1,
+			# 													MatchLength      = matchLengthsNeg,
+			# 													CutIndex         = rep(0,            nrow(negStackT)),
+			# 													contextCondition = rep(FALSE,        nrow(negStackT)),
+			# 													stringsAsFactors = FALSE)
 			
 		}
 
 		#Drop -1 returns for not found instances
 		talFramePos <- talFramePos[which(talFramePos$Sites > -1), ]
-		talFrameNeg <- talFrameNeg[which(talFrameNeg$Sites > -1), ]
+		#talFrameNeg <- talFrameNeg[which(talFrameNeg$Sites > -1), ]
 		
 		if(!findCut){
 			talFramePos$CutIndex <- talFramePos$Sites
-			talFrameNeg$CutIndex <- talFrameNeg$Sites
+			#talFrameNeg$CutIndex <- talFrameNeg$Sites
+			
 		} else {
-			storePos <- sapply(1:length(talFramePos$Target), function (x) as.numeric(unlist(strsplit(as.character(talFramePos$Target[x]), "/"))))
-			storeNeg <- sapply(1:length(talFrameNeg$Target), function (x) as.numeric(unlist(strsplit(as.character(talFrameNeg$Target[x]), "/"))))
+			storePos <- sapply(1:length(talFramePos$Target), function (x) list(as.numeric(unlist(strsplit(as.character(talFramePos$Target[x]), "/")))))
+			#storeNeg <- sapply(1:length(talFrameNeg$Target), function (x) list(as.numeric(unlist(strsplit(as.character(talFrameNeg$Target[x]), "/")))))
 			
 			#Get left spacer arm + half the spacer
-			cutModPos <- talFramePos$Sites + as.numeric(storePos[1]) + (as.numeric(storePos[2]) / 2)
-			cutModNeg <- talFrameNeg$Sites + as.numeric(storeNeg[1]) + (as.numeric(storeNeg[2]) / 2)
+			cutModPos <- talFramePos$Sites + sapply(1:length(storePos), function(x) as.numeric(storePos[[x]][1]) + (as.numeric(storePos[[x]][2]) / 2))
+			#cutModNeg <- talFrameNeg$Sites + sapply(1:length(storeNeg), function(x) as.numeric(storeNeg[[x]][1]) + (as.numeric(storeNeg[[x]][2]) / 2))
 			
 			#Add cut distance to each row based on PAM
-			talFramePos$CutIndex <- talFramePos$Sites + cutModPos
-			talFrameNeg$CutIndex <- talFrameNeg$Sites + cutModNeg
+			talFramePos$CutIndex <- cutModPos
+			#talFrameNeg$CutIndex <- cutModNeg
 		}
 		
 		if(!is.null(exonStarts)){
 			#Add exon starts to each exon
 			talFramePos <- plyr::join(talFramePos, exonMergeFrame, by = "Exon_Num")
-			talFrameNeg <- plyr::join(talFrameNeg, exonMergeFrame, by = "Exon_Num")
+			#talFrameNeg <- plyr::join(talFrameNeg, exonMergeFrame, by = "Exon_Num")
 		}
 		
 		#Concatenate the data frames
-		talFrame <- rbind(talFramePos, talFrameNeg)
+		#talFrame <- rbind(talFramePos, talFrameNeg)
+		talFrame  <- talFramePos
 		
 		# Correct positions by localization in gene and not exon, taking into account "wiggle room"
 		if (!is.null(exonStarts)) {

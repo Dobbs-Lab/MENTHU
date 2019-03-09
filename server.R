@@ -11,8 +11,9 @@ library(DT)
 library(plyr)
 library(Rcpp)
 library(curl)
-library(jsonlite)
 library(httr)
+library(jsonlite)
+library(xml2)
 
 # Required supporting files
 source("apeShiftFunctions.R")
@@ -1317,7 +1318,7 @@ shinyServer(function(input, output, session){
 			# Calculate the MENTHU score
 			stuff   <<- calculateMENTHUGeneSeq(pams, cutDistances, overhangs, wiggle = TRUE, wiggleRoom = 39, 
 																				 stripWhiteSpace(input$geneSeq), exonIn, progress, talArmin, talArmax, talSpamin, talSpamax)
-			
+
 			results <<- stuff[[1]]
 			
 			if(is.numeric(results)){

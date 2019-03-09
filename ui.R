@@ -13,6 +13,7 @@ shinyUI(function(request){
 						 
 						 #Page title box
 						 tags$div(""),
+
 						 
 						 ########ABOUT TAB#################################################
 						 tabPanel(#id = 'about',

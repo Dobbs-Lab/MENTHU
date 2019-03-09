@@ -1,10 +1,10 @@
 # MENTHU
 This is a repository for the MENTHU knockout site recommender.
 
-You can run MENTHU online through a web interface here: http://ll-g2f.gdcb.iastate.edu/menthu/
+You can run MENTHU online through a web interface here: http://genesculpt.org/menthu/
  
 
-### If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU#run-menthu-locally) to immmediately start running MENTHU locally.
+### If you already have R and/or RStudio installed, you can jump to [here](https://github.com/Dobbs-Lab/MENTHU#3-run-menthu-locally) to immmediately start running MENTHU locally.
 
 ### If you are having issues running MENTHU locally, please check the [Troubleshooting](https://github.com/Dobbs-Lab/MENTHU#troubleshooting) section before requesting help.
  
@@ -78,25 +78,21 @@ You can copy and paste the code blocks below into your R/RStudio console to run 
 
 #Install CRAN packages
 install.packages(c("shiny", "shinyjs", "Rcpp", "plyr", "stringr", "stringi", "shinyTable", 
-                   "rentrez", "rlist", "DT", "xlsx", "devtools", "rhandsontable"))
+                   "rentrez", "rlist", "DT", "xlsx", "devtools", "rhandsontable", "httr", "jsonlite", "xml2"))
 
 #Install 'Biostrings' package from Bioconductor
 source("https://bioconductor.org/biocLite.R")
 biocLite("Biostrings")
 
-#Install 'ShinyIncubator' and 'ShinyTable' from GitHub
+#Install 'ShinyIncubator' from GitHub
 devtools::install_github("rstudio/shiny-incubator", force = TRUE)
-devtools::install_github("trestletech/shinyTable",  force = TRUE)
 ```
 
 ### Run this code every time you want to use the tool, including the first time:
 
 ```
-#Load Shiny in the R/RStudio Environment
-library(shiny)
-
 #Retrieve, load, and run MENTHU from GitHub
-runGitHub("MENTHU", "Dobbs-Lab")
+shiny::runGitHub("MENTHU", "Dobbs-Lab")
 ```
 
 You're all set!

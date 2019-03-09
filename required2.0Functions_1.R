@@ -1965,7 +1965,6 @@ reverseComplement.list <- function(seq, type = "DNA"){
 	return(unlist(retList))
 }
 
-#' stripWhiteSpace
 #'
 #' This function removes all white space from character vectors. If it is passed a data frame, it will remove all white space from all columns with character data types.
 #'

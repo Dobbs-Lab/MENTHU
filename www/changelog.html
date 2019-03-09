@@ -15,6 +15,11 @@
 <p>Issue: After submitting and getting results back, switching the input type (e.g., from GenBank to Ensembl) and then resubmitting without resetting the form results in the "Download Results" button downloading the entire page in HTM, rather than the results table in CSV.</p> 
 <p>Temporary workaround: While we implement a fix, use the "Reset Form" link in between uses for best results.</p>
 <br />
+<p><strong>2019-02-08 v2.0.8</strong></p>
+<ul>
+	<li>Fixed bug where newline characters in copy/paste input were read as part of the sequence; newline/whitespace characters in pasted sequences are now automatically removed.</li>
+</ul>
+<br />
 <p><strong>2018-10-12 v2.0.7</strong></p>
 <ul>
 	<li>Added Ensembl support</li>

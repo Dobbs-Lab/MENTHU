@@ -80,7 +80,7 @@ shinyUI(function(request){
 						 
 						 ##########Calculate MENTHU TAB###################################
 						 tabPanel(id = "single",
-						 				 tags$div("Calculate MENTHU Score"),
+						 				 tags$div("Submit Job"),
 						 				 titlePanel(""),
 						 				 
 						 				 ##Sidebar############################################################
@@ -593,7 +593,7 @@ shinyUI(function(request){
 						 	
 						 	#Text area in center of page
 						 	column(9, wellPanel(
-						 		h3("Run MENTHU Locally"),
+						 		h3("Download MENTHU"),
 						 		tags$p(HTML(paste0("A standalone version of this code can be downloaded from our ", 
 						 											 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU", target = "_blank", "GitHub repository"),
 						 											 "."))),
@@ -601,19 +601,21 @@ shinyUI(function(request){
 						 											 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU#how-to-run-menthu-locally", target = "_blank", "README"), 
 						 											 " file."))),
 						 		tags$p("You can clone the repository with the following git command:"),
-						 		tags$p(tags$code("git clone https://github.com/Dobbs-Lab/MENTHU.git")),
+						 		tags$p(tags$code("git clone https://github.com/Dobbs-Lab/MENTHU.git"), style = "text-align:center;"),
+						 		tags$p(HTML(paste0("MENTHU is available under the GNU General Public License v3 (GPL 3.0). You can read the license ",
+						 											 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU/blob/master/LICENSE", target = "_blank", "here"),
+						 											 "."))),
+						 		tags$p(HTML(paste0("The MENTHU R code is provided as-is; please be aware that you modify the code at your own risk. ",
+						 											 "We are unable to provide technical support for modified versions.")))
+						 	),
 						 		
+						 		wellPanel(
+						 			h3("Run MENTHU Locally"),
 						 		tags$p(HTML(paste0("If you have R installed on your system, you can also follow the instructions ",
 						 											 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU#3-run-menthu-locally", target = "_blank", "here"),
 						 											 " to easily run the MENTHU RShiny app from R, without dealing with Git."))),
 						 		p("MENTHU is also available as a Docker container image. You can clone the Docker image using the following command:"),
-						 		tags$p(tags$code("sudo docker pull cmmann/menthu")),
-						 		
-						 		
-						 		tags$p(HTML(paste0("The MENTHU R code is provided as-is; please be aware that you modify the code at your own risk. ",
-						 											 "We are unable to provide technical support for modified versions."))),
-						 		h3("Licensing"),
-						 		p("MENTHU is available under the GNU GPL v3.0 license.")
+						 		tags$p(tags$code("sudo docker pull cmmann/menthu"), style = "text-align:center;")
 						 		
 						 	))
 						 	

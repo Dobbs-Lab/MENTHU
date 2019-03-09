@@ -1,5 +1,5 @@
-body {
-	font-size: 18px;
+bbody {
+	font-size: 16px;
 	font-family: Arial, Helvetica, sans-serif;
 	color: black;
 }
@@ -14,6 +14,11 @@ body {
   background-color: #CC0000;
 }
 
+.navbar-header {
+  position: absolute;
+  z-index: 1;
+}
+
 /* Make code look better */
 code {
 	background-color: white;
@@ -24,7 +29,7 @@ code {
 /* Default coloring and styling of the navbar panel tabs */
 .nav.navbar-nav li a {
 	color: white;
-	font-size: 25px;
+	font-size: 20px;
 }
 
 /* Color the active top navbar panel tab*/
@@ -47,6 +52,27 @@ code {
 .shiny-output-error-validation {
   color: red;
   font-size: 20px;
+}
+
+figure {
+    
+    margin-left: auto;
+    margin-right: auto;
+}
+
+img {
+    width: 100%;
+    display: block;
+    height: auto;
+    margin: 10px auto 10px auto;
+}
+
+figcaption {
+    caption-side: bottom;
+    width: 100%;
+    height: auto;
+    font-size: 14px;
+    text-align: center;
 }
 
 /* Style Example Panel */

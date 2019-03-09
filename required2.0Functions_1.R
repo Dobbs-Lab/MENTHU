@@ -287,8 +287,8 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, ohList, wiggle = TRUE, 
 		# 															 Tool_Type       = pamSites$Target,
 		# 															 Strand          = pamSites$Orientation,
 		# 															 Exon_ID         = pamSites$Exon_Num,
-		# 															 Cut_Location    = pamSites$CutIndex,
-		# 															 Top_Deletion    = pamSites$topDel,
+		# 															 DSB_Location    = pamSites$CutIndex,
+		# 															 PreMA_Sequence    = pamSites$topDel,
 		# 															 stringsAsFactors = FALSE)
 		# 	}
 		# 	
@@ -349,8 +349,8 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, ohList, wiggle = TRUE, 
 		# 															 Tool_Type       = talSites$Target,
 		# 															 Strand          = talSites$Orientation,
 		# 															 Exon_ID         = talSites$Exon_Num,
-		# 															 Cut_Location    = talSites$CutIndex,
-		# 															 Top_Deletion    = talSites$topDel,
+		# 															 DSB_Location    = talSites$CutIndex,
+		# 															 PreMA_Sequence    = talSites$topDel,
 		# 															 stringsAsFactors = FALSE)
 		# 	}
 		# } else {
@@ -479,9 +479,9 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, ohList, wiggle = TRUE, 
 																	Tool_Type        = pamSites$Target, 
 																	Strand           = pamSites$Orientation, 
 																	Exon_ID          = pamSites$Exon_Num, 
-																	Cut_Location     = pamSites$CutIndex,
+																	DSB_Location     = pamSites$CutIndex,
 																	Microhomology    = pamSites$topMH,
-																	Top_Deletion     = pamSites$topDel,
+																	PreMA_Sequence     = pamSites$topDel,
 																	Context          = pamSites$seq,
 																	stringsAsFactors = FALSE)
 		}
@@ -543,9 +543,9 @@ calculateMENTHUGeneSeq <- function(casList, cutDistList, ohList, wiggle = TRUE, 
 																 Tool_Type       = talSites$Target,
 																 Strand          = talSites$Orientation,
 																 Exon_ID         = talSites$Exon_Num,
-																 Cut_Location    = talSites$CutIndex,
+																 DSB_Location    = talSites$CutIndex,
 																 Microhomology   = talSites$topMH,
-																 Top_Deletion    = talSites$topDel,
+																 PreMA_Sequence    = talSites$topDel,
 																 Context         = talSites$seq,
 																 stringsAsFactors = FALSE)
 			
@@ -776,7 +776,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, ohList, wiggle =
 														Tool_Type        = as.character(), 
 														Strand           = as.character(), 
 														Exon_ID          = as.numeric(), 
-														Cut_Location     = as.integer(),
+														DSB_Location     = as.integer(),
 														stringsAsFactors = FALSE)
 	# if(version == 1){
 	# 	if(pamFlag){
@@ -825,8 +825,8 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, ohList, wiggle =
 	# 															 Tool_Type       = pamSites$Target,
 	# 															 Strand          = pamSites$Orientation,
 	# 															 Exon_ID         = pamSites$Exon_Num,
-	# 															 Cut_Location    = pamSites$CutIndex,
-	# 															 Top_Deletion    = pamSites$topDel,
+	# 															 DSB_Location    = pamSites$CutIndex,
+	# 															 PreMA_Sequence    = pamSites$topDel,
 	# 															 stringsAsFactors = FALSE)
 	# 	}
 	# 	
@@ -887,8 +887,8 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, ohList, wiggle =
 	# 															 Tool_Type       = talSites$Target,
 	# 															 Strand          = talSites$Orientation,
 	# 															 Exon_ID         = talSites$Exon_Num,
-	# 															 Cut_Location    = talSites$CutIndex,
-	# 															 Top_Deletion    = talSites$topDel,
+	# 															 DSB_Location    = talSites$CutIndex,
+	# 															 PreMA_Sequence    = talSites$topDel,
 	# 															 stringsAsFactors = FALSE)
 	# 	}
 	# } else {
@@ -1016,9 +1016,9 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, ohList, wiggle =
 																Tool_Type        = pamSites$Target, 
 																Strand           = pamSites$Orientation, 
 																Exon_ID          = pamSites$Exon_Num, 
-																Cut_Location     = pamSites$CutIndex,
+																DSB_Location     = pamSites$CutIndex,
 																Microhomology    = pamSites$topMH,
-																Top_Deletion     = pamSites$topDel,
+																PreMA_Sequence     = pamSites$topDel,
 																Context          = pamSites$seq,
 																stringsAsFactors = FALSE)
 	}
@@ -1080,9 +1080,9 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, ohList, wiggle =
 															 Tool_Type       = talSites$Target,
 															 Strand          = talSites$Orientation,
 															 Exon_ID         = talSites$Exon_Num,
-															 Cut_Location    = talSites$CutIndex,
+															 DSB_Location    = talSites$CutIndex,
 															 Microhomology   = talSites$topMH,
-															 Top_Deletion    = talSites$topDel,
+															 PreMA_Sequence    = talSites$topDel,
 															 Context         = talSites$seq,
 															 stringsAsFactors = FALSE)
 	}
@@ -1299,7 +1299,7 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, ohList, wiggle = TRUE, 
 														Tool_Type        = as.character(), 
 														Strand           = as.character(), 
 														Exon_ID          = as.numeric(), 
-														Cut_Location     = as.integer(),
+														DSB_Location     = as.integer(),
 														stringsAsFactors = FALSE)
 	# if(version == 1){
 	# 	if(pamFlag){
@@ -1348,8 +1348,8 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, ohList, wiggle = TRUE, 
 	# 															 Tool_Type       = pamSites$Target,
 	# 															 Strand          = pamSites$Orientation,
 	# 															 Exon_ID         = pamSites$Exon_Num,
-	# 															 Cut_Location    = pamSites$CutIndex,
-	# 															 Top_Deletion    = pamSites$topDel,
+	# 															 DSB_Location    = pamSites$CutIndex,
+	# 															 PreMA_Sequence    = pamSites$topDel,
 	# 															 stringsAsFactors = FALSE)
 	# 	}
 	# 	
@@ -1410,8 +1410,8 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, ohList, wiggle = TRUE, 
 	# 															 Tool_Type       = talSites$Target,
 	# 															 Strand          = talSites$Orientation,
 	# 															 Exon_ID         = talSites$Exon_Num,
-	# 															 Cut_Location    = talSites$CutIndex,
-	# 															 Top_Deletion    = talSites$topDel,
+	# 															 DSB_Location    = talSites$CutIndex,
+	# 															 PreMA_Sequence    = talSites$topDel,
 	# 															 stringsAsFactors = FALSE)
 	# 	}
 	# } else {
@@ -1539,9 +1539,9 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, ohList, wiggle = TRUE, 
 																Tool_Type        = pamSites$Target, 
 																Strand           = pamSites$Orientation, 
 																Exon_ID          = pamSites$Exon_Num, 
-																Cut_Location     = pamSites$CutIndex,
+																DSB_Location     = pamSites$CutIndex,
 																Microhomology    = pamSites$topMH,
-																Top_Deletion     = pamSites$topDel,
+																PreMA_Sequence     = pamSites$topDel,
 																Context          = pamSites$seq,
 																stringsAsFactors = FALSE)
 	}
@@ -1603,9 +1603,9 @@ calculateMENTHUEnsembl <- function(pamList, cutDistList, ohList, wiggle = TRUE, 
 															 Tool_Type       = talSites$Target,
 															 Strand          = talSites$Orientation,
 															 Exon_ID         = talSites$Exon_Num,
-															 Cut_Location    = talSites$CutIndex,
+															 DSB_Location    = talSites$CutIndex,
 															 Microhomology   = talSites$topMH,
-															 Top_Deletion    = talSites$topDel,
+															 PreMA_Sequence    = talSites$topDel,
 															 Context         = talSites$seq,
 															 stringsAsFactors = FALSE)
 		

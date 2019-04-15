@@ -17,7 +17,7 @@ shinyUI(function(request){
 						 
 						 ########ABOUT TAB#################################################
 						 tabPanel(#id = 'about',
-						 				 tags$div("MENTHU v2.1.0"),
+						 				 tags$div("MENTHU v2.1.1"),
 						 				 titlePanel(""),
 						 				 
 						 				 #Sidebar panel with links
@@ -295,6 +295,16 @@ shinyUI(function(request){
 						 				 			 	# If user uses Ensembl accession
 						 				 			 	conditionalPanel(
 						 				 			 		condition = "input.inputType == 3",
+						 				 			 		
+						 				 			 		#### Ensembl Warning Message ####
+						 				 			 		tags$span(style="color:red", tags$p(HTML(paste0("NOTE: Due to a recent Ensembl update, we ",
+						 				 			 																							 "currently can only retrieve the most recent ",
+						 				 			 																							 "version for any Ensembl accession, regardlesss ", 
+						 				 			 																							 "of the version specified in the accession. If you need ",
+						 				 			 																							 "to use an older version, you should retrieve ",
+						 				 			 																							 "the sequence from Ensembl directly, ",
+						 				 			 																							 "and use the copy/paste input option.")))),
+						 				 			 		
 						 				 			 		textAreaInput("ensemblId",
 						 				 			 									label       = paste0("Enter your Ensembl ID here. ",
 						 				 			 																			 "We can analyze sequences from Ensembl transcript, exon, and protein IDs. ",

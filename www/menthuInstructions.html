@@ -52,6 +52,9 @@
 <br />
 <h3 style = "display:inline-block">Frequently Asked Questions (FAQs)  </h3><a href="#FAQs" data-toggle = "collapse"> expand/collapse </a>
 <div id = "FAQs" class = "collapse in">
+	<p><b>Why is MENTHU using a different accession version than the one I specified?</b></p>
+	<p>A recent Ensembl update (on Apr 09, 2019) changed how the Ensembl REST API responds to requests where the version is specified. For example, submitting "ENSDART00000011520.8" retrieved the Ensembl Noto-1 transcript, version 8, prior to April 9th. After April 9th (and before we implemented a workaround), this resulted in an "Error: The input Ensembl ID was not found in Ensembl's database. Please check your input ID." message, or in MENTHU hanging on these requests. Our temporary workaround strips the version number from the input when we request the entry from Ensembl, which then defaults to retrieving the latest version. Thus, if you request an older version of an entry at this time, you will receive results using the most recent version. If you absolutely need results for an older version, we recommend you retrieve the sequence corresponding to the older entry, and submit this using the copy/paste input. We are working to implement a long-term solution to restore this functionality.</p>
+	<br />
 <p><b>Does MENTHU store data inputs?</b></p>
 <p>No. Your data inputs are only available to MENTHU for as long as your MENTHU session is active, and are only used to calculate your results during that time. The file containing your results is only generated when you click the 'Download' button - no results files are actually created or stored on our server. Once you exit the MENTHU browser window, everything you did in the session is completely gone. (The flip side of this is that if you do not save your results, you will have to perform the analysis again.)</p>
 <br />

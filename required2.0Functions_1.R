@@ -655,7 +655,7 @@ calculateMENTHUGeneSeqGenBank <- function(pamList, cutDistList, ohList, wiggle =
 			pamSites <- pamScan(pamList, 
 													cutDistList, 
 													ohList,
-													exonSeqs,
+													exonSeq,
 													exonList   = "1",
 													exonStarts = NULL, 
 													findCut    = TRUE, 

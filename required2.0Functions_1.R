@@ -1810,7 +1810,7 @@ window <- function(sequence, position, winSize = 80) {
 }
 
 # Filter Results
-filterResults <- function(results, opT7, opThresh){
+filterResults <- function(results, opT7, opThresh, opInFrame, opOutFrame){
 	rResults <- results
 	
 	if(opT7){
@@ -1822,6 +1822,19 @@ filterResults <- function(results, opT7, opThresh){
 	if(opThresh){
 		rResults <- rResults[which(rResults$MENTHU_Score >= 1.5), ]
 	}
+	
+	if(nrow(rResults) > 1) {
+		if(opInFrame && opOutFrame){
+			
+		} else if(opInFrame && !opOutFrame) {
+			rResults <- rResults[which(rResults$Frame_Shift == "No"), ]
+		} else if(!opInFrame && opOutFrame) {
+			rResults <- rResults[which(rResults$Frame_Shift == "Yes"), ]
+		} else {
+			rResults <- rResults[which(rResults$Frame_Shift != "No" && rResults$Frame_Shift != "Yes")]
+		}
+	}
+
 	
 	if(nrow(rResults) < 1){
 		return(list(FALSE, ""))
@@ -1965,6 +1978,8 @@ reverseComplement.list <- function(seq, type = "DNA"){
 	return(unlist(retList))
 }
 
+
+#' stripWhiteSpace
 #'
 #' This function removes all white space from character vectors. If it is passed a data frame, it will remove all white space from all columns with character data types.
 #'
@@ -1991,6 +2006,8 @@ stripWhiteSpace.default <- function(wsco){
 #For handling character vectors
 stripWhiteSpace.character <- function(wsco){
 	stripped <- gsub('\\s+', '', wsco)
+	stripped <- gsub('\\h+', '', stripped)
+	stripped <- gsub('\\v+', '', stripped)
 	return(stripped)
 }
 

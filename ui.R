@@ -17,7 +17,7 @@ shinyUI(function(request){
 						 
 						 ########ABOUT TAB#################################################
 						 tabPanel(#id = 'about',
-						 				 tags$div("MENTHU v2.1.1"),
+						 				 tags$div("MENTHU v2.1.2"),
 						 				 titlePanel(""),
 						 				 
 						 				 #Sidebar panel with links
@@ -67,7 +67,13 @@ shinyUI(function(request){
 						 				 											 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
 						 				 	tags$br(),
 						 				 	tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
-						 				 											 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 				 											 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href   = "https://github.com/Dobbs-Lab/MENTHU", 
+						 				 											 target = "_blank", tags$img(src = "GitHub_Logo.png",                   width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href   = "https://hub.docker.com/r/cmmann/menthu", 
+						 				 											 target = "_blank", tags$img(src = "Docker_Logo.png",                   width = "100%"))))
 						 				 )),
 						 				 
 						 				 #Text area in center of page
@@ -124,6 +130,15 @@ shinyUI(function(request){
 						 				 ####Main Bar#########################################################
 						 				 # Main panel for entering information and submitting job
 						 				 column(9, 
+						 				 			 wellPanel(tags$span(tags$b(HTML(paste0("To avoid overloading our server, ", 
+						 				 			 																			 "MENTHU limits users to one concurrent job submission. ", 
+						 				 			 																			 "You should wait until your submitted job has finished and ", 
+						 				 			 																			 "download your results before submitting an additional job. ",
+						 				 			 																			 "Jobs submitted in additional browser tabs will not start until ",
+						 				 			 																			 "your previous job has completed. ",
+						 				 			 																			 "If you need to run a high volume of jobs, please use the ", 
+						 				 			 																			 "MENTHU command-line utility (see \"Tools and Downloads\" tab.)")))), 
+						 				 			 																style="color:blue;"),
 						 				 			 
 						 				 			 ####Choose PAM sequence#############################################
 						 				 			 wellPanel(
@@ -288,8 +303,9 @@ shinyUI(function(request){
 						 				 			 		
 						 				 			 		# Validation check outputs
 						 				 			 		textOutput("validgenbankid"),
-						 				 			 		textOutput("genbankidexists")
+						 				 			 		textOutput("genbankidexists"),
 						 				 			 		
+						 				 			 		tags$p("MENTHU currently only checks exons for ")
 						 				 			 	),
 						 				 			 	
 						 				 			 	# If user uses Ensembl accession
@@ -304,6 +320,7 @@ shinyUI(function(request){
 						 				 			 																							 "to use an older version, you should retrieve ",
 						 				 			 																							 "the sequence from Ensembl directly, ",
 						 				 			 																							 "and use the copy/paste input option.")))),
+
 						 				 			 		
 						 				 			 		textAreaInput("ensemblId",
 						 				 			 									label       = paste0("Enter your Ensembl ID here. ",
@@ -489,7 +506,9 @@ shinyUI(function(request){
 						 				 			 			tags$br(),
 						 				 			 			p("Filter Options: "),
 						 				 			 			checkboxInput("t7OptGB",     "T7-compatible gRNAs",                       value = FALSE),
-						 				 			 			checkboxInput("thresholdGB", "Recommended sites (>=1.5 score threshold)", value = FALSE)
+						 				 			 			checkboxInput("thresholdGB", "Recommended sites (>=1.5 score threshold)", value = FALSE),
+						 				 			 			checkboxInput("inFrameGB",   "Show in-frame PreMA sites", value = TRUE),
+						 				 			 			checkboxInput("outFrameGB",  "Show out-of-frame PreMA sites", value = TRUE)
 						 				 			 		),
 						 				 			 		
 						 				 			 		uiOutput('genbankResults')
@@ -531,7 +550,9 @@ shinyUI(function(request){
 						 				 			 			tags$br(),
 						 				 			 			p(tags$b("Filter Options: ")),
 						 				 			 			checkboxInput("t7OptE",     "T7-compatible gRNAs",                       value = FALSE),
-						 				 			 			checkboxInput("thresholdE", "Recommended sites (>=1.5 score threshold)", value = FALSE)
+						 				 			 			checkboxInput("thresholdE", "Recommended sites (>=1.5 score threshold)", value = FALSE),
+						 				 			 			checkboxInput("inFrameE",   "Show in-frame PreMA sites", value = TRUE),
+						 				 			 			checkboxInput("outFrameE",  "Show out-of-frame PreMA sites", value = TRUE)
 						 				 			 		),
 						 				 			 		
 						 				 			 		uiOutput('ensemblResults')
@@ -560,7 +581,9 @@ shinyUI(function(request){
 						 				 			 			tags$br(),
 						 				 			 			p("Filter Options: "),
 						 				 			 			checkboxInput("t7OptGS",     "T7-compatible gRNAs",                       value = FALSE),
-						 				 			 			checkboxInput("thresholdGS", "Recommended sites (>=1.5 score threshold)", value = FALSE)
+						 				 			 			checkboxInput("thresholdGS", "Recommended sites (>=1.5 score threshold)", value = FALSE),
+						 				 			 			checkboxInput("inFrameGS",   "Show in-frame PreMA sites", value = TRUE),
+						 				 			 			checkboxInput("outFrameGS",  "Show out-of-frame PreMA sites", value = TRUE)
 						 				 			 		),
 						 				 			 		
 						 				 			 		uiOutput('geneSeqResults')
@@ -619,7 +642,19 @@ shinyUI(function(request){
 						 		tags$p(HTML(paste0("The MENTHU R code is provided as-is; please be aware that you modify the code at your own risk. ",
 						 											 "We are unable to provide technical support for modified versions.")))
 						 	),
-						 		
+						 	
+						 	wellPanel(
+						 		h3("Download MENTHU for High-Throughput Use"),
+						 		tags$p(HTML(paste0("If you want to run MENTHU for very large genes (e.g., TTN, DMD) or for a large number of genes, ", 
+						 											 "we recommend that you use the MENTHU command-line tool."))),
+						 		tags$p("You can download the command-line tool from its ",
+						 					 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU-command-line", target = "_blank", "GitHub repository"),
+						 					 "."),
+						 		tags$p(HTML(paste0("There are extensive usage and installation instructions for this tool in its ReadMe file, and on GitHub. "),
+						 								"You can clone the repository with the following git command:")),
+						 		tags$p(tags$code("git clone https://github.com/Dobbs-Lab/MENTHU-command-line.git"), style = "text-align:center;")
+						 	),
+						 	
 						 		wellPanel(
 						 			h3("Run MENTHU Locally"),
 						 		tags$p(HTML(paste0("If you have R installed on your system, you can also follow the instructions ",

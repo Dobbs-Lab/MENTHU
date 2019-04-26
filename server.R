@@ -191,7 +191,7 @@ shinyServer(function(input, output, session){
 						 			 "Allowed nucleotides are A, C, G, and T.")),
 				
 				# Prevent users from submitting too short sequences
-				need(nchar(input$geneSeq) > 80,
+				need(nchar(input$geneSeq) >= 80,
 						 paste0("The DNA sequence has <80 nucleotides. MENTHU requires at least 40 nucleotides upstream", 
 						 			 "and 40 nucleotides downstream of the DSB site in order to properly calculate the MENTHU score."))#,
 				
@@ -359,7 +359,7 @@ shinyServer(function(input, output, session){
 		if(rValues$geneSeqError == 0){
 			""
 		} else if(rValues$geneSeqError == 1){
-			"No targets corresponding to the PAM(s) detected."
+			"Error: No targets corresponding to the PAM(s) detected."
 		}
 	})
 	
@@ -518,7 +518,7 @@ shinyServer(function(input, output, session){
 			if(input$inputType == 1){
 				# For GenBank/Refseq
 				# Tag the file if the outputs were filtered
-				if(input$t7OptGB || input$thresholdGB){
+				if(input$t7OptGB || input$thresholdGB || !input$inFrameGB || !input$outFrameGB){
 					filt <- "filtered"
 				} else {
 					filt <- ""
@@ -529,7 +529,7 @@ shinyServer(function(input, output, session){
 			} else if(input$inputType == 3){
 				# For Ensembl
 				# Tag the file if the outputs were filtered
-				if(input$t7OptE || input$thresholdE){
+				if(input$t7OptE || input$thresholdE || !input$inFrameE || !input$outFrameE){
 					filt <- "filtered"
 				} else {
 					filt <- ""
@@ -540,7 +540,7 @@ shinyServer(function(input, output, session){
 			} else {
 				# For copy/paste
 				# Tag the file if the outputs were filtered
-				if(input$t7OptGS || input$thresholdGS){
+				if(input$t7OptGS || input$thresholdGS || !input$inFrameGS || !input$outFrameGS){
 					filt <- "filtered"
 				} else {
 					filt <- ""
@@ -554,13 +554,13 @@ shinyServer(function(input, output, session){
 		content = function(file){
 			# Apply filters to the download
 			if(input$inputType == 1){
-				resOut <- filterResults(results, input$t7OptGB, input$thresholdGB)
+				resOut <- filterResults(results, input$t7OptGB, input$thresholdGB, input$inFrameGB, input$outFrameGB)
 				
 			} else if(input$inputType == 2){
-				resOut <- filterResults(results, input$t7OptGS, input$thresholdGS)
+				resOut <- filterResults(results, input$t7OptGS, input$thresholdGS, input$inFrameGS, input$outFrameGS)
 				
 			} else if(input$inputType == 3){
-				resOut <- filterResults(results, input$t7OptE,  input$thresholdE)
+				resOut <- filterResults(results, input$t7OptE,  input$thresholdE, input$inFrameE, input$outFrameE)
 				
 			}
 			
@@ -604,7 +604,7 @@ shinyServer(function(input, output, session){
   	input$inputType
   	
   	if(rValues$geneSeqResultsFlag && input$inputType == "2"){
-  		out <- filterResults(results, input$t7OptGS, input$thresholdGS)
+  		out <- filterResults(results, input$t7OptGS, input$thresholdGS, input$inFrameGS, input$outFrameGS)
   		
   		if(out[[1]]){
   			output$placeholder <- DT::renderDataTable(out[[2]], 
@@ -627,7 +627,7 @@ shinyServer(function(input, output, session){
   	input$inputType
   	
   	if(rValues$genbankResultsFlag && input$inputType == "1"){
-  		out <- filterResults(results, input$t7OptGB, input$thresholdGB)
+  		out <- filterResults(results, input$t7OptGB, input$thresholdGB, input$inFrameGB, input$outFrameGB)
   		
   		if(out[[1]]){
   			output$placeholder <- DT::renderDataTable(out[[2]], 
@@ -651,7 +651,7 @@ shinyServer(function(input, output, session){
   	input$inputType
   	
   	if(rValues$ensemblResultsFlag && input$inputType == "3"){
-  		out <- filterResults(results, input$t7OptE, input$thresholdE)
+  		out <- filterResults(results, input$t7OptE, input$thresholdE, input$inFrameE, input$outFrameE)
   		
   		if(out[[1]]){
   			output$placeholder <- DT::renderDataTable(out[[2]], 

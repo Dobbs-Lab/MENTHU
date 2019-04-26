@@ -17,7 +17,7 @@ shinyUI(function(request){
 						 
 						 ########ABOUT TAB#################################################
 						 tabPanel(#id = 'about',
-						 				 tags$div("MENTHU v2.1.2"),
+						 				 tags$div("MENTHU v2.1.1"),
 						 				 titlePanel(""),
 						 				 
 						 				 #Sidebar panel with links
@@ -289,6 +289,13 @@ shinyUI(function(request){
 						 				 			 							 ),
 						 				 			 							 selected = 1),
 						 				 			 	
+						 				 			 	tags$p(HTML(paste0("MENTHU currently only checks exons for target sites. ",
+						 				 			 										 "Due to increased variation in intronic regions vs exonic regions, ", 
+						 				 			 										 "we do not recommend using MENTHU with reference assembly ", 
+						 				 			 										 "intronic sequences; if you intend to use MENTHU for targeting an intronic region, ", 
+						 				 			 										 "we HIGHLY recommend that you sequence the model organism's targeted intronic region, ", 
+						 				 			 										 "and use this with the copy/paste input (do not specify exons in the input table.)"))),
+						 				 			 	
 						 				 			 	####Input sequence#####################
 						 				 			 	#If the user wants to use a genbank accession
 						 				 			 	conditionalPanel(
@@ -303,9 +310,9 @@ shinyUI(function(request){
 						 				 			 		
 						 				 			 		# Validation check outputs
 						 				 			 		textOutput("validgenbankid"),
-						 				 			 		textOutput("genbankidexists"),
+						 				 			 		textOutput("genbankidexists")
 						 				 			 		
-						 				 			 		tags$p("MENTHU currently only checks exons for ")
+						 				 			 		
 						 				 			 	),
 						 				 			 	
 						 				 			 	# If user uses Ensembl accession

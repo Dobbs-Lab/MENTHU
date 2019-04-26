@@ -370,8 +370,8 @@ shinyUI(function(request){
 						 				 			 			p(paste0("Input exon location information here. Only include information about exons you wish to target.", 
 						 				 			 							 "If your first exon of interest starts on nucleotide 63 and ends on nucleotide 145 of your sequence,",
 						 				 			 							 " type '63' into 'exonStart' and '145' into 'exonEnd'.")),
-						 				 			 			p(paste0("If you need to add more exons, right-click or command-click and select 'Insert Row'.", 
-						 				 			 							 " You do not need to remove extra rows.")),
+						 				 			 			tags$b(p(paste0("If you need to add more exons, right-click or command-click and select 'Insert Row'.", 
+						 				 			 							 " You do not need to remove extra rows."))),
 						 				 			 			rHandsontableOutput("exonInfo"),
 						 				 			 			textOutput("validexoninfo")
 						 				 			 		)

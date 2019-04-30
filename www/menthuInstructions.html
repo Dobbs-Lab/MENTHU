@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <body>
+	<!--
    <h3>Jump To:</h3>
    <p><a href="#insHead">Instructions</a></p>
    <p><a href="#FAQsHead">Frequently Asked Questions (FAQs)</a></p>
    <p><a href="#FAQs_errorsHead">Frequently Asked Questions (FAQs): Resolving Error Messages</a></p>
-   <p><a href="#troubleHead">Troubleshooting</a></p>
+   <p><a href="#troubleHead">Troubleshooting</a></p>-->
 
 <h3 id = "insHead" style = "display:inline-block">Instructions  </h3><a href="#instructions" data-toggle = "collapse"> expand/collapse </a>
 <div id = "instructions" class = "collapse in">
@@ -127,81 +128,64 @@
 <h3 id="FAQs_errorsHead" style = "display:inline-block">Frequently Asked Questions (FAQs): Resolving MENTHU Errors</h3><a href="#FAQs_errors" data-toggle = "collapse"> expand/collapse </a>
 <div id = "FAQs_errors" class = "collapse in">
 	<p><b>How do I correct the error message I received?</b></p>
-	<p></p>
-   <ol>
-      <li><a href="#error1">Error: Accession was not found in database</a></li>
-      <li><a href="#error2">Error: MENTHU was unable to connect to Ensembl</a></li>
-      <li><a href="#error3">Error: This ID matches the RefSeq protein accession format. Please submit an accession corresponding to a DNA sequence.</a></li>
-      <li><a href="#error3">Error: This ID matches GenBank protein accession format. Please submit an accession corresponding to a DNA sequence.</a></li>
-      <li><a href="#error4">Error: The entered ID does not match a known GenBank NUCLEOTIDE or RefSeq NUCLEOTIDE ID format. Please check your submitted accession to make sure you are using a NUCLEOTIDE entry.</a></li>
-      <li><a href="#error5">Error: The input Ensembl accession appears to be an Ensembl gene. Ensembl genes can have several associated transcripts; please use the Ensembl transcript ID instead of the gene.</a></li>
-      <li><a href="#error6">Error: Input Ensembl ID does not match a known Ensembl species or Ensembl ID format. Please check your input ID.</a></li>
-      <li><a href="#error7">Error: The input Ensembl ID was not found in Ensembl's database. Please check your input ID.</a></li>
-      <li><a href="#error8">Error: Input DNA sequence appears to be in FASTA format. Please paste your sequence without the fasta header.</a></li>
-      <li><a href="#error9">Error: Input DNA sequence contains non-standard nucleotides. Allowed nucleotides are A, C, G, and T.</a></li>
-      <li><a href="#error10">Error: The DNA sequence has &lt;80 nucleotides. MENTHU requires at least 40 nucleotides upstream and 40 nucleotides downstream of the DSB site in order to properly calculate the MENTHU score.</a></li>
-      <li><a href="#error11">Error: No nuclease selected. Please select a Cas type and/or a custom PAM scheme and/or the TALEN input option.</a></li>
-      <li><a href="#error12">Error: Maximum TALEN arm length must be greater than or equal to minimum TALEN arm length.</a></li>
-      <li><a href="#error12">Error: Minimum TALEN arm length is 15 nucleotides.</a></li>
-      <li><a href="#error12">Error: Maximum TALEN arm length is 18 nucleotides.</a></li>
-      <li><a href="#error13">Error: Non-allowed characters detected. Only standard nucleotide (A, C, G, T), IUPAC extended nucleotide symbols (R, Y, S, W, K, M, B, D, H, V, N), and separating characters (spaces and commas) allowed.</a></li>
-      <li><a href="#error14">Error: Only numbers, dashes, commas, and spaces allowed.</a></li>
-      <li><a href="#error15">Error: The number of custom PAM sequences, custom DSB sites, and overhang lengths does not match. Please make sure that each PAM has one distance to its cut site and overhang length specified.</a></li>
-      <li><a href="#error16">Error: Some or all of the exons in this list are not found in the input accession. Please check the exon numbering of your accession (ESPECIALLY if you're using Ensembl), as GenBank, RefSeq, and Ensembl may have inconsistent exon numbering.</a></li>
-      <li><a href="#error17">Error: No targets corresponding to the PAM(s) detected.</a></li>
-      <li><a href="#error2">Warning: Ensembl is not responding to our requests. Please try again in a few minutes.</a></li>
-   </ol>
-	 	
-	 	<p><a name="error1" style="color:black;text-decoration:none;"><b>Accession Not Found in Database Error</b></a></p>
+	 	<p><a name="error1" style="color:black;text-decoration:none;"><b>Error: Accession was not found in database</b></a></p>
 	 	<p>This error occurs when the input GenBank/RefSeq ID is not found in NCBI's GenBank or RefSeq databases. This error is caused either by inputting a properly formatted GenBank/RefSeq ID which doesn't actually correspond to an actual sequence, or if the GenBank/RefSeq database is not responding. To resolve this error, double-check that you've entered the ID correctly, and that GenBank/RefSeq is up and running.</p>
 	 	
-	 	<p><a name="error2" style="color:black;text-decoration:none;"><b>MENTHU Was Unable to Connect to Ensembl Error</b></a></p>
+	 	<p><a name="error2" style="color:black;text-decoration:none;"><b>Error: MENTHU was unable to connect to Ensembl</b></a></p>
 	 	<p>This error occurs when MENTHU attempts to ping Ensembl but receives no response (which in turn generally occurs when Ensembl is unstable or down). To correct this error, try again later when Ensembl is functioning.</p>
 	 	
-	 	<p><a name="error3" style="color:black;text-decoration:none;"><b>RefSeq/GenBank Protein Accession Error</b></a></p>
+	 	<p><a name="error3" style="color:black;text-decoration:none;"><b>Error: RefSeq/GenBank Protein Accession Detected</b></a></p>
+	 	<ul>
+	 		<li>Error: This ID matches the RefSeq protein accession format. Please submit an accession corresponding to a DNA sequence.</li>
+	 		<li>Error: This ID matches GenBank protein accession format. Please submit an accession corresponding to a DNA sequence.</li>
+	 	</ul>
 	 	<p>This error occurs when an input RefSeq or GenBank accession corresponds to a protein sequence, rather than a nucleotide sequence. MENTHU cannot map RefSeq/GenBank protein accessions back to a unique DNA sequence, and so requires a nucleotide accession as input. To correct this error, use the nucleotide sequence encoding your protein of interest.</p>
 
-	 	<p><a name="error4" style="color:black;text-decoration:none;"><b>GenBank/RefSeq NUCLEOTIDE Error</b></a></p>
+	 	<p><a name="error4" style="color:black;text-decoration:none;"><b>Error: The entered ID does not match a known GenBank NUCLEOTIDE or RefSeq NUCLEOTIDE ID format. Please check your submitted accession to make sure you are using a NUCLEOTIDE entry.</b></a></p>
 	 	  <p>This error occurs when MENTHU detects that an input RefSeq or GenBank ID does not match a nucleotide ID format. See the list of <a href="https://www.ncbi.nlm.nih.gov/Sequin/acc.html" target="_blank">GenBank</a> and <a href="" target="_blank">RefSeq</a> prefixes for properly formatted GenBank/RefSeq nucleotide IDs. Make sure that you're not attempting to input an Ensembl ID into this box.</p>
 	 	
-	 	<p><a name="error5" style="color:black;text-decoration:none;"><b>Ensembl Gene Error</b></a></p>
+	 	<p><a name="error5" style="color:black;text-decoration:none;"><b>Error: The input Ensembl accession appears to be an Ensembl gene. Ensembl genes can have several associated transcripts; please use the Ensembl transcript ID instead of the gene.</b></a></p>
 	 	  <p>This error occurs when MENTHU detects that the input Ensembl ID matches the format of an Ensembl gene ID. MENTHU requires an Ensembl exon, transcript, or protein input; all other Ensembl types (including genes) are not supported. Ensembl exons, transcripts, and proteins all specify unique DNA sequences (in the case of Ensembl proteins, MENTHU can identify the parent transcript). All other Ensembl entries, especially genes, may have multiple associated sequences, and MENTHU can't tell which sequence to use. To resolve this error, make sure that you are specifying an exon, transcript, or protein.</p>
 	 	  
-	 	<p><a name="error6" style="color:black;text-decoration:none;"><b>Ensembl ID Does Not Match Known Ensembl Species or ID Format Error</b></a></p>
+	 	<p><a name="error6" style="color:black;text-decoration:none;"><b>Error: Input Ensembl ID does not match a known Ensembl species or Ensembl ID format. Please check your input ID.</b></a></p>
 	 	  <p>This error occurs when the ID put into the Ensembl ID box in Step 2 doesn't match a known Ensembl format. See the list of <a href="https://useast.ensembl.org/info/genome/stable_ids/prefixes.html">Ensembl stable ID prefixes</a> for properly formatted Ensembl accession IDs. Make sure that you are not attempting to input a GenBank/RefSeq ID into this box. Ensembl identifiers (with a few exceptions) generally consist of a six-letter species identifier (an "ENS" prefix attached to a three-letter species code), followed by a code indicating the accession type - "E" for exon, "T" for transcript, "P" for protein, "G" for gene, etc. MENTHU requires an Ensembl exon, transcript, or protein input; all other Ensembl types (including genes) are not supported. Ensembl exons, transcripts, and proteins all specify unique DNA sequences (in the case of proteins, MENTHU can identify the parent transcript). All other Ensembl entries, especially genes, may have multiple associated sequences, and MENTHU can't tell which sequence to use. To resolve this error, make sure that you are specifying an exon, transcript, or protein, with proper species prefixes.</p>
 	 	  
-	 	<p><a name="error7" style="color:black;text-decoration:none;"><b>Ensembl ID Was Not Found in Database Error</b></a></p>
+	 	<p><a name="error7" style="color:black;text-decoration:none;"><b>Error: The input Ensembl ID was not found in Ensembl's database. Please check your input ID.</b></a></p>
 	 	<p>This error occurs when a properly formatted Ensembl ID is input in Step 2, but is not found in the Ensembl database. To correct this error, make sure that you are using the correct Ensembl ID, and check that it exists in the Ensembl database.</p>
-	 	
-	 	<p><a name="error8" style="color:black;text-decoration:none;"><b>DNA Sequence is in FASTA Format Error</b></a></p>
+
+	 	<p><a name="error8" style="color:black;text-decoration:none;"><b>Error: Input DNA sequence appears to be in FASTA format. Please paste your sequence without the fasta header.</b></a></p>
 	 	  <p>This error occurs when a FASTA sequence - specifically, a sequence including a FASTA header - is pasted into the text box for the copy/paste option in Step 2. To correct this error, remove the FASTA header line from the input.</p>
 	 	
-	 	<p><a name="error9" style="color:black;text-decoration:none;"><b>DNA Sequence Contains Non-Standard Nucleotides Error</b></a></p>
+	 	<p><a name="error9" style="color:black;text-decoration:none;"><b>Error: Input DNA sequence contains non-standard nucleotides. Allowed nucleotides are A, C, G, and T.</b></a></p>
 	 	  <p>These errors are caused by the presence of characters which are not A, C, G, or T in the copy/paste DNA seqence box. The copy/paste input does allow for linebreak characters for ease in copying/pasting from FASTA files, however. If this error appears, check that your input does not include ambiguous nucleotide codes (e.g., 'R', 'V', 'Y', etc.) and only includes A, C, G, and T (or a, c, g, and t), and that you are not including a FASTA header in the input.</p>
 	 	
-	 	<p><a name="error10" style="color:black;text-decoration:none;"><b>DNA Sequence Has &lt;80 Nucleotides Error</b></a></p>
+	 	<p><a name="error10" style="color:black;text-decoration:none;"><b>Error: The DNA sequence has &lt;80 nucleotides. MENTHU requires at least 40 nucleotides upstream and 40 nucleotides downstream of the DSB site in order to properly calculate the MENTHU score.</b></a></p>
 	 	<p>This error occurs when the input DNA sequence has fewer than 80 nucleotides. MENTHU looks at 80 nucleotides of context surrounding a DSB site, and thus requires an input of at least 80 nucleotides in order to make calculations. To correct this error, make sure your sequence is at least 80 nucleotides long.</p>
 	 	
-	 	<p><a name="error11" style="color:black;text-decoration:none;"><b>No Nuclease Selected Error</b></a></p>
+	 	<p><a name="error11" style="color:black;text-decoration:none;"><b>Error: No nuclease selected. Please select a Cas type and/or a custom PAM scheme and/or the TALEN input option.</b></a></p>
 	 	<p>This error occurs when there are no pre-generated or custom CRISPR targets OR TALEN option specified. To correct this error, specify a nuclease type for which to search.</p>
-	 	
+	
 	 	<p><a name="error12" style="color:black;text-decoration:none;"><b>TALEN Arm Length Errors</b></a></p>
+	 	<ul>
+	 		<li>Error: Maximum TALEN arm length must be greater than or equal to minimum TALEN arm length.</li>
+	 		<li>Error: Minimum TALEN arm length is 15 nucleotides.</li>
+	 		<li>Error: Maximum TALEN arm length is 18 nucleotides.</li>
+	 	</ul>
 	 	<p>These errors are caused by improperly formatted TALEN inputs. To correct these errors, make sure that your minimum TALEN length is no less than 15, your maximum TALEN arm length is no more than 18, and that your minimum TALEN arm length is smaller than your maximum TALEN arm length.</p>
 	 	
-	 	<p><a name="error13" style="color:black;text-decoration:none;"><b>Non-Allowed Characters Detected Error</b></a></p>
+	 	<p><a name="error13" style="color:black;text-decoration:none;"><b>Error: Non-allowed characters detected. Only standard nucleotide (A, C, G, T), IUPAC extended nucleotide symbols (R, Y, S, W, K, M, B, D, H, V, N), and separating characters (spaces and commas) allowed.</b></a></p>
 	 	  <p>This error occurs when MENTHU detects the presence of non-standard IUPAC 1-letter codes in the custom PAM box in Step 1a. To correct this error, make sure the custom PAM input contains only standard nucleotide (A, C, G, T), IUPAC extended nucleotide symbols (R, Y, S, W, K, M, B, D, H, V, N), and separating characters (spaces and commas). Check for other white-space characters (e.g., newlines) or punctuation.</p>
 	 	
-	 	<p><a name="error14" style="color:black;text-decoration:none;"><b>Only Numbers, Dashes, Commas, and Spaces Allowed Error</b></a></p>
+	 	<p><a name="error14" style="color:black;text-decoration:none;"><b>Error: Only numbers, dashes, commas, and spaces allowed.</b></a></p>
 	 	<p>This error occurs when specifying exons to search in Step 2a for the Ensembl and GenBank inputs, and choosing to "Provide a list of exons to target". The error is caused by the presence of non-numeric charactes which are not dashes ('-'), commas (','), or spaces. Tabs and newlines are not allowed. To correct this error, make sure that you follow the bold directions for that step to properly format the exon input list.</p>
 	 	
-	 	<p><a name="error15" style="color:black;text-decoration:none;"><b>Number of Custom PAM Sequences, Custom DSB Sites, and Overhang Lengths Does Not Match Error</b></a></p>
+	 	<p><a name="error15" style="color:black;text-decoration:none;"><b>Error: The number of custom PAM sequences, custom DSB sites, and overhang lengths does not match. Please make sure that each PAM has one distance to its cut site and overhang length specified.</b></a></p>
 	 	<p>This error occurs when using the 'custom' PAM input in step 1a. It is caused when MENTHU does not detect the same number of custom PAM sequences, custom DSB sites, and custom overhang lengths. To correct this error, make sure that you have the same number of PAM sequences, DSB sites, and overhangs. Remember that even if your nuclease does not have an overhang (e.g., it generates a blunt DSB like SpCas9), you need to specify that it has an overhang of 0.</p>
-	 	
-	 	
-	 	<p><a name="error16" style="color:black;text-decoration:none;"><b>Exons in the List are Not Found in the Accession Error</b></a></p>
+
+	 	<p><a name="error16" style="color:black;text-decoration:none;"><b>Error: Some or all of the exons in this list are not found in the input accession. Please check the exon numbering of your accession (ESPECIALLY if you're using Ensembl), as GenBank, RefSeq, and Ensembl may have inconsistent exon numbering.</b></a></p>
 	 	<p>This error occurs when the exons specified in Step 2a ("Provide a list of exons to target") are not found in the input sequence. To correct this error for Ensembl and GenBank/RefSeq inputs, you should check the accession in the database to ensure that the list of exons you are providing are actually found in the accession.</p>
 	 	
-	 	<p><a name="error17" style="color:black;text-decoration:none;"><b>No Targets Corresponding to PAMs Detected Error</b></a></p>
+	 	<p><a name="error17" style="color:black;text-decoration:none;"><b>Error: No targets corresponding to the PAM(s) detected.</b></a></p>
 	 	<p>This error occurs when there are no targets corresponding to the input PAM sequences detected in the input DNA. To correct this error, use a different PAM sequence or input a longer (or different) DNA sequence.</p>
 
 </div>

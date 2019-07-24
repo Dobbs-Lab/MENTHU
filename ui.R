@@ -17,7 +17,7 @@ shinyUI(function(request){
 						 
 						 ########ABOUT TAB#################################################
 						 tabPanel(#id = 'about',
-						 				 tags$div("MENTHU v2.1.1"),
+						 				 tags$div("MENTHU v2.1.2"),
 						 				 titlePanel(""),
 						 				 
 						 				 #Sidebar panel with links

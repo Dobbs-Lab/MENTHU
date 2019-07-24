@@ -346,10 +346,10 @@ getExonLocus <- function(gene){
 																	orientation = rep(geneExons[[i]][4, 2], length(exonStartList)),
 																	number      = seq(1:length(exonStartList)),
 																	stringsAsFactors = FALSE)
+					exonTable <- rbind(exonTable, tempTable)
 					
 					
 				} else {
-					for(i in 1:length(geneExons)){
 						tempTable <- data.frame(start       = as.numeric(geneExons[[i]][2, 2]),
 																		end         = as.numeric(geneExons[[i]][3, 2]),
 																		width       = as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2]),
@@ -357,9 +357,8 @@ getExonLocus <- function(gene){
 																		orientation = geneExons[[i]][4, 2],
 																		number      = i,
 																		stringsAsFactors = FALSE)
-					}
+						exonTable <- rbind(exonTable, tempTable)
 				}
-				exonTable <- rbind(exonTable, tempTable)
 			}
 		}
 		

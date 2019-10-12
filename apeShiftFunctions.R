@@ -48,10 +48,8 @@ formatApe <- function(apeContents){
 	#Get the reference(s)
 	#references <- grep()
 	
-	
 	comments   <- gsub("\\s{2,}", "", gsub("COMMENT",    "", grep("^COMMENT",      apeContents, value = TRUE)))
 	comments   <- comments[which(comments != "")]
-	
 	
 	#featureIndexStart <- grep("^FEATURES", apeContents, value = FALSE)
 	featureIndexStop  <- grep("^ORIGIN",   apeContents, value = FALSE)
@@ -59,7 +57,7 @@ formatApe <- function(apeContents){
 	#Get the indices of each feature
 	featureIndices  <- grep("^\\s+[a-zA-Z0-9_\\-\\']+\\s+[a-zA-Z\\>\\<]*\\({0,1}[0-9]+[\\.][\\.][\\>\\<]{0,1}[0-9]+[\\>\\<]{0,1}\\){0,1}", apeContents)
 	featureIndices1 <- grep("^\\s+[a-zA-Z0-9_\\-\\']+\\s+complement", apeContents)
-	featureIndices2 <- grep("^\\s+[a-zA-Z0-9_\\-\\']+\\s+join", apeContents)
+	featureIndices2 <- grep("^\\s+[a-zA-Z0-9_\\-\\']+\\s+join",       apeContents)
 	featureIndices  <- unique(sort(c(featureIndices, featureIndices1, featureIndices2)))
 	
 	#Get the sequence
@@ -86,26 +84,28 @@ formatApe <- function(apeContents){
 		featureString <- paste(apeContents[featureIndices[i]:(indexStop - 1)], collapse = "")
 		indexString   <- strsplit(featureString, "\\/", fixed = FALSE)[[1]][1]
 		indexString   <- gsub("^\\s*[0-9]+", "", indexString, perl = TRUE)
-		indexString   <- gsub("[a-zA-Z]*", "", indexString, perl = TRUE)
-		indexString   <- gsub("\\'", "", indexString, perl = TRUE)
-		indexString   <- gsub("\\s*", "", indexString, perl = TRUE)
-		indexString   <- gsub("\\(", "", indexString,  perl = TRUE)
-		indexString   <- gsub("\\)", "", indexString,  perl = TRUE)
-		indexString   <- gsub("\\>", "", indexString,  perl = TRUE)
-		indexString   <- gsub("\\<", "", indexString,  perl = TRUE)
+		indexString   <- gsub("[a-zA-Z]*",   "", indexString, perl = TRUE)
+		indexString   <- gsub("\\'",         "", indexString, perl = TRUE)
+		indexString   <- gsub("\\s*",        "", indexString, perl = TRUE)
+		indexString   <- gsub("\\(",         "", indexString, perl = TRUE)
+		indexString   <- gsub("\\)",         "", indexString, perl = TRUE)
+		indexString   <- gsub("\\>",         "", indexString, perl = TRUE)
+		indexString   <- gsub("\\<",         "", indexString, perl = TRUE)
 		
 		#If the indices of the feature are complicated by a join
 		if(grepl("join\\(", curFeat, ignore.case = TRUE)){
 			#If on the complement strand
 			if(grepl("complement\\(", curFeat, ignore.case = TRUE)){
 				orientation <- "complement"
+				
 			} else {
 				#String is in default orientation
 				orientation <- "default"
 			}
-			jS <- strsplit(indexString, split = ",", fixed = TRUE)
-			jSStart <-  as.numeric(sapply(strsplit(unlist(jS), split = "\\.\\.", fixed = FALSE), "[", 1))
-			jSEnd   <-  as.numeric(sapply(strsplit(unlist(jS), split = "\\.\\.", fixed = FALSE), "[", 2))
+			
+			jS      <- strsplit(indexString,                  split = ",",      fixed = TRUE)
+			jSStart <- as.numeric(sapply(strsplit(unlist(jS), split = "\\.\\.", fixed = FALSE), "[", 1))
+			jSEnd   <- as.numeric(sapply(strsplit(unlist(jS), split = "\\.\\.", fixed = FALSE), "[", 2))
 			
 			seqFeat <- paste(substr(rep(seq, length(jSStart)), jSStart, jSEnd), collapse = "")
 			
@@ -116,14 +116,17 @@ formatApe <- function(apeContents){
 		} else {
 			if(grepl("complement", curFeat, ignore.case = TRUE)){
 				orientation <- "complement"
-				startIn <- as.numeric(                strsplit(gsub("complement\\(", "", gsub("\\<", "", gsub("\\>", "", indexString, perl = TRUE), perl = TRUE)), "\\.\\.", perl = TRUE)[[1]][1])
-				stopIn  <- as.numeric(gsub("\\)", "", strsplit(gsub("complement\\(", "", gsub("\\<", "", gsub("\\>", "", indexString, perl = TRUE), perl = TRUE)), "\\.\\.", perl = TRUE)[[1]][2]))
+				startIn <- as.numeric(                strsplit(gsub("complement\\(", "", gsub("\\<", "", gsub("\\>", "", indexString, perl = TRUE), perl = TRUE)), 
+																											 "\\.\\.", perl = TRUE)[[1]][1])
+				stopIn  <- as.numeric(gsub("\\)", "", strsplit(gsub("complement\\(", "", gsub("\\<", "", gsub("\\>", "", indexString, perl = TRUE), perl = TRUE)), 
+																											 "\\.\\.", perl = TRUE)[[1]][2]))
 				
 			} else {
 				orientation <- "default"
 				startIn <- as.numeric(strsplit(gsub("\\<", "", gsub("\\>", "", indexString, perl = TRUE)), "\\.\\.", perl = TRUE)[[1]][1])
 				stopIn  <- as.numeric(strsplit(gsub("\\<", "", gsub("\\>", "", indexString, perl = TRUE)), "\\.\\.", perl = TRUE)[[1]][2])
 			}
+			
 			jSStart <- NA
 			jSEnd   <- NA
 			
@@ -134,30 +137,29 @@ formatApe <- function(apeContents){
 		
 		if(i < length(featureIndices)){
 			featValues <- getFeatureValues(apeContents[featureIndices[i]:(featureIndices[i + 1] - 1)])
+			
 		} else {
 			featValues <- getFeatureValues(apeContents[featureIndices[i]:(featureIndexStop - 1)])
 		}
 		
-		featValues[1, 1] <- "feature_type"
+		featValues[1, 1]    <- "feature_type"
 		featValues$value[1] <- gsub("\"", "", attType)
-		featValues[2, 1] <- "featStart"
+		featValues[2, 1]    <- "featStart"
 		featValues$value[2] <- startIn
-		featValues[3, 1] <- "featEnd"
+		featValues[3, 1]    <- "featEnd"
 		featValues$value[3] <- stopIn
-		featValues[4, 1] <- "orientation"
+		featValues[4, 1]    <- "orientation"
 		featValues$value[4] <- orientation
-		featValues[5, 1] <- "joinStart"
+		featValues[5, 1]    <- "joinStart"
 		featValues$value[5] <- list(jSStart)
-		featValues[6, 1] <- "joinStop"
+		featValues[6, 1]    <- "joinStop"
 		featValues$value[6] <- list(jSEnd)
-		featValues[7, 1] <- "genomicContext"
+		featValues[7, 1]    <- "genomicContext"
 		featValues$value[7] <- toupper(as.character(seqFeat))
-		featValues[8, 1] <- "featureSequence"
+		featValues[8, 1]    <- "featureSequence"
 		featValues$value[8] <- (if(orientation == "complement"){toupper(reverseComplement(as.character(seqFeat)))} else {toupper(as.character(seqFeat))})
-		featList[[i]] <- featValues
+		featList[[i]]       <- featValues
 	}
-	
-	
 	
 	ape <- list(locus, definition, accession, version, source, organism, comments, featList, seqStart, seq)
 	names(ape) <- list("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "SOURCE", "ORGANISM", "COMMENT", "FEATURES", "seqStart", "ORIGIN")
@@ -166,7 +168,6 @@ formatApe <- function(apeContents){
 	
 	return(ape)
 }
-
 
 
 getFeatures <- function(plasmid, qual = NULL, qualValue = NULL){
@@ -244,15 +245,20 @@ getFeatureValues <- function(featureLines){
 }
 
 getExonLocus <- function(gene){
+	# Get the features
 	geneF <- getFeatures(gene)
+	# Set the coding sequence flag to false
 	cdsFlag <- FALSE
+	# Get a list of the features classified as 'exon'
 	exonList <- which(sapply(sapply(geneF, "[", 2), "[", 1) == "exon")
 	
+	# If there are no features classified as 'exon', try for features classified as "CDS"
 	if(length(exonList) < 1){
 		exonList <- which(sapply(sapply(geneF, "[", 2), "[", 1) == "CDS")
 		cdsFlag <- TRUE
 	}
-
+	
+	# If there are no exons or CDS regions, give up
 	if(length(exonList) < 1){
 		return("Error: No exons or CDS")
 		
@@ -260,44 +266,105 @@ getExonLocus <- function(gene){
 		geneExons <- list()
 		
 		#Treat CDS as exons
-		if(cdsFlag){
+		if(cdsFlag && length(exonList) > 1){
 			for(p in 1:length(exonList)){
 				curBit <- geneF[exonList[p]][[1]]
 				joinS  <- curBit[5, 2]
 				joinE  <- curBit[6, 2]
+				
 				for(q in 1:length(joinS[[1]])){
-					subGene <- curBit
+					subGene       <- curBit
 					subGene[2, 2] <- joinS[[1]][q]
 					subGene[3, 2] <- joinE[[1]][q]
-					tFrame <- data.frame(qualifier = "number", value = q)
-					subGene <- rbind(subGene, tFrame)
-					geneExons <- rlist:::list.append(geneExons, subGene)
+					tFrame        <- data.frame(qualifier = "number", value = q)
+					subGene       <- rbind(subGene, tFrame)
+					geneExons     <- rlist:::list.append(geneExons, subGene)
 				}
 			}
 		} else {
 			geneExons <- geneF[exonList]
 		}
 		
-		exonTable <- data.frame(start       = numeric(length(exonList)), 
-														end         = numeric(length(exonList)),
-														width       = numeric(length(exonList)),
-														type        = character(length(exonList)),
-														orientation = character(length(exonList)),
-														number      = character(length(exonList)),
+		exonTable <- data.frame(start       = as.numeric(),
+														end         = as.numeric(),
+														width       = as.numeric(),
+														type        = as.character(),
+														orientation = as.character(),
+														number      = as.character(),
 														stringsAsFactors = FALSE)
 		
-		for(i in 1:length(geneExons)){
-			exonTable[i, 1] <- geneExons[[i]][2, 2]
-			exonTable[i, 2] <- geneExons[[i]][3, 2]
-			exonTable[i, 3] <- as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2])
-			exonTable[i, 4] <- geneExons[[i]][1, 2]
-			exonTable[i, 5] <- geneExons[[i]][4, 2]
-			exonTable[i, 6] <- geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2]
+		#Determine if exons are numbered
+		numberedLength <- "number" %in% unlist(geneExons)
+		
+		#print(numberedLength)
+		
+		if(numberedLength){
+			for(i in 1:length(geneExons)){
+				
+				#print(i)
+				#print(length(geneExons))
+				#print(head(exonTable))
+				
+				# Deal with joins
+				if(is.na(geneExons[[i]][2, 2]) && is.na(geneExons[[i]][3, 2])){
+					exonStartList <- unlist(geneExons[[i]][5, 2])
+					exonEndList   <- unlist(geneExons[[i]][6, 2])
+					tempTable <- data.frame(start       = as.numeric(exonStartList),
+																	end         = as.numeric(exonEndList),
+																	width       = as.numeric(exonEndList - exonStartList),
+																	type        = rep(geneExons[[i]][1, 2], length(exonStartList)),
+																	orientation = rep(geneExons[[i]][4, 2], length(exonStartList)),
+																	number      = rep(geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2], length(exonStartList)),
+																	stringsAsFactors = FALSE)
+					colnames(tempTable) <- c("start", "end", "width", "type", "orientation", "number")
+					
+				} else {
+					tempTable <- data.frame(start       = as.numeric(geneExons[[i]][2, 2]),
+																	end         = as.numeric(geneExons[[i]][3, 2]),
+																	width       = as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2]),
+																	type        = geneExons[[i]][1, 2],
+																	orientation = geneExons[[i]][4, 2],
+																	number      = geneExons[[i]][which(geneExons[[i]]$qualifier == "number"),2],
+																	stringsAsFactors = FALSE)
+					colnames(tempTable) <- c("start", "end", "width", "type", "orientation", "number")
+				}
+				
+				#print(head(tempTable))
+				exonTable <- rbind(exonTable, tempTable)
+				
+			}
 			
+		} else {
+			for(i in 1:length(geneExons)){
+				if(is.na(geneExons[[i]][2, 2]) && is.na(geneExons[[i]][3, 2])){
+					exonStartList <- unlist(geneExons[[i]][5, 2])
+					exonEndList   <- unlist(geneExons[[i]][6, 2])
+					tempTable <- data.frame(start       = as.numeric(exonStartList),
+																	end         = as.numeric(exonEndList),
+																	width       = as.numeric(exonEndList - exonStartList),
+																	type        = rep(geneExons[[i]][1, 2], length(exonStartList)),
+																	orientation = rep(geneExons[[i]][4, 2], length(exonStartList)),
+																	number      = seq(1:length(exonStartList)),
+																	stringsAsFactors = FALSE)
+					exonTable <- rbind(exonTable, tempTable)
+					
+					
+				} else {
+						tempTable <- data.frame(start       = as.numeric(geneExons[[i]][2, 2]),
+																		end         = as.numeric(geneExons[[i]][3, 2]),
+																		width       = as.numeric(geneExons[[i]][3, 2]) - as.numeric(geneExons[[i]][2, 2]),
+																		type        = geneExons[[i]][1, 2],
+																		orientation = geneExons[[i]][4, 2],
+																		number      = i,
+																		stringsAsFactors = FALSE)
+						exonTable <- rbind(exonTable, tempTable)
+				}
+			}
 		}
 		
 		return(exonTable)
 	}
 }
+
 
 

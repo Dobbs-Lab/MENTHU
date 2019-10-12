@@ -1,18 +1,8 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(shinyjs)
 library(rhandsontable)
-library(shinyIncubator)
 
-shinyUI(
+shinyUI(function(request){
 	
 	####Creates the navbar set-up####
 	navbarPage(id = 'mainPage',
@@ -22,48 +12,68 @@ shinyUI(
 						 theme = "ogtheme.css", 
 						 
 						 #Page title box
-						 tags$div("MENTHU v1.1.0", 
-						 				 style = "color:white"),
+						 tags$div(""),
+
 						 
 						 ########ABOUT TAB#################################################
-						 tabPanel(tags$div("About", style = "color:white"),
+						 tabPanel(#id = 'about',
+						 				 tags$div("MENTHU v2.1.2"),
 						 				 titlePanel(""),
 						 				 
 						 				 #Sidebar panel with links
 						 				 column(2, wellPanel(
-						 				 	tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 				 	tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
+						 				 											 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
 						 				 	tags$br(),
-						 				 	tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 				 	tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
+						 				 											 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
 						 				 	tags$br(),
-						 				 	tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 				 	tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
+						 				 											 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
 						 				 	tags$br(),
-						 				 	tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 				 											 target = "_blank", 
-						 				 											 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 				 	tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
+						 				 											 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href   = "https://github.com/Dobbs-Lab/MENTHU", 
+						 				 											 target = "_blank", tags$img(src = "GitHub_Logo.png",                   width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href   = "https://hub.docker.com/r/cmmann/menthu", 
+						 				 											 target = "_blank", tags$img(src = "Docker_Logo.png",                   width = "100%"))))
+						 				 	
 						 				 )),
 						 				 
 						 				 #Text area in center of page
 						 				 column(9, wellPanel(
+						 				 	
+						 				 	#Display about page
 						 				 	includeHTML("www/menthuAbout.html")
 						 				 ))
 						 				 
 						 ),
 						 
 						 ##########INSTRUCTIONS############################################
-						 tabPanel(tags$div("Instructions and FAQs", style = "color:white"),
+						 tabPanel(tags$div("Instructions and FAQs"),
 						 				 titlePanel(""),
 						 				 
 						 				 #Sidebar panel with links
 						 				 column(2, wellPanel(
-						 				 	tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 				 	tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
+						 				 											 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
 						 				 	tags$br(),
-						 				 	tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 				 	tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
+						 				 											 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
 						 				 	tags$br(),
-						 				 	tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 				 	tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
+						 				 											 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
 						 				 	tags$br(),
-						 				 	tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 				 											 target = "_blank", 
-						 				 											 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 				 	tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
+						 				 											 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href   = "https://github.com/Dobbs-Lab/MENTHU", 
+						 				 											 target = "_blank", tags$img(src = "GitHub_Logo.png",                   width = "100%")))),
+						 				 	tags$br(),
+						 				 	tags$div(tags$span(a(href   = "https://hub.docker.com/r/cmmann/menthu", 
+						 				 											 target = "_blank", tags$img(src = "Docker_Logo.png",                   width = "100%"))))
 						 				 )),
 						 				 
 						 				 #Text area in center of page
@@ -77,473 +87,743 @@ shinyUI(
 						 
 						 ##########Calculate MENTHU TAB###################################
 						 tabPanel(id = "single",
-						 				 tags$div("Calculate MENTHU Score", style = "color:white"),
+						 				 tags$div("Submit Job"),
 						 				 titlePanel(""),
 						 				 
 						 				 ##Sidebar############################################################
 						 				 #Adds a sidebar for users to pre-populate fields with an example, and reset the form
 						 				 column(2, wellPanel(
+						 				 	class = "examplePanel",
+						 				 	
+						 				 	# Attempts to get the sidebar floating have failed thus far
+						 				 	#style = "position:fixed;width:inherit;",
+						 				 	
+						 				 	p(tags$b(tags$u("Example Inputs"))),
 						 				 	
 						 				 	#GenBank Example
 						 				 	actionLink("exampleGenBank",
-						 				 						 label = "GenBank Gene ID Example"),
-						 				 	p(""),
+						 				 						 label = "[GenBank Gene ID Example]"),
+						 				 	
+						 				 	tags$br(),
+						 				 	tags$br(),
+						 				 	
+						 				 	# Ensembl input example; input$exampleEnsembl
+						 				 	actionLink("exampleEnsembl",
+						 				 						 label = "[Ensembl ID Example]"),
+						 				 	
+						 				 	tags$br(),
+						 				 	tags$br(),
 						 				 	
 						 				 	#Cut/Paste cDNA example; input$example
 						 				 	actionLink("exampleGeneSeq", 
-						 				 						 label = "Pasted Sequence Example"),
+						 				 						 label = "[Pasted Sequence Example]"),
 						 				 	
-						 				 	p(""),
+						 				 	tags$br(),
+						 				 	tags$br(),
 						 				 	
 						 				 	#Reset Button; input$reset
 						 				 	actionLink("reset", 
 						 				 						 label = "Reset Form")
+						 				 	
 						 				 )),
 						 				 
-						 				 
 						 				 ####Main Bar#########################################################
-						 				 #Main panel for entering information and submitting job
-						 				 column(9, wellPanel(
-						 				 	
-						 				 	####Choose PAM sequence#############################################
-						 				 	checkboxGroupInput("casType",
-						 				 										 label = "1. Select the PAM sequence(s) you wish to target:",
-						 				 										 choices = list("S. pyogenes SpCas9: 5'-NGG-3'" = "NGG",
-						 				 										 							 "S. pyogenes SpCas9: 5'-NRG-3'" = "NRG",
-						 				 										 							 "S. aureus SaCas9: 5'-NNNRRT-3'" = "NNNRRT",
-						 				 										 							 "S. aureus SaCas9: 5'-NNGRRT-3'" = "NNGRRT",
-						 				 										 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'" = "NNGTGA",
-						 				 										 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'" = "NNAGAAW",
-						 				 										 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'" = "NNNVRYAC",
-						 				 										 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT"),
-						 				 										 #CPF1 is not currently supported, but may be in future releases
-						 				 										 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTN-3'" = "TTTN",
-						 				 										 #"Acidaminococcus AsCpf1/Lachnospiraceae LbCpf1: 5'-TTTV-3'" = "TTTV",
-						 				 										 #"Francisella FnCpf1: 5'-TTN-3'" = "TTN",
-						 				 										 #"Francisella FnCpf1: 5'-YTN-3'" = "YTN"),
-						 				 										 selected = "NGG"
-						 				 	),
-						 				 	
-						 				 	
-						 				 	tags$br(),
-						 				 	actionLink("selectAll", "Select All PAMs"),
-						 				 	tags$br(),
-						 				 	actionLink("selectNone", "De-select All PAMs"),
-						 				 	tags$br(),
-						 				 	textOutput("validpam"),
-						 				 	
-						 				 	
-						 				 	radioButtons("customCutOpt",
-						 				 							 label    = "1a. Do you want to create a 'custom' PAM sequence?",
-						 				 							 choices  = list("No" = 0,
-						 				 							 								"Yes" = 1),
-						 				 							 selected = 0, 
-						 				 							 inline = TRUE),
-						 				 	
-						 				 	conditionalPanel(
-						 				 		condition = "input.customCutOpt == 1",
-						 				 		textOutput("validmatchcustominputlength"),
-						 				 		textOutput("validcustompam"),
-						 				 		textAreaInput("customPamSeq",
-						 				 									label = "Input your nucleotide PAM sequence in the 5'-3' direction (e.g., 'NGG' for SpCas9). You can enter multiple sequences by separating the PAMs with a comma or a space, e.g. 'NGG NRG NNVRYAC', etc.:", 
-						 				 									#\nIf your sequence allows for ambiguity, please use the IUPAC one-letter codes: R = A or G; Y = C or T; S = G or C; W = A or T; K = G or T; M = A or C; B = not A; D = not C; H = not G; V = not T; N = any base.",
-						 				 									value = "",
-						 				 									placeholder = "Please input PAM sequence(s) in 5'-3' direction..."),
-						 				 		textOutput("validcustomcutsites"),
-						 				 		textAreaInput("cutSite",
-						 				 									label = "Please specify where your nuclease cuts in relation to your PAM (negative values for upstream). If you entered multiple PAM sequences, please list the DSB locations in the ORDER YOU INPUT THE PAM SEQUENCES, e.g. '-3 -3 3', etc.:",
-						 				 									#If the double-strand break site (DSB) is 5' to the PAM, count the number of bases between the DSB site and the FIRST base of your PAM. For example, SpCas9 generally induces a DSB three bases upstream of 'NGG', so the input value would be -3. If the cut is 3' to the PAM, count the number of bases between the LAST base of your PAM and the DSB site.",
-						 				 									value = "",
-						 				 									placeholder = "Input the DSB site(s) in relation to your PAM(s)...")
-						 				 	),
-						 				 	
-						 				 	#Decide whether to include TALEN targets
-						 				 	radioButtons("talenOp",
-						 				 							 label = "1b. Do you want to use TALEN targets?",
-						 				 							 choices = list(
-						 				 							 	"No" = 0,
-						 				 							 	"Yes" = 1
-						 				 							 ),
-						 				 							 selected = 0,
-						 				 							 inline = TRUE
-						 				 	),
-						 				 	
-						 				 	#For not using TALEN targets
-						 				 	conditionalPanel(
-						 				 		condition = "input.talenOp == 0",
-						 				 		p("You can use TALEN targets in addition to, or instead of, PAM targets.")
-						 				 	),
-						 				 	
-						 				 	#Using TALEN targets
-						 				 	conditionalPanel(
-						 				 		condition = "input.talenOp == 1",
-						 				 		p(paste0("Specify TALEN design parameters. For an exact length, make \"Min\" and \"Max\" values identical.", 
-						 				 						 "The \"Min\" value must be less than or equal to the \"Max\" value. Please note that to shorten computation time, we currently only search for TALENs in the forward/sense orientation.")),
-						 				 		textOutput("validtalen"),
-						 				 		
-						 				 		#Choose TALEN arm length by specifying min and max values
-						 				 		tags$b("Choose the minimum and maximum TALEN arm length (arm length may range from 15-18 nucleotides): "),
-						 				 		tags$br(),
-						 				 		div(style="display:inline-block",
-						 				 				numericInput("armin",
-						 				 										 label = "Min: ",
-						 				 										 value = 15,
-						 				 										 min = 15,
-						 				 										 max = 18,
-						 				 										 step = 1,
-						 				 										 width = "80px"
-						 				 				)),
-						 				 		
-						 				 		div(style="display:inline-block",
-						 				 				numericInput("armax",
-						 				 										 label = "Max: ",
-						 				 										 value = 15,
-						 				 										 min = 15,
-						 				 										 max = 18,
-						 				 										 step = 1,
-						 				 										 width = "80px")
-						 				 		),
-						 				 		tags$br(),
-						 				 		
-						 				 		#Choose spacer length by specifying min and max values
-						 				 		tags$b("Choose the minimum and maximum spacer length (spacer length may range from 14-16 nucleotides): "),
-						 				 		tags$br(),
-						 				 		div(style="display:inline-block",
-						 				 				numericInput("spamin",
-						 				 										 label = "Min: ",
-						 				 										 value = 15,
-						 				 										 min = 14,
-						 				 										 max = 16,
-						 				 										 step = 1,
-						 				 										 width = "80px"
-						 				 				)),
-						 				 		
-						 				 		div(style="display:inline-block",
-						 				 				numericInput("spamax",
-						 				 										 label = "Max: ",
-						 				 										 value = 15,
-						 				 										 min = 14,
-						 				 										 max = 16,
-						 				 										 step = 1,
-						 				 										 width = "80px")
-						 				 		)
-						 				 	)
-						 				 ),
-						 				 
-						 				 wellPanel(
-						 				 	####Choose Input Type###############################################
-						 				 	radioButtons("inputType",
-						 				 							 label = "2. What type of sequence input do you want to use?",
-						 				 							 choices = list("GenBank Gene ID"  = 1,
-						 				 							 							 "Copy/paste gene sequence" = 2
-						 				 							 ),
-						 				 							 selected = 1),
-						 				 	
-						 				 	####Input sequence#####################
-						 				 	#If the user wants to use a genbank accession
-						 				 	conditionalPanel(
-						 				 		condition = "input.inputType == 1",
-						 				 		
-						 				 		textAreaInput("genbankId",
-						 				 									label = "",
-						 				 									value = NULL,
-						 				 									placeholder = "Paste GenBank gene ID here..."),
-						 				 		textOutput("validgenbankid"),
-						 				 		textOutput("genbankidexists")
-						 				 		
-						 				 	),
-						 				 	
-						 				 	#If user wants to copy/paste sequence
-						 				 	conditionalPanel(
-						 				 		condition = "input.inputType == 2",
-						 				 		
-						 				 		#Text area to copy/paste gene sequence
-						 				 		textAreaInput("geneSeq",
-						 				 									label = "",
-						 				 									value = "",
-						 				 									placeholder = "Paste gene sequence here..."),
-						 				 		
-						 				 		#Check to make sure gene sequence is valid
-						 				 		textOutput("validgeneseq"), 
-						 				 		tags$br(),
-						 				 		
-						 				 		#Choose to specify exon inputs by hand
-						 				 		radioButtons("pasteExonType", 
-						 				 								 label = "Does your pasted sequence have multiple exons, and do you wish to find a target within those exons?",
-						 				 								 choices = list("No" = 0, "Yes" = 1),
-						 				 								 selected = 0, 
-						 				 								 inline = TRUE),
-						 				 		
-						 				 		#If the user wants to enter exon information
-						 				 		conditionalPanel(
-						 				 			condition = "input.pasteExonType == 1",
-						 				 			p(paste0("Input exon location information here. Only include information about exons you wish to target.", 
-						 				 							 "If your first exon of interest starts on nucleotide 63 and ends on nucleotide 145 of your sequence,",
-						 				 							 " type '63' into 'exonStart' and '145' into 'exonEnd'.")),
-						 				 			p(paste0("If you need to add more exons, right-click or command-click and select 'Insert Row'.", 
-						 				 							 " You do not need to remove extra rows.")),
-						 				 			#uiOutput("inputTable"),
-						 				 			rHandsontableOutput("exonInfo"),
-						 				 			textOutput("validexoninfo")
-						 				 		)
-						 				 	)
-						 				 ),
-						 				 
-						 				 
-						 				 ############Exon Options#########################
-						 				 conditionalPanel(
-						 				 	condition = "input.inputType == 1",
-						 				 	
-						 				 	wellPanel(
-						 				 		#Choose whether to include first exon in future determinations
-						 				 		radioButtons("firstExon",
-						 				 								 label = "2a. Do you want to find targets in the first exon? (Not recommended for gene knockouts.)",
-						 				 								 choices = list("No" = 0,
-						 				 								 							 "Yes" = 1),
-						 				 								 selected = 0,
-						 				 								 inline = TRUE),
-						 				 		
-						 				 		#Choose option for specifying exon input
-						 				 		p(tags$b("Which exon(s) do you want to target?")),
-						 				 		radioButtons("exonTargetType",
-						 				 								 label = "Do you want to: ",
-						 				 								 choices = list("Search all exons" = 0,
-						 				 								 							 "Search for a target within a specified percentage of exons of the beginning of the sequence" = 1,
-						 				 								 							 "Search for a target within a specified percentage of exons of the end of the sequence" = 2,
-						 				 								 							 "Provide a list of exons to target" = 3),
-						 				 								 selected = 0),
-						 				 		
-						 				 		#When working from the beginning of the sequence
-						 				 		conditionalPanel(
-						 				 			condition = "input.exonTargetType == 1",
-						 				 			p(paste0("Specify a percentage of exons, starting from the beginning of the sequence,", 
-						 				 							 " to search (this includes the first exon if you chose 'yes' in 3, and excludes it if you chose 'no'.)", 
-						 				 							 " For gene knockouts, it is recommended that you use 30%. ",
-						 				 							 "For example, if your gene has 10 exons and you choose not to look for targets in the first exon,", 
-						 				 							 " a value of '30%' will search exons 2, 3, and 4 for target sites. ",
-						 				 							 "If you chose to look for targets in the first exon, a value of 30% will search exons 1, 2, and 3.")),
-						 				 			p("You can look for targets in every exon (100%) by changing the value to '100'. Minimum value is 1%."),
-						 				 			
-						 				 			numericInput("exonBegPercentage",
-						 				 									 label = "",
-						 				 									 min = 1,
-						 				 									 max = 100,
-						 				 									 value = 30)
-						 				 		),
-						 				 		
-						 				 		#When working from the end of the sequence
-						 				 		conditionalPanel(
-						 				 			condition = "input.exonTargetType == 2",
-						 				 			p("Specify a percentage of exons, starting from the end of the sequence, to search. "),
-						 				 			
-						 				 			numericInput("exonEndPercentage",
-						 				 									 label = "",
-						 				 									 value = 30,
-						 				 									 min = 1,
-						 				 									 max = 100)
-						 				 		),
-						 				 		
-						 				 		#When listing exons to target
-						 				 		conditionalPanel(
-						 				 			condition = "input.exonTargetType == 3",
-						 				 			textAreaInput("exonTargetList",
-						 				 										label = paste0("Specify the exon(s) you wish to target. ",
-						 				 																	 "Multiple exons should be separated with a comma ",
-						 				 																	 "(e.g., to select exon 3 and 5, type '3,5'.) ",
-						 				 																	 "A range of exons can be specified by a dash ",
-						 				 																	 "(e.g., to target all exons between exon 5 and exon 10, type '5-10'). ",
-						 				 																	 "You can specify multiple ranges and/or multiple exons using commas ",
-						 				 																	 "(e.g., to select exon 3, exon 5 through 7, exon 9, ",
-						 				 																	 "and exon 11 through 13, type '3,5-7,9,11-13'.)"), 
-						 				 										placeholder = "Enter exons here...")
-						 				 		)
-						 				 	)
-						 				 ),
-						 				 
-						 				 ###########THRESHOLD#############################
-						 				 wellPanel(
-						 				 	#Choose value for MENTHU display threshold
-						 				 	numericInput("threshold",
-						 				 							 label = paste0("3. Choose minimum score for reporting (>50 is a strong score, ",
-						 				 							 							 ">40 is moderate; we do not recommend using sites <40.): "),
-						 				 							 value = 40,
-						 				 							 min = 0,
-						 				 							 max = 100
-						 				 	),
-						 				 	
-						 				 	#Validate threshold
-						 				 	textOutput("validthreshold")
-						 				 ),
-						 				 
-						 				 wellPanel(	
-						 				 	
-						 				 	#Submit panel for GenBank subissions
-						 				 	conditionalPanel(
-						 				 		condition = "input.inputType == 1",
-						 				 		actionButton("genbankSubmit", "Submit"), #Submit button
-						 				 		tags$br(),
-						 				 		
-						 				 		uiOutput("downOutGenbank"), #Download button; should only display when there are results to download
-						 				 		tags$br(),
-						 				 		
-						 				 		textOutput('genbankIdOutcome'), #Indicates if there is a problem with the supplied s
-						 				 		tags$style("#genbankIdOutcome{color: red;}"),
-						 				 		DT::dataTableOutput('genbankResults')
-						 				 		
-						 				 	),
-						 				 	
-						 				 	conditionalPanel(
-						 				 		condition = "input.inputType == 2",
-						 				 		actionButton("geneSeqSubmit", "Submit"),
-						 				 		tags$br(),
-						 				 		
-						 				 		uiOutput("downOut"),
-						 				 		tags$br(),
-						 				 		
-						 				 		DT::dataTableOutput('geneSeqResults')
-						 				 		#tags$head(tags$style("#geneSeqResults table {background-color: white; }", media = "screen", type = "text/css"))
-						 				 	),
-						 				 	p("Your results may take a few minutes to appear. Please do not close this web page until your calculation is finished.")
-						 				 	
-						 				 )
+						 				 # Main panel for entering information and submitting job
+						 				 column(9, 
+						 				 			 wellPanel(tags$span(tags$b(HTML(paste0("To avoid overloading our server, ", 
+						 				 			 																			 "MENTHU limits users to one concurrent job submission. ", 
+						 				 			 																			 "You should wait until your submitted job has finished and ", 
+						 				 			 																			 "download your results before submitting an additional job. ",
+						 				 			 																			 "Jobs submitted in additional browser tabs will not start until ",
+						 				 			 																			 "your previous job has completed. ",
+						 				 			 																			 "If you need to run a high volume of jobs, please use the ", 
+						 				 			 																			 "MENTHU command-line utility (see \"Tools and Downloads\" tab.)")))), 
+						 				 			 																style="color:blue;"),
+						 				 			 
+						 				 			 ####Choose PAM sequence#############################################
+						 				 			 wellPanel(
+						 				 			 	checkboxGroupInput("casType",
+						 				 			 										 label = "1. Select the PAM sequence(s) you wish to target:",
+						 				 			 										 choices = list("S. pyogenes SpCas9: 5'-NGG-3'"         = "NGG",
+						 				 			 										 							 "S. pyogenes SpCas9: 5'-NRG-3'"          = "NRG",
+						 				 			 										 							 "S. aureus SaCas9: 5'-NNNRRT-3'"         = "NNNRRT",
+						 				 			 										 							 "S. aureus SaCas9: 5'-NNGRRT-3'"         = "NNGRRT",
+						 				 			 										 							 "S. pasteurianus SpCas9: 5'-NNGTGA-3'"   = "NNGTGA",
+						 				 			 										 							 "S. thermophilus StCas9: 5'-NNAGAAW-3'"  = "NNAGAAW",
+						 				 			 										 							 "C. jejuni CjCas9: 5'-NNNVRYAC-3'"       = "NNNVRYAC",
+						 				 			 										 							 "N. meningitidis NmCas9: 5'-NNNNGMTT-3'" = "NNNNGMTT",
+						 				 			 										 							 "Acidaminococcus AsCas12a (AsCpf1)/Lachnospiraceae LbCas12a (LbCpf1): 5'-TTTN-3'" = "TTTN",
+						 				 			 										 							 "Acidaminococcus AsCas12a (AsCpf1)/Lachnospiraceae LbCas12a (LbCpf1): 5'-TTTV-3'" = "TTTV",
+						 				 			 										 							 "Francisella FnCas12a (FnCpf1): 5'-TTN-3'" = "TTN",
+						 				 			 										 							 "Francisella FnCas12a (FnCpf1): 5'-YTN-3'" = "YTN"),
+						 				 			 										 selected = "NGG"
+						 				 			 	),
+						 				 			 	actionLink("selectAll",  "Select All PAMs"),
+						 				 			 	
+						 				 			 	tags$br(),
+						 				 			 	actionLink("selectNone", "De-select All PAMs"),
+						 				 			 	
+						 				 			 	p(paste0("If you select a PAM sequence which is a subset of another selected PAM sequence ", 
+						 				 			 					 "(e.g., 'NGG' is a specific case of 'NRG'), MENTHU searches only for the more general case.")),
+						 				 			 	
+						 				 			 	tags$br(),
+						 				 			 	textOutput("validpam"),
+						 				 			 	
+						 				 			 	#Input interface for custom pam sequences
+						 				 			 	radioButtons("customCutOpt",
+						 				 			 							 label    = "1a. Do you want to create a 'custom' PAM sequence?",
+						 				 			 							 choices  = list("No"  = 0,
+						 				 			 							 								 "Yes" = 1),
+						 				 			 							 selected = 0, 
+						 				 			 							 inline = TRUE),
+						 				 			 	
+						 				 			 	# When users use a custom input PAM sequence
+						 				 			 	conditionalPanel(
+						 				 			 		condition = "input.customCutOpt == 1",
+						 				 			 		textOutput("validmatchcustominputlength"),
+						 				 			 		textOutput("validcustompam"),
+						 				 			 		
+						 				 			 		# tags$b(p("Input your nuclease PAM in the \"PAM_Sequence\" column. Ambiguous characters are allowed.")),
+						 				 			 		# tags$b(p(paste0("Input the double-strand break position in relation to your PAM sequence in the \"DSB_Position\" column; ", 
+						 				 			 		# 						"use negative values for DSBs upstream of the PAM, and positive values for downstream."))),
+						 				 			 		# tags$b(p("Input the length of 5' overhang for sticky-cutting nucleases. Use '0' for blunt DSBs.")),
+						 				 			 		# 
+						 				 			 		# rHandsontableOutput("pamTable")
+						 				 			 		
+						 				 			 		# Area to input PAM sequences
+						 				 			 		textAreaInput("customPamSeq",
+						 				 			 									label = paste0("Input your nucleotide PAM sequence in the 5'-3' direction (e.g., 'NGG' for SpCas9).",
+						 				 			 																 "You can enter multiple sequences by separating the PAMs with a comma or a space, e.g.",
+						 				 			 																 "'NGG NRG NNVRYAC', etc.:"),
+						 				 			 									value = "",
+						 				 			 									placeholder = "Please input PAM sequence(s) in 5'-3' direction..."),
+						 				 			 		textOutput("validcustomcutsites"),
+
+						 				 			 		# Area to input cut patterns
+						 				 			 		textAreaInput("cutSite",
+						 				 			 									label = paste0("Please specify where your nuclease cuts in relation to your PAM ",
+						 				 			 																 "(negative values for upstream). If you entered multiple PAM sequences,",
+						 				 			 																 " please list the DSB locations in the ORDER YOU INPUT THE PAM SEQUENCES, e.g. '-3 -3 3', etc.:"),
+						 				 			 									value = "",
+						 				 			 									placeholder = "Input the DSB site(s) in relation to your PAM(s)..."),
+
+						 				 			 		textAreaInput("overhang",
+						 				 			 									label = paste0("Please specify the length of the overhangs resulting from the nuclease cut ",
+						 				 			 																 "(use '0' (zero) for blunt cuts; a 5' overhange is assumed). If you entered multiple PAM sequences,",
+						 				 			 																 " please list the overhang lengths in the ORDER YOU INPUT THE PAM SEQUENCES, e.g. '4 0 5', etc.:"),
+						 				 			 									value = "",
+						 				 			 									placeholder = "Input the overhang length(s)...")
+						 				 			 	),
+						 				 			 	
+						 				 			 	tags$br(),
+						 				 			 	
+						 				 			 	#Decide whether to include TALEN targets
+						 				 			 	radioButtons("talenOp",
+						 				 			 							 label = "1b. Do you want to use TALEN targets?",
+						 				 			 							 choices = list("No"  = 0,
+						 				 			 							 							  "Yes" = 1),
+						 				 			 							 selected = 0,
+						 				 			 							 inline = TRUE
+						 				 			 	),
+						 				 			 	
+						 				 			 	#For not using TALEN targets
+						 				 			 	conditionalPanel(
+						 				 			 		condition = "input.talenOp == 0",
+						 				 			 		p("You can use TALEN targets in addition to, or instead of, PAM targets.")
+						 				 			 	),
+						 				 			 	
+						 				 			 	#Using TALEN targets
+						 				 			 	conditionalPanel(
+						 				 			 		condition = "input.talenOp == 1",
+						 				 			 		p(paste0("Specify TALEN design parameters. For an exact length, make \"Min\" and \"Max\" values identical.", 
+						 				 			 						 "The \"Min\" value must be less than or equal to the \"Max\" value.")),
+						 				 			 		textOutput("validtalen"),
+						 				 			 		
+						 				 			 		#Choose TALEN arm length by specifying min and max values
+						 				 			 		tags$b("Choose the minimum and maximum TALEN arm length (arm length may range from 15-18 nucleotides): "),
+						 				 			 		br(),
+						 				 			 		div(style="display:inline-block",
+						 				 			 				numericInput("armin",
+						 				 			 										 label = "Min: ",
+						 				 			 										 value = 15,
+						 				 			 										 min   = 15,
+						 				 			 										 max   = 18,
+						 				 			 										 step  = 1,
+						 				 			 										 width = "80px"
+						 				 			 				)),
+						 				 			 		
+						 				 			 		div(style="display:inline-block",
+						 				 			 				numericInput("armax",
+						 				 			 										 label = "Max: ",
+						 				 			 										 value = 15,
+						 				 			 										 min   = 15,
+						 				 			 										 max   = 18,
+						 				 			 										 step  = 1,
+						 				 			 										 width = "80px")
+						 				 			 		),
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		tags$b("Choose the spacer length: "),
+						 				 			 		tags$br(),
+						 				 			 		div(style = "display:inline-block",
+						 				 			 				radioButtons("spacer",
+						 				 			 										 label = "",
+						 				 			 										 choices = c("14 nts"       = 0,
+						 				 			 										 						 "16 nts"       = 1,
+						 				 			 										 						 "14 OR 16 nts" = 2),
+						 				 			 										 inline = TRUE
+						 				 			 				)
+						 				 			 				
+						 				 			 		)
+						 				 			 	)
+						 				 			 ),
+						 				 			 
+						 				 			 wellPanel(
+						 				 			 	####Choose Input Type###############################################
+						 				 			 	# Choose whether to use GenBank/RefSeq ID, Ensembl ID, or copy/paste input (used to correctly choose processing machinery)
+						 				 			 	radioButtons("inputType",
+						 				 			 							 label = "2. What type of sequence input do you want to use?",
+						 				 			 							 choices = list("GenBank/RefSeq ID"        = 1,
+						 				 			 							 							 "Ensembl ID"                = 3,
+						 				 			 							 							 "Copy/paste gene sequence"  = 2
+						 				 			 							 ),
+						 				 			 							 selected = 1),
+						 				 			 	
+						 				 			 	tags$p(HTML(paste0("MENTHU currently only checks exons for target sites. ",
+						 				 			 										 "Due to increased variation in intronic regions vs exonic regions, ", 
+						 				 			 										 "we do not recommend using MENTHU with reference assembly ", 
+						 				 			 										 "intronic sequences; if you intend to use MENTHU for targeting an intronic region, ", 
+						 				 			 										 "we HIGHLY recommend that you sequence the model organism's targeted intronic region, ", 
+						 				 			 										 "and use this with the copy/paste input (do not specify exons in the input table.)"))),
+						 				 			 	
+						 				 			 	####Input sequence#####################
+						 				 			 	#If the user wants to use a genbank accession
+						 				 			 	conditionalPanel(
+						 				 			 		condition = "input.inputType == 1",
+						 				 			 		
+						 				 			 		textAreaInput("genbankId",
+						 				 			 									label       = paste0("Enter your GenBank or RefSeq ID here. ", 
+						 				 			 																			 "For a full list of supported and not supported input types, ", 
+						 				 			 																			 "please see the 'FAQs' section in the 'Instructions and FAQs' tab. "),
+						 				 			 									value       = "",
+						 				 			 									placeholder = "Enter GenBank gene ID here..."),
+						 				 			 		
+						 				 			 		# Validation check outputs
+						 				 			 		textOutput("validgenbankid"),
+						 				 			 		textOutput("genbankidexists")
+						 				 			 		
+						 				 			 		
+						 				 			 	),
+						 				 			 	
+						 				 			 	# If user uses Ensembl accession
+						 				 			 	conditionalPanel(
+						 				 			 		condition = "input.inputType == 3",
+						 				 			 		
+						 				 			 		#### Ensembl Warning Message ####
+						 				 			 		tags$span(style="color:red", tags$p(HTML(paste0("NOTE: Due to a recent Ensembl update, we ",
+						 				 			 																							 "currently can only retrieve the most recent ",
+						 				 			 																							 "version for any Ensembl accession, regardlesss ", 
+						 				 			 																							 "of the version specified in the accession. If you need ",
+						 				 			 																							 "to use an older version, you should retrieve ",
+						 				 			 																							 "the sequence from Ensembl directly, ",
+						 				 			 																							 "and use the copy/paste input option.")))),
+
+						 				 			 		
+						 				 			 		textAreaInput("ensemblId",
+						 				 			 									label       = paste0("Enter your Ensembl ID here. ",
+						 				 			 																			 "We can analyze sequences from Ensembl transcript, exon, and protein IDs. ",
+						 				 			 																			 "Please see the 'FAQs' section in the 'Instructions and FAQs' tab for more information."),
+						 				 			 									value       = "",
+						 				 			 									placeholder = "Enter Ensembl transcript, exon, or protein ID here..."),
+						 				 			 		
+						 				 			 		# Validation check outputs
+						 				 			 		#textOutput("validensemblid"),
+						 				 			 		textOutput("ensemblidexists")
+						 				 			 		
+						 				 			 	),
+						 				 			 	
+						 				 			 	#If user wants to copy/paste sequence
+						 				 			 	conditionalPanel(
+						 				 			 		condition = "input.inputType == 2",
+						 				 			 		
+						 				 			 		#Text area to copy/paste gene sequence
+						 				 			 		textAreaInput("geneSeq",
+						 				 			 									label       = "Please input your genomic sequence of interest (sequences should be between 80 and 5000 nucleotides in length.)",
+						 				 			 									value       = "",
+						 				 			 									placeholder = "Paste gene sequence here..."),
+						 				 			 		
+						 				 			 		#Check to make sure gene sequence is valid
+						 				 			 		textOutput("validgeneseq"), 
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		#Choose to specify exon inputs by hand
+						 				 			 		radioButtons("pasteExonType", 
+						 				 			 								 label    = "Does your pasted sequence have multiple exons, and do you wish to find a target within those exons?",
+						 				 			 								 choices  = list("No"  = 0, 
+						 				 			 								 								"Yes" = 1),
+						 				 			 								 selected = 0, 
+						 				 			 								 inline   = TRUE),
+						 				 			 		
+						 				 			 		#If the user wants to enter exon information
+						 				 			 		conditionalPanel(
+						 				 			 			condition = "input.pasteExonType == 1",
+						 				 			 			p(paste0("Input exon location information here. Only include information about exons you wish to target.", 
+						 				 			 							 "If your first exon of interest starts on nucleotide 63 and ends on nucleotide 145 of your sequence,",
+						 				 			 							 " type '63' into 'exonStart' and '145' into 'exonEnd'.")),
+						 				 			 			tags$b(p(paste0("If you need to add more exons, right-click or command-click and select 'Insert Row'.", 
+						 				 			 							 " You do not need to remove extra rows."))),
+						 				 			 			rHandsontableOutput("exonInfo"),
+						 				 			 			textOutput("validexoninfo")
+						 				 			 		)
+						 				 			 	)
+						 				 			 ),
+						 				 			 
+						 				 			 ############Exon Options#########################
+						 				 			 conditionalPanel(
+						 				 			 	condition = "input.inputType == 1 | input.inputType == 3",
+						 				 			 	
+						 				 			 	wellPanel(
+						 				 			 		#Choose whether to include first exon in future determinations
+						 				 			 		radioButtons("firstExon",
+						 				 			 								 label    = "2a. Do you want to find targets in the first exon? (Not recommended for gene knockouts.)",
+						 				 			 								 choices  = list("No"  = 0,
+						 				 			 								 								"Yes" = 1),
+						 				 			 								 selected = 0,
+						 				 			 								 inline   = TRUE),
+						 				 			 		
+						 				 			 		#Choose option for specifying exon input
+						 				 			 		p(tags$b("Which exon(s) do you want to target?")),
+						 				 			 		radioButtons("exonTargetType",
+						 				 			 								 label   = "Do you want to: ",
+						 				 			 								 choices = list("Search all exons - Please note if 2a = 'No', the first exon will not be searched"           = 0,
+						 				 			 								 							 "Search for a target within a specified percentage of exons of the beginning of the sequence" = 1,
+						 				 			 								 							 "Search for a target within a specified percentage of exons of the end of the sequence"       = 2,
+						 				 			 								 							 "Provide a list of exons to target"                                                           = 3),
+						 				 			 								 selected = 0),
+						 				 			 		
+						 				 			 		#When working from the beginning of the sequence
+						 				 			 		conditionalPanel(
+						 				 			 			condition = "input.exonTargetType == 1",
+						 				 			 			p(paste0("Specify a percentage of exons, starting from the beginning of the sequence, ", 
+						 				 			 							 "to search (this includes the first exon if you chose 'yes' in 3, and excludes it if you chose 'no'.) ", 
+						 				 			 							 "For gene knockouts, it is recommended that you use 30%. ",
+						 				 			 							 "For example, if your gene has 10 exons and you choose not to look for targets in the first exon, ", 
+						 				 			 							 "a value of '30%' will search exons 2, 3, and 4 for target sites. ",
+						 				 			 							 "If you chose to look for targets in the first exon, a value of 30% will search exons 1, 2, and 3. ")),
+						 				 			 			p("You can look for targets in every exon (100%) by changing the value to '100'. Minimum value is 1%."),
+						 				 			 			
+						 				 			 			numericInput("exonBegPercentage",
+						 				 			 									 label = "",
+						 				 			 									 min   = 1,
+						 				 			 									 max   = 100,
+						 				 			 									 value = 30)
+						 				 			 		),
+						 				 			 		
+						 				 			 		# When working from the end of the sequence
+						 				 			 		conditionalPanel(
+						 				 			 			condition = "input.exonTargetType == 2",
+						 				 			 			p("Specify a percentage of exons, starting from the end of the sequence, to search. "),
+						 				 			 			
+						 				 			 			numericInput("exonEndPercentage",
+						 				 			 									 label = "",
+						 				 			 									 value = 30,
+						 				 			 									 min   = 1,
+						 				 			 									 max   = 100)
+						 				 			 		),
+						 				 			 		
+						 				 			 		#When listing exons to target
+						 				 			 		conditionalPanel(
+						 				 			 			condition = "input.exonTargetType == 3",
+						 				 			 			textAreaInput("exonTargetList",
+						 				 			 										label = paste0("Specify the exon(s) you wish to target. ",
+						 				 			 																	 "Multiple exons should be separated with a comma ",
+						 				 			 																	 "(e.g., to select exon 3 and 5, type '3,5'.) ",
+						 				 			 																	 "A range of exons can be specified by a dash ",
+						 				 			 																	 "(e.g., to target all exons between exon 5 and exon 10, type '5-10'). ",
+						 				 			 																	 "You can specify multiple ranges and/or multiple exons using commas ",
+						 				 			 																	 "(e.g., to select exon 3, exon 5 through 7, exon 9, ",
+						 				 			 																	 "and exon 11 through 13, type '3,5-7,9,11-13'.)"), 
+						 				 			 										placeholder = "Enter exons here...",
+						 				 			 										value       = ""),
+						 				 			 			textOutput("validexonlist")
+						 				 			 		)
+						 				 			 	)#,
+						 				 			 	
+						 				 			 	#wellPanel(
+						 				 			 	#	
+						 				 			 	# Allow user to choose if context consideration can run over into exon region
+						 				 			 	#	radioButtons("contextWiggleType",
+						 				 			 	#							 label    = paste0("2c. Do you want to include target sites where the double-strand break site will occur within an exon, ",
+						 				 			 	#							 									"but the contextual information used to calculate the MENTHU score may include intronic sequences?"),
+						 				 			 	#							 choices  = c("No" = 0,
+						 				 			 	#							 						 "Yes" = 1),
+						 				 			 	#							 selected = 0,
+						 				 			 	#							 inline   = TRUE
+						 				 			 	#	),
+						 				 			 	
+						 				 			 	# Allow user to choose if gRNA can run over into exon region
+						 				 			 	#	radioButtons("gRNAWiggleType",
+						 				 			 	#							 label    = paste0("2b. Do you want to include target sites where the double-strand break ",
+						 				 			 	#							 							     "site will occur within an exon, but the gRNA may run over the exon boundary into an intron?"),
+						 				 			 	#							 choices  = c("No"  = 0,
+						 				 			 	#							 						  "Yes" = 1),
+						 				 			 	#							 selected = 0,
+						 				 			 	#							 inline   = TRUE
+						 				 			 	#	)
+						 				 			 	#	
+						 				 			 	#	
+						 				 			 	#	
+						 				 			 	#)
+						 				 			 ),
+						 				 			 
+						 				 			 wellPanel(	
+						 				 			 	
+						 				 			 	#Submit panel for GenBank submissions
+						 				 			 	conditionalPanel(
+						 				 			 		# If GenBank/RefSeq
+						 				 			 		condition = "input.inputType == 1", 
+						 				 			 		
+						 				 			 		#Submit button
+						 				 			 		actionButton("genbankSubmit", "Submit"), 
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		p("Your results may take a few minutes to calculate. Please do not close this web page until your calculation is finished."),
+						 				 			 		
+						 				 			 		# Generate the UI for the download button
+						 				 			 		uiOutput("downOutGB"),
+						 				 			 		tags$br(), 
+						 				 			 		
+						 				 			 		# Generate button to bookmark inputs
+						 				 			 		bookmarkButton(label = "Bookmark Session Inputs",
+						 				 			 									 title = "Click here to generate a URL that can be copy/pasted into a web browser to easily reproduce your analysis",
+						 				 			 									 id    = "bookmarkGB"),
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		#Indicates if there is a problem with the supplied ID
+						 				 			 		textOutput('genbankIdOutcome'), 
+						 				 			 		tags$style("#genbankIdOutcome{color: red;}"),
+						 				 			 		
+						 				 			 		# Output information regarding the number of hits and misses
+						 				 			 		#uiOutput('genbankhits'),
+						 				 			 		#tags$br(),
+						 				 			 		
+						 				 			 		#Output results
+						 				 			 		conditionalPanel(
+						 				 			 			condition = "output.filtOpsGB",
+						 				 			 			tags$br(),
+						 				 			 			p("Filter Options: "),
+						 				 			 			checkboxInput("t7OptGB",     "T7-compatible gRNAs",                       value = FALSE),
+						 				 			 			checkboxInput("thresholdGB", "Recommended sites (>=1.5 score threshold)", value = FALSE),
+						 				 			 			checkboxInput("inFrameGB",   "Show in-frame PreMA sites", value = TRUE),
+						 				 			 			checkboxInput("outFrameGB",  "Show out-of-frame PreMA sites", value = TRUE)
+						 				 			 		),
+						 				 			 		
+						 				 			 		uiOutput('genbankResults')
+						 				 			 	),
+						 				 			 	
+						 				 			 	#Submit panel for Ensembl submissions
+						 				 			 	conditionalPanel(
+						 				 			 		# If Ensembl
+						 				 			 		condition = "input.inputType == 3",
+						 				 			 		
+						 				 			 		# Submit button
+						 				 			 		actionButton("ensemblSubmit", "Submit"), 
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		p("Your results may take a few minutes to calculate. Please do not close this web page until your calculation is finished."),
+						 				 			 		
+						 				 			 		# Generate UI for download button
+						 				 			 		uiOutput("downOutEns"),
+						 				 			 		tags$br(), 
+						 				 			 		
+						 				 			 		# Generate button to bookmark inputs
+						 				 			 		bookmarkButton(label = "Bookmark Session Inputs",
+						 				 			 									 title = "Click here to generate a URL that can be copy/pasted into a web browser to easily reproduce your analysis",
+						 				 			 									 id    = "bookmarkE"),
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		# Indicates if there is a problem with the supplied ID or connection to Ensembl
+						 				 			 		#textOutput('ensemblIdOutcome'), 
+						 				 			 		#tags$style("#ensemblIdOutcome{color: red;}"),
+						 				 			 		textOutput('ensemblUp'),
+						 				 			 		tags$style("#ensemblUp{color: red;"),
+						 				 			 		
+						 				 			 		#uiOutput('ensemblhits'),
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		#Output results
+						 				 			 		conditionalPanel(
+						 				 			 			condition = "output.filtOpsE",
+						 				 			 			tags$br(),
+						 				 			 			p(tags$b("Filter Options: ")),
+						 				 			 			checkboxInput("t7OptE",     "T7-compatible gRNAs",                       value = FALSE),
+						 				 			 			checkboxInput("thresholdE", "Recommended sites (>=1.5 score threshold)", value = FALSE),
+						 				 			 			checkboxInput("inFrameE",   "Show in-frame PreMA sites", value = TRUE),
+						 				 			 			checkboxInput("outFrameE",  "Show out-of-frame PreMA sites", value = TRUE)
+						 				 			 		),
+						 				 			 		
+						 				 			 		uiOutput('ensemblResults')
+						 				 			 	),
+						 				 			 	
+						 				 			 	conditionalPanel(
+						 				 			 		condition = "input.inputType == 2",
+						 				 			 		actionButton("geneSeqSubmit", "Submit"),
+						 				 			 		
+						 				 			 		tags$br(),
+						 				 			 		p("Your results may take a few minutes to appear. Please do not close this web page until your calculation is finished."),
+						 				 			 		uiOutput("downOutGS"),
+						 				 			 		tags$br(), 
+						 				 			 		bookmarkButton(label = "Bookmark Session Inputs",
+						 				 			 									 title = "Click here to generate a URL that can be copy/pasted into a web browser to easily reproduce your analysis",
+						 				 			 									 id    = "bookmarkGS"),
+						 				 			 		tags$br(),
+						 				 			 		
+						 				 			 		textOutput('geneseqerrors'),
+						 				 			 		
+						 				 			 		#Output results
+						 				 			 		#uiOutput('geneseqhits'),
+						 				 			 		#br(),
+						 				 			 		conditionalPanel(
+						 				 			 			condition = "output.filtOpsGS",
+						 				 			 			tags$br(),
+						 				 			 			p("Filter Options: "),
+						 				 			 			checkboxInput("t7OptGS",     "T7-compatible gRNAs",                       value = FALSE),
+						 				 			 			checkboxInput("thresholdGS", "Recommended sites (>=1.5 score threshold)", value = FALSE),
+						 				 			 			checkboxInput("inFrameGS",   "Show in-frame PreMA sites", value = TRUE),
+						 				 			 			checkboxInput("outFrameGS",  "Show out-of-frame PreMA sites", value = TRUE)
+						 				 			 		),
+						 				 			 		
+						 				 			 		uiOutput('geneSeqResults')
+						 				 			 		#tags$head(tags$style("#geneSeqResults table {background-color: white; }", media = "screen", type = "text/css"))
+						 				 			 		
+						 				 			 	)
+						 				 			 )
 						 				 )
 						 ),
+						 
+						 ##########Pre-COMPUTED GENES TAB#################################
+						 # This is being moved to its own app
 						 
 						 ##########TOOLS AND DOWNLOADS TAB#################################
 						 
 						 tabPanel(
-						 	tags$div("Tools and Downloads", style = "color:white"),
+						 	tags$div("Tools and Downloads"),
 						 	titlePanel(""),
 						 	
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
+						 												 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
+						 												 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
+						 												 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 												 target = "_blank", 
-						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
 						 		tags$br(),
-						 		p(tags$a(href = "https://github.com/Dobbs-Lab/MENTHU", target = "_blank", "Download MENTHU at GitHub"))
+						 		tags$div(tags$span(a(href   = "https://github.com/Dobbs-Lab/MENTHU", 
+						 												 target = "_blank", tags$img(src = "GitHub_Logo.png",                   width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://hub.docker.com/r/cmmann/menthu", 
+						 												 target = "_blank", tags$img(src = "Docker_Logo.png",                   width = "100%"))))
+						 		
 						 	)),
 						 	
 						 	#Text area in center of page
 						 	column(9, wellPanel(
-						 		p("A standalone version of this code may be downloaded from", tags$a(href = "https://github.com/Dobbs-Lab/MENTHU", target = "_blank", " GitHub."), " The R code is provided as-is, and may not be used in commercial applications. Please be aware that you modify the code at your own risk; we are unable to provide support for modified versions.")
+						 		h3("Download MENTHU"),
+						 		tags$p(HTML(paste0("A standalone version of this code can be downloaded from our ", 
+						 											 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU", target = "_blank", "GitHub repository"),
+						 											 "."))),
+						 		tags$p(HTML(paste0("There are extensive installation/usage instructions available in the GitHub ", 
+						 											 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU#how-to-run-menthu-locally", target = "_blank", "README"), 
+						 											 " file."))),
+						 		tags$p("You can clone the repository with the following git command:"),
+						 		tags$p(tags$code("git clone https://github.com/Dobbs-Lab/MENTHU.git"), style = "text-align:center;"),
+						 		tags$p(HTML(paste0("MENTHU is available under the GNU General Public License v3 (GPL 3.0). You can read the license ",
+						 											 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU/blob/master/LICENSE", target = "_blank", "here"),
+						 											 "."))),
+						 		tags$p(HTML(paste0("The MENTHU R code is provided as-is; please be aware that you modify the code at your own risk. ",
+						 											 "We are unable to provide technical support for modified versions.")))
+						 	),
+						 	
+						 	wellPanel(
+						 		h3("Download MENTHU for High-Throughput Use"),
+						 		tags$p(HTML(paste0("If you want to run MENTHU for very large genes (e.g., TTN, DMD) or for a large number of genes, ", 
+						 											 "we recommend that you use the MENTHU command-line tool."))),
+						 		tags$p("You can download the command-line tool from its ",
+						 					 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU-command-line", target = "_blank", "GitHub repository"),
+						 					 "."),
+						 		tags$p(HTML(paste0("There are extensive usage and installation instructions for this tool in its ReadMe file, and on GitHub. "),
+						 								"You can clone the repository with the following git command:")),
+						 		tags$p(tags$code("git clone https://github.com/Dobbs-Lab/MENTHU-command-line.git"), style = "text-align:center;")
+						 	),
+						 	
+						 		wellPanel(
+						 			h3("Run MENTHU Locally"),
+						 		tags$p(HTML(paste0("If you have R installed on your system, you can also follow the instructions ",
+						 											 tags$a(href = "https://github.com/Dobbs-Lab/MENTHU#3-run-menthu-locally", target = "_blank", "here"),
+						 											 " to easily run the MENTHU RShiny app from R, without dealing with Git."))),
+						 		p("MENTHU is also available as a Docker container image. You can clone the Docker image using the following command:"),
+						 		tags$p(tags$code("sudo docker pull cmmann/menthu"), style = "text-align:center;")
+						 		
 						 	))
 						 	
 						 ),
+						 
 						 ##########FUNDING Tab#############################################
 						 tabPanel(
-						 	tags$div("Funding", style = "color:white"),
+						 	tags$div("Funding"),
 						 	titlePanel(""),
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
 						 		#Sidebar panel with links
-						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
+						 												 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
+						 												 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
+						 												 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 												 target = "_blank", 
-						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
+						 												 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.nih.gov/", target = "_blank", tags$img(src = "nihlogo.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
+						 												 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://dill-picl.org", target = "_blank", tags$img(src = "lawlab_web_wiki_header.png", width = "100%"))))
+						 		tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
+						 												 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://github.com/Dobbs-Lab/MENTHU", 
+						 												 target = "_blank", tags$img(src = "GitHub_Logo.png",                   width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://hub.docker.com/r/cmmann/menthu", 
+						 												 target = "_blank", tags$img(src = "Docker_Logo.png",                   width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://dill-picl.org", 
+						 												 target = "_blank", tags$img(src = "lawlab_web_wiki_header.png",        width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href = "https://www.nih.gov/", 
+						 												 target = "_blank", tags$img(src = "nihlogo.png",                       width = "100%"))))
+						 		
 						 	)),
 						 	
 						 	column(9, wellPanel(
-						 		tags$p("This webtool was created and is maintained by funding through ", a(href = "https://projectreporter.nih.gov/project_info_description.cfm?aid=9276155&icde=37715852", target = "_blank", 'NIH R24 OD020166: Development of Tools for Site-directed Analysis of Gene Function'), " and is a joint effort by ", a(href = "https://www.iastate.edu/", target = "_blank", 'Iowa State University'), " and ", a(href = "https://www.mayoclinic.org/", target = "_blank", " The Mayo Clinic.")),
-						 		tags$p("This server is generously hosted by the", a(href = "https://dill-picl.org/", target = "_blank", 'Lawrence-Dill Plant Informatics and Computation (Dill-PICL) Lab'), "at Iowa State University.")
-						 	),
-						 	
-						 	wellPanel(
-						 		p("NIH R24 OD020166 Project Abstract: "),
-						 		p("The overarching goal of this application is to create tools and efficient methods to define genes that can promote human health. While a tremendous amount of data has been cataloged on gene mutation and changes in gene expression associated with complex human disease, our understanding of those genes that could be co-opted to restore patient health is lacking. To address this need and test for genes that when restored to wild type function promote health, we propose develop mutagenic, revertible and conditional alleles that provide spatial and temporal control of gene expression. The ability to make site-specific, untagged mutant alleles in zebrafish and other models has been greatly advanced by custom nucleases that include TALENs and CRISPR/Cas9 systems. These systems operate on the same principle: they are designed to bind to specific sequences in the genome and create a double strand break. The goals of this proposal leverage the activities of TALEN and CRISPR/Cas9 technologies to make site-specific double strand breaks. First, we propose to develop a suite of vectors to make integration alleles that are highly mutagenic and allow production of conditional and revertible alleles. Second, we propose to develop methods to generate predictable alleles in zebrafish at TALEN- and CRISPR/Cas9-induced double strand break sites by invoking the microhomology mediated end-joining pathway. Third, leveraging our preliminary data, we propose to improve methods for homology directed repair with oligonucleotides to create disease associated alleles in zebrafish and for site-specific integration using homologous recombination at TALENs and CRISPR/Cas9 cut sites. Fourth, we propose use single-strand annealing at TALENs and CRISPR/Cas9 cut sites to promote precise transgene integration to make tagged and highly mutagenic allele. These tools and techniques will have direct implications for providing precise gene editing techniques to assess the roles of genes in disease and their ability to promote health following disease progression. While we will develop these methodologies in zebrafish due to their ease of gene delivery, we anticipate these methodologies will not only enhance the efficiency of gene editing but will be readily adaptable for use in other model organisms and large animals. In our opinion, this will have important implications for modeling human disease and health in animal systems by greatly enhancing the ability to make predictible alleles, small nucleotide polymorphisms similar to those associated with human disease, and conditional alleles to test for the ability of a gene to restore health.")
+						 		includeHTML("www/funding.html")
 						 	))
 						 ),
 						 
 						 
 						 ##########HOW TO CITE Tab#########################################
 						 tabPanel(
-						 	tags$div("How to Cite", style = "color:white"),
+						 	tags$div("How to Cite"),
 						 	titlePanel(""),
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
+						 												 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
+						 												 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
+						 												 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 												 target = "_blank", 
-						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 		tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://github.com/Dobbs-Lab/MENTHU", 
+						 												 target = "_blank", tags$img(src = "GitHub_Logo.png",                   width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://hub.docker.com/r/cmmann/menthu", 
+						 												 target = "_blank", tags$img(src = "Docker_Logo.png",                   width = "100%"))))
+						 		
 						 	)),
 						 	
 						 	#Text area in center of page
 						 	column(9, wellPanel(
-						 		p("Manuscript is in prep; citation will be available shortly.")
+						 		includeHTML("www/citation.html")
 						 	))
 						 	
 						 ),
 						 
 						 ##########CONTACT US Tab##########################################
 						 tabPanel(
-						 	tags$div("Report Bugs or Contact Us", style = "color:white"),
+						 	tags$div("Report Bugs or Contact Us"),
 						 	titlePanel(""),
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
+						 												 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
+						 												 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
+						 												 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 												 target = "_blank", 
-						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 		tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://github.com/Dobbs-Lab/MENTHU", 
+						 												 target = "_blank", tags$img(src = "GitHub_Logo.png",                   width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://hub.docker.com/r/cmmann/menthu", 
+						 												 target = "_blank", tags$img(src = "Docker_Logo.png",                   width = "100%"))))
+						 		
 						 	)),
 						 	
 						 	#Text area in center of page
 						 	column(9, wellPanel(
-						 		p("Please use the form below, or email us directly at GeneSculptSuite@gmail.com, to report issues and request support.")
+						 		p("Please use the form below, or email us directly at help@genesculpt.org, to report issues and request support.")
 						 	),
 						 	
-						 	tags$iframe(id = "googleform", 
-						 							src = "https://docs.google.com/forms/d/e/1FAIpQLSeq9aDRj6EOCskBwPsA2PFQ2LsKxT4v85-rGTlYQOk0n8X2Gw/viewform?usp=pp_url&entry.358268393&entry.1646278736=MENTHU&entry.1934309806&entry.565411344&entry.754537383&entry.826100992",
-						 							width = 760,
-						 							height = 2000,
-						 							frameborder = 0,
+						 	tags$iframe(id           = "googleform", 
+						 							src          = paste0("https://docs.google.com/forms/d/e/1FAIpQLSeq9aDRj6EOCskBwPsA2PFQ2LsKxT4v85-", 
+						 																		"rGTlYQOk0n8X2Gw/viewform?usp=pp_url&entry.358268393&entry.1646278736=MENTHU&entry.", 
+						 																		"1934309806&entry.565411344&entry.754537383&entry.826100992"),
+						 							width        = 760,
+						 							height       = 2000,
+						 							frameborder  = 0,
 						 							marginheight = 0)
 						 	)
-						 	
 						 ),
-						 
-						 
 						 
 						 ######STATUS and CHANGELOG Tab####################################
 						 tabPanel(
-						 	tags$div("Change Log", style = "color:white"),
+						 	tags$div("Change Log"),
 						 	titlePanel(""),
 						 	
 						 	#Sidebar panel with links
 						 	column(2, wellPanel(
-						 		tags$div(tags$span(a(href = "http://ll-g2f.gdcb.iastate.edu/gss/", target = "_blank", tags$img(src = "GSS logo small.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "http://genesculpt.org/gss/", 
+						 												 target = "_blank", tags$img(src = "GSS logo small.png",                width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.iastate.edu/",   target = "_blank", tags$img(src = "isu-logo-alt.png",     width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.iastate.edu/",   
+						 												 target = "_blank", tags$img(src = "isu-logo-alt.png",                  width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.mayoclinic.org", target = "_blank", tags$img(src = "MC_stack_4c_DAC.png", width = "100%")))),
+						 		tags$div(tags$span(a(href   = "https://www.mayoclinic.org", 
+						 												 target = "_blank", tags$img(src = "MC_stack_4c_DAC.png",               width = "100%")))),
 						 		tags$br(),
-						 		tags$div(tags$span(a(href = "https://www.genomewritersguild.org/", 
-						 												 target = "_blank", 
-						 												 tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%"))))
+						 		tags$div(tags$span(a(href   = "https://www.genomewritersguild.org/", 
+						 												 target = "_blank", tags$img(src = "genome-writers-guild-logo_DAC.png", width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://github.com/Dobbs-Lab/MENTHU", 
+						 												 target = "_blank", tags$img(src = "GitHub_Logo.png",                   width = "100%")))),
+						 		tags$br(),
+						 		tags$div(tags$span(a(href   = "https://hub.docker.com/r/cmmann/menthu", 
+						 												 target = "_blank", tags$img(src = "Docker_Logo.png",                   width = "100%"))))
+						 		
 						 	)),
 						 	
 						 	#Text area in center of page
@@ -551,5 +831,7 @@ shinyUI(
 						 		includeHTML("www/changelog.html")
 						 	))
 						 )
-	))
+	)}
+)
+
 #

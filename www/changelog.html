@@ -1,23 +1,113 @@
 <!DOCTYPE HTML>
-<p>2018-01-27 v1.1.0</p>
-<p>*Added custom PAM support</p>
-<p>*Fixed GenBank retrieval issue</p>
-<p>*Added GenBank ID validation checks</p>
-<p>*Fixed crashing on TALEN inputs</p>
-<p>*Funding page updates</p>
-<p>*Miscellaneous formatting updates</p>
-<p>*Logo updates</p>
+<head></head>
+<body>
+		<p><strong>2019-07-24 v2.1.2</strong></p>
+	<ul>
+		<li>Fixed a bug affecting some RefSeq mRNA entries caused by numbering issues of exons; bug caused results to display a single gRNA many times.</li>
+	</ul>
+	<br />
+	<p><strong>2019-04-15 v2.1.1</strong></p>
+	<ul>
+		<li>Added workaround to fix issue caused by submitting Ensembl IDs with accompanying version numbers (see FAQs)</li>
+	</ul>
+	<br />
+<p><strong>2019-03-07 v2.1.0</strong></p>
+<ul>
+	<li>Added support for non-Cas9-like nucleases producing sticky/overhanging double-stranded DNA breaks</li>
+	<li>Re-implemented TALEN support</li>
+	<li>Added T7 and score-filtering options</li>
+	<li>Several UI/CSS improvements</li>
+	<li>Updated instructions</li>
+	<li>Added microhomology responsible for Top_Deletion to output table</li>
+	<li>Added sequence context to output table (i.e., wildtype sequence for Top_Deletion sequence)</li>
+</ul>
+<p><strong>KNOWN ISSUE:</strong></p>
+<p>Issue: After submitting and getting results back, switching the input type (e.g., from GenBank to Ensembl) and then resubmitting without resetting the form results in the "Download Results" button downloading the entire page in HTM, rather than the results table in CSV.</p> 
+<p>Temporary workaround: While we implement a fix, use the "Reset Form" link in between uses for best results.</p>
+<br />
+<p><strong>2019-02-08 v2.0.8</strong></p>
+<ul>
+	<li>Fixed bug where newline characters in copy/paste input were read as part of the sequence; newline/whitespace characters in pasted sequences are now automatically removed.</li>
+</ul>
+<br />
+<p><strong>2018-10-12 v2.0.7</strong></p>
+<ul>
+	<li>Added Ensembl support</li>
+	<li>Fixed a bug causing crashes on single exon inputs</li>
+	<li>Fixed a bug creating wrong gRNA/PAM combinations on certain single-exon inputs</li>
+</ul>
+<p><strong>2018-09-19 v2.0.6</strong></p>
+<ul>
+	<li>Changed GenBank retrieval to use curl instead of rentrez</li>
+	<li>Fixed exon number processing issue leading to crashes on certain GenBank files</li>
+</ul>
+<br />
+<p><strong>2018-08-03 v2.0.5</strong></p>
+<ul>
+	<li>Modified deletion pattern generation to increase efficiency and improve detection</li>
+</ul>
+<br />
+<p><strong>2018-07-30 v2.0.4</strong></p>
+<ul>
+	<li>Fixed crashes on lowercase copy/paste submissions</li>
+</ul>
+<br />
+<p><strong>2018-07-17 v2.0.3</strong></p>
+<ul>
+	<li>Fixed crashes on GenBank files with 'join' statements</li>
+	<li>Removed display threshold parameter</li>
+</ul>
+<br />
+<p><strong>2018-04-04 v2.0.2</strong></p>
+<ul>
+	<li>Fixed crashes on GenBank files with no exon numbers in locus tags</li>
+	<li>Modified MMEJ deletion pattern identification algorithm to enhance calculation speed</li>
+</ul>
+<br />
+<p><strong>2018-03-28 v2.0.1</strong></p>
+<ul>
+	<li>Made changelog more readable</li>
+	<li>Added NCBI API key and data usage policy compliance statement</li>
+	<li>Updated support request email address</li>
+	<li>Made project abstract more readable</li>
+	<li>Temporarily disabled TALEN support in preparation for TALEN generation overhaul</li>
+	<li>Added bolded PAM sequences in gRNA sequences</li>
+	<li>Removed Version 1.0 from web server</li>
+</ul>
+<br />
+<p><strong>2018-03-22 v2.0.0</strong></p>
+<ul>
+	<li>Added Version 2.0 scoring system</li>
+	<li>Fixed bug where copy paste without exon inputs were improperly reporting gRNA sequences</li>
+</ul>
+<br />
+<p><strong>2018-01-27 v1.1.0</strong></p>
+<ul>
+	<li>Added custom PAM support</li>
+	<li>Fixed GenBank retrieval issue</li>
+	<li>Added GenBank ID validation checks</li>
+	<li>Fixed crashing on TALEN inputs</li>
+	<li>Funding page updates</li>
+	<li>Miscellaneous formatting updates</li>
+	<li>Logo updates</li>
+</ul>
 <p><b>KNOWN ISSUE: Pasted sequence with manual exon input has bugs in 'Exon ID' properly displaying in table.</b></p>
-<br>
-<p>2017-12-20 v1.0.2</p>
-<p>*Added TALEN support</p>
-<p>*Added GenBank ID support</p>
-<p>*Fixed progress bar to more closely mirror actual progress</p>
-<p>*Fixed incorrect exon labeling in output</p>
-<p>*Updated logos and links</p>
-<br>
-<p>2017-10-10 v1.0.1</p>
-<p>*Added progress bar</p>
-<p>*Added improved table output</p>
-<p>*Excel table downloads</p>
-<p>*Pasted sequence exon input is now supported</p>
+<br />
+<p><strong>2017-12-20 v1.0.2</strong></p>
+<ul>
+	<li>Added TALEN support</li>
+	<li>Added GenBank ID support</li>
+	<li>Fixed progress bar to more closely mirror actual progress</li>
+	<li>Fixed incorrect exon labeling in output</li>
+	<li>Updated logos and links</li>
+</ul>
+<br />
+<p><strong>2017-10-10 v1.0.1</strong></p>
+<ul>
+	<li>Added progress bar</li>
+	<li>Added improved table output</li>
+	<li>Excel table downloads</li>
+	<li>Pasted sequence exon input is now supported</li>
+</ul>
+</body>
+</html>

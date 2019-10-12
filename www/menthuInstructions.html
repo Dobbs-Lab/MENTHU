@@ -1,47 +1,194 @@
 <!DOCTYPE HTML>
 <html>
 <body>
+	<!--
+   <h3>Jump To:</h3>
+   <p><a href="#insHead">Instructions</a></p>
+   <p><a href="#FAQsHead">Frequently Asked Questions (FAQs)</a></p>
+   <p><a href="#FAQs_errorsHead">Frequently Asked Questions (FAQs): Resolving Error Messages</a></p>
+   <p><a href="#troubleHead">Troubleshooting</a></p>-->
 
-<h3 style = "display:inline-block">Instructions  </h3><a href="#instructions" data-toggle = "collapse"> expand/collapse </a>
+<h3 id = "insHead" style = "display:inline-block">Instructions  </h3><a href="#instructions" data-toggle = "collapse"> expand/collapse </a>
 <div id = "instructions" class = "collapse in">
-<p>MENTHU will scan a gene (or specified exons within a gene)</p>
-<p>To use MENTHU, choose the "Calculate MENTHU Score" tab.</p>
-<p>Step 1) Choose the nuclease(s) you intend to use for generating your knockout. MENTHU will search your submitted sequence (see Step 3) for the PAM sequence(s) of your selected Cas9 species. You can search for all PAM types by clicking 'Select All PAMs', or uncheck all PAM types by clicking 'De-select ALL PAMs'. Note that you MUST choose at least one Cas9 species OR use TALEN targets (see Step 1a).</p>
-<p>Step 1a) If you wish to use TALEN targets, choose "Yes" in the radio button options under 1a. You will then be prompted to specify TALEN design parameters. You can choose to search for TALEN arms ranging from 15 to 18 nucleotides in size. If you want to search only for TALEN targets with, for example, 16 nucleotide arms, set the "Min" parameter for TALEN arm length to 16, and the "Max" parameter to 16. You can also choose the length of the spacer region between the TALEN arms; the spacer region must be between 14 and 16 nucleotides in length; if you want to set a single length for the spacer region, set the "Min" and "Max" parameters to the same value.</p>
-<p>Step 2) Choose your sequence input type. If using a GenBank gene id, select the "GenBank Gene ID" radio button and then paste the ID into the box. If copy/pasting the gene sequence, select the "Copy/paste gene sequence" radio button and then paste your sequence into the box. If copy/pasting, you will then be asked if your pasted sequence has multiple exons, and if you want to target a specific exon within the sequence. If you choose "No", MENTHU will search for target sites within the entirety of your pasted sequence. If you choose "Yes", MENTHU will display table in which you can enter exon information for your sequence.</p>
-<p>The exon table has two columns - one to specify the location of the first nucleotide in the exon (exonStart) and one to specify the location of the last nucleotide in the exon (exonEnd). For example, if you paste a gene sequence that has 300 nucleotides in it, and the first exon runs from the 34th to the 121st nucleotides in the sequence, you would click on the box in the first row under "exonStart" and type "34", then click on the box in the first row under "exonEnd" and type "121". Note that you cannot have negative values in the table, and your "exonEnd" must be smaller than the length of your sequence (your exon can't end after the sequence does.) If you are only interested in one exon, you can enter that information in the first row and leave the remaining rows blank. If you are interested in multiple exons, you can enter that information into the provided rows. If you have more than five exons of interests, you can right-click or CMD+click on the fifth row and choose "Insert row below" to add additional rows.</p>
-<p>Step 2a) This step will be displayed if you choose to submit a GenBank gene ID by selecting the "GenBank Gene ID" radio button. You will then be prompted as to which exons in the corresponding GenBank gene should be targeted.</p>
-<p>Step 3) Choose a score threshold for reporting results. We highly recommend that you choose to <b>DISPLAY</b> sites with a competition score greater than or equal to 40, but only <b>USE</b> sites with a score greater than or equal to 50. Sites scoring 40-50 may be used if no sites with a score of >50 are present, as many sequences do not have any sites with a score greater than 50. Therefore, if you choose 40 as the threshold cutoff, you will display all targets worth consideration.</p>
+<p>MENTHU will scan a gene (or specified exons within a gene) for specified nuclease targeting sites, and output the MENTHU score for each site.</p>
+<p>To see examples of the various input options, you can pre-populate the form with a GenBank, Ensembl, or pasted DNA sequence by clicking one of the options in the "Example Inputs" box (which is colored gold.) You can clear all the inputs by using the "Reset Form" link. The GenBank and Ensembl IDs correspond to the <i>noto</i> gene sequence; the pasted sequence is a random DNA string.</p>
+<p>To use MENTHU, choose the "Submit Job" tab.</p>
+<p><b>Step 1) Choose the nuclease(s) for generating your knockout.</b> MENTHU will search your submitted sequence (see Step 3) for the PAM sequence(s) of your selected Cas9 species. You can search for all PAM types by clicking 'Select All PAMs', or uncheck all PAM types by clicking 'De-select ALL PAMs'. Note that you MUST choose at least one Cas9 species, generate a "custom" PAM sequence (see Step 1a), OR use TALEN targets (see Step 1b).</p>
+
+<p><b>Step 1a) Generate a "custom" PAM sequence.</b> If you are interested in using a CRISPR nuclease not listed under Step 1, you can design a 'custom' PAM sequence. Select the 'Yes' radio button under '1a. Do you want to create a 'custom' PAM sequence?'. Three text boxes will appear. The first is a text box in which you can put multiple PAM sequences (separated by commas or spaces). PAM sequences should use IUPAC standard nucleotide abbreviations and can use ambiguous nucleotides (e.g., 'N' for any nucleotide, 'V' for 'A' or 'C' or 'G', etc.)</p>
+<p>The second text box allows you to specify where to induce a DSB in relation to your PAM. If the DSB is upstream of the PAM, use a negative value. If the DSB is downstream, use a positive value. For example, if we were attempting to recreate the SpCas9 nuclease, we would use a value of -3 here, as SpCas9 induces a DSB 3 nucleotides upstream of its PAM sequence. If we were recreating the AsCas12a nuclease, we would use a value of 18, as AsCas12a (aka AsCpf1) induces a DSB starting 18 bp downstream of its PAM.</p>
+<p>The third text box allows you to specify the length of an overhang, in the case of nucleases (like AsCas12a) which induce a sticky-end cut. For a blunt-end nuclease, like SpCas9, this value is zero. For AsCas12a, which has a 5bp 5' overhang, you would enter a "5".</p>
+
+<p><b>Step 1b) Specify TALEN parameters.</b> If you wish to use TALEN targets, choose "Yes" in the radio button options under 1a. You will then be prompted to specify TALEN design parameters. You can choose to search for TALEN arms ranging from 15 to 18 nucleotides in length. If you want to search only for TALEN targets with, for example, 16 nucleotide arms, set the "Min" parameter for TALEN arm length to 16, and the "Max" parameter to 16. You can also choose the length of the spacer region between the TALEN arms. Due to the ambiguity of the DSB site in a spacer region with an odd number of nucleotides, we only support generating TALENs with a spacer region of 14 or 16 nucleotides.</p>
+
+<p><b>Step 2) Choose your sequence input type.</b> You can choose to enter a GenBank/RefSeq ID nucleotide ID, an Ensembl transcript, protein, or exon ID, or copy and paste an input sequence. 
+<p>If you choose to use an ID, simply paste it in the appropriate box. We stronly recommend against using GenBank post-spliced IDs, as MENTHU uses an 80bp window centered on a DSB site in order to determine if a PreMA is likely. In post-spliced sequence, if the context surrounding the DSB site overruns the end of the exon, this will provide incorrect sequence context and produce errors. We do not support GenBank/RefSeq/Ensembl <i>gene</i> IDs, as multiple transcripts/sequences may map to the same gene ID. Please see the FAQ section <a href="#supportedIds" >here</a> for a list of supported ID types.</p>
+<p>If you choose to copy/paste a gene sequence, the option will appear to find targets within specified exons. If you choose this option, a table will appear in which you can specify exons. The exon table has two columns - one to specify the location of the first nucleotide in the exon (exonStart) and one to specify the location of the last nucleotide in the exon (exonEnd). For example, if you paste a gene sequence that has 300 nucleotides in it, and the first exon runs from the 34th to the 121st nucleotides in the sequence, you would click on the box in the first row under "exonStart" and type "34", then click on the box in the first row under "exonEnd" and type "121". Note that you cannot have negative values in the table, and your "exonEnd" must be smaller than the length of your sequence (your exon can't end after the sequence does.) If you are only interested in one exon, you can enter that information in the first row and leave the remaining rows blank. If you are interested in multiple exons, you can enter that information into the provided rows. If you have more than five exons of interests, you can right-click or CMD+click on the fifth row and choose "Insert row below" to add additional rows.</p>
+<p><b>Step 2a) Choose exon(s) to target.</b> This step will be displayed if you choose to submit a GenBank or Ensembl gene ID by selecting the appropriate radio button. You will then be prompted as to which exons in the corresponding GenBank gene should be targeted.</p>
+<!--<p>Step 2b) Choose whether or not to consider sites where the double-strand break site will occur within an exon, but the context considered by MENTHU may include intronic sequences. Keep in mind that intronic sequences are generally not as well conserved as exon sequences, so the intron sequences from GenBank, RefSeq, and Ensembl may be very different from the introns in your model system. (We also can't guarantee the reference exons will match your organism closely, either, but exons are generally better conserved and this is less of an issue.) In order for MENTHU to accurately choose sites with a single predominant outcome <i>in vivo</i>, your organism's genomic DNA must closely match the input given to MENTHU. </p>
+<p>Step 2c) Choose whether or not to consider sites where the double-strand break site will occur within an exon, but the gRNA may run over the exon boundary into an intron. As discussed above, the intron sequences from GenBank, RefSeq, and Ensembl may be different from your organism's intron sequences. Therefore, if you choose "Yes" here, MENTHU does not guarantee that the output gRNA sequence will actually closely match the target in your organism; the portion of the gRNA crossing into the intron could be very, very different in your organism. If this option is selected, 2b will automatically be set to "Yes" as well, as it is impossible to have a gRNA span into an intron without also considering intron context in the MENTHU score.</p>-->
+<!--<p>Step 3) Choose a score threshold for reporting results. If using the Version 2 scoring system, we recommend you use only use sites with a score greater than or equal to 1.5. If using the legacy Version 1.0 scoring system, we highly recommend that you choose to <b>DISPLAY</b> sites with a competition score greater than or equal to 40 (and so enter '40' in the threshold box), but only <b>USE</b> sites with a score greater than or equal to 50. Sites scoring 40-50 may be used if no sites with a score of >50 are present, as many sequences do not have any sites with a score greater than 50. Therefore, if you choose 40 as the threshold cutoff, you will display all targets worth consideration.</p>-->
+<p>At this point you can click the 'Submit' button. Depending on several factors (including whether a GenBank/RefSeq accession was used, the length of sequence to be searched, the number of PAMs selected/specified, etc.), it may take a few seconds to a few minutes to calculate your scores. Please <strong>DO NOT</strong> leave the page until your results are finished calculating.</p>
+<p><strong>Interpreting results:</strong></p>
+<p>MENTHU will generate a table of results, consisting of 10 columns and a number of rows (see image below).</p>
+    <figure>
+      <img src = "menthu_example_output.png" alt = "MENTHU example output table" width="100%">
+      <figcaption>Example of a MENTHU result table ("Context" column not shown)</figcaption>
+    </figure>
+<p></p>
+<p>Each row corresponds to a single target site (double-strand break site) in the GenBank/RefSeq/Ensembl or copied/pasted sequence you provided.</p>
+<p>The columns are:</p>
+<ol>
+	<li><b>Target_Sequence:</b> Provides the gRNA sequence (for CRISPR nucleases) or TALEN reagent required to target a particular site. The PAM sequence and TALEN arms are displayed in bold online. Users may remove a nucleotide from the beginning of the gRNA sequence to generate a 19bp gRNA sequence, and may also modify the gRNA sequence for compatibility with T7-cloning.</li>
+	<li><b>MENTHU_Score:</b> Provides a score indicating the relative "strength" of competing microhomologies near the target site. The MENTHU score is the ratio of the pattern score (see <a href="https://www.nature.com/articles/nmeth.3015" target="_blank">Bae et al.</a> and <a href="https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1007652" target="_blank">Ata et al.</a> for more information) between the top two strongest microhomologies present within an 80bp context surrounding the double-strand break site; the strongest scoring microhomology must ALSO contain <u><</u>5 intervening nucleotides between the homology arms. A larger MENTHU score indicates a likely Predominant MMEJ Allele (PreMA) outcome, in which the deletion produced by the strongest microhomology will compose >50% of the repair outcomes. A true PreMA site has a MENTHU score <u>></u>1.5, but by default MENTHU outputs all sites with a score <u>></u>1.0.</li>
+	<li><b>Frame_Shift:</b> Indicates "Yes", the top predicted deletion will produce an out-of-frame deletion, or "No", the deletion will be in-frame.</li>
+	<li><b>Tool_Type:</b> For CRISPR nucleases, this column indicates the PAM of the nuclease required to target the DSB site. For TALENs, this column will contain the left arm length, spacer length, and right arm length (in nucleotides) of the TALEN required to target the site (in the form of left arm length/spacer length/right arm length)</li>
+	<li><b>Strand:</b> Indicates if the target is on the forward or complement strand. In the case of copied/pasted sequences, the "forward" strand is the sequence as you pasted it; the "complement" strand is the reverse complement of your pasted sequence.</li>
+	<li><b>Exon_ID:</b> Gives the exon in which the DSB site is located. In cases where a GenBank file does not have properly annotated exon numbers, Exon_ID will simply correspond to the exons as they are listed in the GenBank file. If exon information is unavailable, this value will simply be "1".</li>
+	<li><b>DSB_Location:</b> Provides the position of the nucleotide directly upstream (to the left) of the expected double-strand break site produced by the Target_Sequence. This is the position of the nucleotide within the whole sequence, NOT within an exon.</li>
+	<li><b>Microhomology:</b> The sequence of the microhomology arms used to create the deletion in the PreMA_Sequence column.</li>
+	<li><b>PreMA_Sequence:</b> The sequence of the likely Predominant MMEJ Allele outcome - that is, the deletion produced by the strongest microhomology within an 80bp window centered on the DSB site. Technically, a deletion must have a MENTHU score <u>></u>1.5 in order to be a PreMA outcome.</li>
+	<li><b>Context:</b> The 80bp window centered on the DSB site - this is the sequence context used to calculate the MENTHU score. If you use a staggered-cutting nuclease (e.g., Cas12a), the Context will consist of the "pseudostring" DNA sequence (see <a href="#staggeredCuts">here</a> for an explanation of this approach.</li>
+</ol>
+<p>The number of DSB sites displayed can be changed by clicking on the "Show entries" drop-down box in the upper left hand corner of the table. The results can also be sorted by clicking on the column heading on which you would like to sort. The table can also be searched using the search box in the upper right hand corner.</p>
+<p>The results table can be filtered to only show T7-compatible gRNAs (that is, gRNAs which have one or more "G"s within the first two nucleotides of the beginning of the gRNA sequence) by checking the "T7-compatible gRNAs" checkbox beneath "Filter Options".</p>
+<p>By default, MENTHU outputs all results with a MENTHU score <u>></u>1.0. However, <i>recommended</i> sites have a MENTHU score <u>></u>1.5. You can choose to only display these sites by checking the "Recommended sites (>=1.5 score threshold) option beneath "Filter Options".</p>
+<p>To download your results, click the "Download Results" button. This will generate a comma separated value (CSV) file, which can be opened in any text editing program or in Microsoft Excel. PAM sequences and TALEN arms will not display as bold when downloaded; however, you can determine the PAM sequence and TALEN arms and spacers using the information in the Tool_Type column.</p>
 </div>
-<br>
-<h3 style = "display:inline-block">Frequently Asked Questions (FAQs)  </h3><a href="#FAQs" data-toggle = "collapse"> expand/collapse </a>
+<br />
+<h3 id="FAQsHead" style = "display:inline-block">Frequently Asked Questions (FAQs)  </h3><a href="#FAQs" data-toggle = "collapse"> expand/collapse </a>
 <div id = "FAQs" class = "collapse in">
-<p><b>I used an ENSEMBL/Rfam/Pfam/UNIPROT/PDB/NDB/EMBL/BioCyc/PROSITE ID, and didn't get results. Why?</b></p>
-<p>MENTHU currently only supports GenBank/RefSeq accessions, and will only perform an analysis on DNA sequences. Check your input to make sure you're using a GenBank or RefSeq ID, and that the ID corresponds to a DNA entry.</p>
-<br>
+	<p><b>Why is MENTHU using a different accession version than the one I specified?</b></p>
+	<p>A recent Ensembl update (on Apr 09, 2019) changed how the Ensembl REST API responds to requests where the version is specified. For example, submitting "ENSDART00000011520.8" retrieved the Ensembl Noto-1 transcript, version 8, prior to April 9th. After April 9th (and before we implemented a workaround), this resulted in an "Error: The input Ensembl ID was not found in Ensembl's database. Please check your input ID." message, or in MENTHU hanging on these requests. Our temporary workaround strips the version number from the input when we request the entry from Ensembl, which then defaults to retrieving the latest version. Thus, if you request an older version of an entry at this time, you will receive results using the most recent version. If you absolutely need results for an older version, we recommend you retrieve the sequence corresponding to the older entry, and submit this using the copy/paste input. We are working to implement a long-term solution to restore this functionality.</p>
+	<br />
+<p><b>Does MENTHU store data inputs?</b></p>
+<p>No. Your data inputs are only available to MENTHU for as long as your MENTHU session is active, and are only used to calculate your results during that time. The file containing your results is only generated when you click the 'Download' button - no results files are actually created or stored on our server. Once you exit the MENTHU browser window, everything you did in the session is completely gone. (The flip side of this is that if you do not save your results, you will have to perform the analysis again.)</p>
+<br />
+<p><a name="supportedIds" style="color:black;text-decoration:none;"><b>What accession types are supported?</b></a></p>
+<p>MENTHU supports the following input types:</p>
+<ul>
+<li>GenBank and RefSeq nucleotide inputs</li>
+<li>RefSeq mRNA accessions (RefSeq NM or XM prefixes; please note that if you want to use targets at the beginning or end of an exon, mRNAs and other CDS-based GenBank/RefSeq entries may not have enough context to identify these targets. Use a primary DNA sequence instead.)</li>
+<li>Ensembl transcripts, exons, and proteins (check the Ensembl Stable ID prefixes <a href="https://useast.ensembl.org/info/genome/stable_ids/prefixes.html" target = "_blank">here</a>.) </li>
+<li>Nucleotide accessions not on the unsupported list (check the GenBank prefixes <a href="https://www.ncbi.nlm.nih.gov/Sequin/acc.html" target = "_blank">here</a>.)</li>
+</ul>
+<br />
+<p><b>What accession types are NOT supported?</b></p>
+<p>MENTHU DOES NOT support the following accession types: </p>
+<ul>
+<li>Non-nucleotide accessions from GenBank and RefSeq</li>
+<li>Whole genome sequences (GenBank accession with a 4 letter prefix followed by 6-10 numerals, RefSeq IDs with AC, NC, or NZ prefixes)</li>
+<li>(Incomplete) Genomic regions (RefSeq accession with NG prefix)</li>
+<li>Contigs and scaffolds (RefSeq accession with NT or NW prefixes)</li>
+<li>Ensembl genes (ID ends in a "G" character)</li>
+</ul>
+<p><b>I used an Rfam/Pfam/UNIPROT/PDB/NDB/EMBL/BioCyc/PROSITE ID, and didn't get results. Why?</b></p>
+<p>MENTHU currently only supports GenBank, RefSeq, and Ensembl accessions, and will only perform an analysis on DNA sequences, or IDs which can be mapped to a unique DNA sequence (as with Ensembl protein accessions). Check your input to make sure you're using a supported ID type.</p>
+<br />
 <p><b>Why is it taking so long for me to get results?</b></p>
 <p>In order to generate scores, MENTHU has to perform a series of calculations. The amount of time needed to perform those calculations increases with: </p>
+<ul>
 <li>sequence length</li>
 <li>number and length of exons</li>
 <li>number of target types (e.g., more PAMs = more time)</li>
 <li>lower minimum score threshold</li>
-<br>
+</ul>
+<br />
 <p>You can decrease the length of time needed to get results by :</p>
+<ul>
 <li>limiting your search to the beginning of a sequence</li>
 <li>choosing one or two exons in which to search for targets</li>
 <li>choosing only one or two nuclease target types</li>
 <li>setting a more stringent score threshold (we recommend using the default setting of 40)</li>
-<p></p>
-<p>We are in the progress of implementing an email submission form for performing longer calculations.</p>
-<br>
-<p><b>I specified targets in X exon, but the targets returned to me are from a different exon. What gives?</b></p>
+</ul>
+<br />
+<p><b>I specified targets in Exon X, but the targets returned to me are from Exon Y. What gives?</b></p>
 <p>This problem can occur if:</p>
+<ul>
 <li>Your submitted GenBank/RefSeq accession ID contains multiple genes (which can occur if you submit a genomic section)</li>
 <li>The submitted accession is missing one or more exons</li>
-<li>The submitted accession has multiple version of the same exon</li>
+<li>The submitted accession has multiple versions of the same exon</li>
+</ul>
 <p></p>
 <p>We are working on a solution to this.</p>
-<br>
+<br />
+<p><b>Why don't you support Ensembl gene IDs?</b></p>
+<p>We don't support Ensembl genes at the moment because Ensembl genes may have several associated transcripts (splicing isoforms), and we don't know which one you're interested in. We are working on implementing support for Ensembl genes soon.</p>
+<br />
+<p><b>I tried running the same gene from GenBank and Ensembl with otherwise identical settings, but there are some results in the Ensembl output that aren't in the GenBank output. What's happening?</b></p>
+<p>Most likely, one of two things is ocurring.</p>
+<p>1.) Ensembl transcripts will generally include the 5' UTR as part of the first exon, and the 3' UTR as part of the final exon. GenBank entries are far more hit and miss on this - some GenBank entries will include the (unlabeled) UTRs with the exons, while other GenBank entries do not include them as part of the exon, if they are labeled at all. So, the Ensembl entry may have more results because there are targets in the UTRs which are NOT present in the GenBank entry. We recommend checking your results carefully to ensure that you are only targeting a UTR if that is your intent.</p>
+<p>2.) More rarely, there may be differences in the gene sequences deposited in GenBank vs Ensembl (this may be due to SNPs or different sequence versions). It is possible for these changes to impact whether a site has a single predominant outcome, and thus appears in the results.</p>
+<br />
+<p><a name="staggeredCuts" style="color:black;text-decoration:none;"><b>How do you deal with staggered-cutting nucleases?</b></a></p>
+<p>MMEJ end-resection operates in a 5'-3' fashion. The 5' overhangs produced by staggered cutting nucleases will thus be removed during this phase. We can therefore approximate the microhomologies available for use in the MMEJ repair by creating a "pseudostring" DNA sequence, which consists of the 5' sequence to the left of the DSB site, and the complement of the 3' strand to the right of the DSB site. Essentially, you remove the nucleotides in the overhang from consideration.</p>
 </div>
+
+<br />
+<h3 id="FAQs_errorsHead" style = "display:inline-block">Frequently Asked Questions (FAQs): Resolving MENTHU Errors</h3><a href="#FAQs_errors" data-toggle = "collapse"> expand/collapse </a>
+<div id = "FAQs_errors" class = "collapse in">
+	<p><b>How do I correct the error message I received?</b></p>
+	 	<p><a name="error1" style="color:black;text-decoration:none;"><b>Error: Accession was not found in database</b></a></p>
+	 	<p>This error occurs when the input GenBank/RefSeq ID is not found in NCBI's GenBank or RefSeq databases. This error is caused either by inputting a properly formatted GenBank/RefSeq ID which doesn't actually correspond to an actual sequence, or if the GenBank/RefSeq database is not responding. To resolve this error, double-check that you've entered the ID correctly, and that GenBank/RefSeq is up and running.</p>
+	 	
+	 	<p><a name="error2" style="color:black;text-decoration:none;"><b>Error: MENTHU was unable to connect to Ensembl</b></a></p>
+	 	<p>This error occurs when MENTHU attempts to ping Ensembl but receives no response (which in turn generally occurs when Ensembl is unstable or down). To correct this error, try again later when Ensembl is functioning.</p>
+	 	
+	 	<p><a name="error3" style="color:black;text-decoration:none;"><b>Error: RefSeq/GenBank Protein Accession Detected</b></a></p>
+	 	<ul>
+	 		<li>Error: This ID matches the RefSeq protein accession format. Please submit an accession corresponding to a DNA sequence.</li>
+	 		<li>Error: This ID matches GenBank protein accession format. Please submit an accession corresponding to a DNA sequence.</li>
+	 	</ul>
+	 	<p>This error occurs when an input RefSeq or GenBank accession corresponds to a protein sequence, rather than a nucleotide sequence. MENTHU cannot map RefSeq/GenBank protein accessions back to a unique DNA sequence, and so requires a nucleotide accession as input. To correct this error, use the nucleotide sequence encoding your protein of interest.</p>
+
+	 	<p><a name="error4" style="color:black;text-decoration:none;"><b>Error: The entered ID does not match a known GenBank NUCLEOTIDE or RefSeq NUCLEOTIDE ID format. Please check your submitted accession to make sure you are using a NUCLEOTIDE entry.</b></a></p>
+	 	  <p>This error occurs when MENTHU detects that an input RefSeq or GenBank ID does not match a nucleotide ID format. See the list of <a href="https://www.ncbi.nlm.nih.gov/Sequin/acc.html" target="_blank">GenBank</a> and <a href="" target="_blank">RefSeq</a> prefixes for properly formatted GenBank/RefSeq nucleotide IDs. Make sure that you're not attempting to input an Ensembl ID into this box.</p>
+	 	
+	 	<p><a name="error5" style="color:black;text-decoration:none;"><b>Error: The input Ensembl accession appears to be an Ensembl gene. Ensembl genes can have several associated transcripts; please use the Ensembl transcript ID instead of the gene.</b></a></p>
+	 	  <p>This error occurs when MENTHU detects that the input Ensembl ID matches the format of an Ensembl gene ID. MENTHU requires an Ensembl exon, transcript, or protein input; all other Ensembl types (including genes) are not supported. Ensembl exons, transcripts, and proteins all specify unique DNA sequences (in the case of Ensembl proteins, MENTHU can identify the parent transcript). All other Ensembl entries, especially genes, may have multiple associated sequences, and MENTHU can't tell which sequence to use. To resolve this error, make sure that you are specifying an exon, transcript, or protein.</p>
+	 	  
+	 	<p><a name="error6" style="color:black;text-decoration:none;"><b>Error: Input Ensembl ID does not match a known Ensembl species or Ensembl ID format. Please check your input ID.</b></a></p>
+	 	  <p>This error occurs when the ID put into the Ensembl ID box in Step 2 doesn't match a known Ensembl format. See the list of <a href="https://useast.ensembl.org/info/genome/stable_ids/prefixes.html">Ensembl stable ID prefixes</a> for properly formatted Ensembl accession IDs. Make sure that you are not attempting to input a GenBank/RefSeq ID into this box. Ensembl identifiers (with a few exceptions) generally consist of a six-letter species identifier (an "ENS" prefix attached to a three-letter species code), followed by a code indicating the accession type - "E" for exon, "T" for transcript, "P" for protein, "G" for gene, etc. MENTHU requires an Ensembl exon, transcript, or protein input; all other Ensembl types (including genes) are not supported. Ensembl exons, transcripts, and proteins all specify unique DNA sequences (in the case of proteins, MENTHU can identify the parent transcript). All other Ensembl entries, especially genes, may have multiple associated sequences, and MENTHU can't tell which sequence to use. To resolve this error, make sure that you are specifying an exon, transcript, or protein, with proper species prefixes.</p>
+	 	  
+	 	<p><a name="error7" style="color:black;text-decoration:none;"><b>Error: The input Ensembl ID was not found in Ensembl's database. Please check your input ID.</b></a></p>
+	 	<p>This error occurs when a properly formatted Ensembl ID is input in Step 2, but is not found in the Ensembl database. To correct this error, make sure that you are using the correct Ensembl ID, and check that it exists in the Ensembl database.</p>
+
+	 	<p><a name="error8" style="color:black;text-decoration:none;"><b>Error: Input DNA sequence appears to be in FASTA format. Please paste your sequence without the fasta header.</b></a></p>
+	 	  <p>This error occurs when a FASTA sequence - specifically, a sequence including a FASTA header - is pasted into the text box for the copy/paste option in Step 2. To correct this error, remove the FASTA header line from the input.</p>
+	 	
+	 	<p><a name="error9" style="color:black;text-decoration:none;"><b>Error: Input DNA sequence contains non-standard nucleotides. Allowed nucleotides are A, C, G, and T.</b></a></p>
+	 	  <p>These errors are caused by the presence of characters which are not A, C, G, or T in the copy/paste DNA seqence box. The copy/paste input does allow for linebreak characters for ease in copying/pasting from FASTA files, however. If this error appears, check that your input does not include ambiguous nucleotide codes (e.g., 'R', 'V', 'Y', etc.) and only includes A, C, G, and T (or a, c, g, and t), and that you are not including a FASTA header in the input.</p>
+	 	
+	 	<p><a name="error10" style="color:black;text-decoration:none;"><b>Error: The DNA sequence has &lt;80 nucleotides. MENTHU requires at least 40 nucleotides upstream and 40 nucleotides downstream of the DSB site in order to properly calculate the MENTHU score.</b></a></p>
+	 	<p>This error occurs when the input DNA sequence has fewer than 80 nucleotides. MENTHU looks at 80 nucleotides of context surrounding a DSB site, and thus requires an input of at least 80 nucleotides in order to make calculations. To correct this error, make sure your sequence is at least 80 nucleotides long.</p>
+	 	
+	 	<p><a name="error11" style="color:black;text-decoration:none;"><b>Error: No nuclease selected. Please select a Cas type and/or a custom PAM scheme and/or the TALEN input option.</b></a></p>
+	 	<p>This error occurs when there are no pre-generated or custom CRISPR targets OR TALEN option specified. To correct this error, specify a nuclease type for which to search.</p>
+	
+	 	<p><a name="error12" style="color:black;text-decoration:none;"><b>TALEN Arm Length Errors</b></a></p>
+	 	<ul>
+	 		<li>Error: Maximum TALEN arm length must be greater than or equal to minimum TALEN arm length.</li>
+	 		<li>Error: Minimum TALEN arm length is 15 nucleotides.</li>
+	 		<li>Error: Maximum TALEN arm length is 18 nucleotides.</li>
+	 	</ul>
+	 	<p>These errors are caused by improperly formatted TALEN inputs. To correct these errors, make sure that your minimum TALEN length is no less than 15, your maximum TALEN arm length is no more than 18, and that your minimum TALEN arm length is smaller than your maximum TALEN arm length.</p>
+	 	
+	 	<p><a name="error13" style="color:black;text-decoration:none;"><b>Error: Non-allowed characters detected. Only standard nucleotide (A, C, G, T), IUPAC extended nucleotide symbols (R, Y, S, W, K, M, B, D, H, V, N), and separating characters (spaces and commas) allowed.</b></a></p>
+	 	  <p>This error occurs when MENTHU detects the presence of non-standard IUPAC 1-letter codes in the custom PAM box in Step 1a. To correct this error, make sure the custom PAM input contains only standard nucleotide (A, C, G, T), IUPAC extended nucleotide symbols (R, Y, S, W, K, M, B, D, H, V, N), and separating characters (spaces and commas). Check for other white-space characters (e.g., newlines) or punctuation.</p>
+	 	
+	 	<p><a name="error14" style="color:black;text-decoration:none;"><b>Error: Only numbers, dashes, commas, and spaces allowed.</b></a></p>
+	 	<p>This error occurs when specifying exons to search in Step 2a for the Ensembl and GenBank inputs, and choosing to "Provide a list of exons to target". The error is caused by the presence of non-numeric charactes which are not dashes ('-'), commas (','), or spaces. Tabs and newlines are not allowed. To correct this error, make sure that you follow the bold directions for that step to properly format the exon input list.</p>
+	 	
+	 	<p><a name="error15" style="color:black;text-decoration:none;"><b>Error: The number of custom PAM sequences, custom DSB sites, and overhang lengths does not match. Please make sure that each PAM has one distance to its cut site and overhang length specified.</b></a></p>
+	 	<p>This error occurs when using the 'custom' PAM input in step 1a. It is caused when MENTHU does not detect the same number of custom PAM sequences, custom DSB sites, and custom overhang lengths. To correct this error, make sure that you have the same number of PAM sequences, DSB sites, and overhangs. Remember that even if your nuclease does not have an overhang (e.g., it generates a blunt DSB like SpCas9), you need to specify that it has an overhang of 0.</p>
+
+	 	<p><a name="error16" style="color:black;text-decoration:none;"><b>Error: Some or all of the exons in this list are not found in the input accession. Please check the exon numbering of your accession (ESPECIALLY if you're using Ensembl), as GenBank, RefSeq, and Ensembl may have inconsistent exon numbering.</b></a></p>
+	 	<p>This error occurs when the exons specified in Step 2a ("Provide a list of exons to target") are not found in the input sequence. To correct this error for Ensembl and GenBank/RefSeq inputs, you should check the accession in the database to ensure that the list of exons you are providing are actually found in the accession.</p>
+	 	
+	 	<p><a name="error17" style="color:black;text-decoration:none;"><b>Error: No targets corresponding to the PAM(s) detected.</b></a></p>
+	 	<p>This error occurs when there are no targets corresponding to the input PAM sequences detected in the input DNA. To correct this error, use a different PAM sequence or input a longer (or different) DNA sequence.</p>
+
+</div>
+
 </body>
 </html>
